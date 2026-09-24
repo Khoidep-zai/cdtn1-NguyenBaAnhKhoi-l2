@@ -7,5 +7,6 @@ target/
 coverage/
 .idea/
 .vscode/settings.json
-data/*
-!data/.keep
+data/raw/
+*.csv.gz
+*.zip
