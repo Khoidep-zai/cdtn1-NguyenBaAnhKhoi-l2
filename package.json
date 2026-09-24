@@ -1,0 +1,21 @@
+{
+  "name": "cdtn1-nguyenbaanhkhoi-l2",
+  "version": "1.0.0",
+  "description": "L2 – Tiếp nhận và phân loại yêu cầu bảo hành",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2.git"
+  },
+  "keywords": [],
+  "author": "Nguyen Ba Anh Khoi",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
