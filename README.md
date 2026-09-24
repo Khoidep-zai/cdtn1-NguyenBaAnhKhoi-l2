@@ -1,4 +1,4 @@
-# Nhân viên tiếp nhận tạo phiếu bảo hành từ thông tin khách hàng cung cấp, phân loại theo loại sự cố/lỗi, ghi nhận dữ liệu bắt buộc, cập nhật trạng thái ban đầu của phiếu và lưu vào hệ thống để sẵn sàng chuyển sang bước phân công kỹ thuật viên.
+# Tiếp nhận và phân loại yêu cầu bảo hành
 
 Sinh viên:  
 Nguyễn Bá Anh Khôi - 237480200247 - Track SE
