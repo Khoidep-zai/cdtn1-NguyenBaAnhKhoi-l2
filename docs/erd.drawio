@@ -1,39 +1,75 @@
-<mxfile host="Electron" modified="2023-01-01T00:00:00.000Z" agent="Mozilla/5.0" etag="xxx" version="20.8.16" type="device">
-  <diagram id="diagram_id" name="Page-1">
-    <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+<mxfile host="Electron" modified="2026-09-28T17:00:00.000Z" agent="Mozilla/5.0" etag="cdtn1-l2-erd" version="21.0.0" type="device">
+  <diagram id="erd_diagram_l2" name="ERD - Luồng L2 Bảo Hành">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="750" background="#0F172A" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="Customer" value="Customer&#10;+ customer_id (PK)&#10;+ full_name&#10;+ phone&#10;+ email&#10;+ address" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="50" y="50" width="200" height="150" as="geometry" />
+
+        <!-- DIAGRAM HEADER TITLE -->
+        <mxCell id="title_banner" value="&lt;div style=&quot;font-size: 17px; font-weight: 800; color: #F8FAFC; letter-spacing: 0.05em;&quot;&gt;SƠ ĐỒ THỰC THỂ QUAN HỆ (ERD) - CSDL LUỒNG TIẾP NHẬN BẢO HÀNH (L2)&lt;/div&gt;&lt;div style=&quot;font-size: 12px; color: #94A3B8; margin-top: 4px;&quot;&gt;Hệ thống: Mekong Mobile CRM | Chuẩn Crow&#39;s Foot Notation | Học phần: Chuyên đề 1&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="20" width="1000" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="Device" value="Device&#10;+ device_id (PK)&#10;+ customer_id (FK)&#10;+ serial_no&#10;+ purchase_date" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="50" y="300" width="200" height="120" as="geometry" />
+
+        <!-- ENTITY 1: CUSTOMER -->
+        <mxCell id="Customer" value="&lt;div style=&quot;background: #1E3A8A; color: #FFFFFF; font-weight: 700; font-size: 13px; text-align: center; padding: 6px 0; border-bottom: 2px solid #3B82F6;&quot;&gt;CUSTOMER (Khách hàng)&lt;/div&gt;&lt;div style=&quot;padding: 10px 12px; font-family: &#39;JetBrains Mono&#39;, Consolas, monospace; font-size: 11.5px; line-height: 1.7; color: #F1F5F9;&quot;&gt;&lt;span style=&quot;color: #F59E0B; font-weight: 700;&quot;&gt;PK&lt;/span&gt;  customer_id : BIGSERIAL&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  full_name : VARCHAR(120)&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  phone : VARCHAR(20) &lt;span style=&quot;color: #38BDF8;&quot;&gt;[UQ]&lt;/span&gt;&lt;br&gt;   email : VARCHAR(120)&lt;br&gt;   address : VARCHAR(255)&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  created_at : TIMESTAMP&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=1.5;verticalAlign=top;align=left;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="50" y="100" width="250" height="175" as="geometry" />
         </mxCell>
-        <mxCell id="Ticket" value="Ticket&#10;+ ticket_id (PK)&#10;+ ticket_code&#10;+ customer_id (FK)&#10;+ device_id (FK)&#10;+ category_id (FK)&#10;+ issue_desc&#10;+ status" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="350" y="150" width="200" height="180" as="geometry" />
+
+        <!-- ENTITY 2: DEVICE -->
+        <mxCell id="Device" value="&lt;div style=&quot;background: #1E3A8A; color: #FFFFFF; font-weight: 700; font-size: 13px; text-align: center; padding: 6px 0; border-bottom: 2px solid #3B82F6;&quot;&gt;DEVICE (Thiết bị)&lt;/div&gt;&lt;div style=&quot;padding: 10px 12px; font-family: &#39;JetBrains Mono&#39;, Consolas, monospace; font-size: 11.5px; line-height: 1.7; color: #F1F5F9;&quot;&gt;&lt;span style=&quot;color: #F59E0B; font-weight: 700;&quot;&gt;PK&lt;/span&gt;  device_id : BIGSERIAL&lt;br&gt;&lt;span style=&quot;color: #06B6D4; font-weight: 700;&quot;&gt;FK&lt;/span&gt;  customer_id : BIGINT&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  serial_no : VARCHAR(50) &lt;span style=&quot;color: #38BDF8;&quot;&gt;[UQ]&lt;/span&gt;&lt;br&gt;   purchase_date : DATE&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  warranty_months : SMALLINT&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=1.5;verticalAlign=top;align=left;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="50" y="370" width="250" height="155" as="geometry" />
         </mxCell>
-        <mxCell id="Category" value="Issue_Category&#10;+ category_id (PK)&#10;+ category_name&#10;+ default_priority" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="650" y="50" width="200" height="100" as="geometry" />
+
+        <!-- ENTITY 3: ISSUE_CATEGORY -->
+        <mxCell id="Category" value="&lt;div style=&quot;background: #1E3A8A; color: #FFFFFF; font-weight: 700; font-size: 13px; text-align: center; padding: 6px 0; border-bottom: 2px solid #3B82F6;&quot;&gt;ISSUE_CATEGORY (Danh mục lỗi)&lt;/div&gt;&lt;div style=&quot;padding: 10px 12px; font-family: &#39;JetBrains Mono&#39;, Consolas, monospace; font-size: 11.5px; line-height: 1.7; color: #F1F5F9;&quot;&gt;&lt;span style=&quot;color: #F59E0B; font-weight: 700;&quot;&gt;PK&lt;/span&gt;  category_id : SERIAL&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  category_name : VARCHAR(60) &lt;span style=&quot;color: #38BDF8;&quot;&gt;[UQ]&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  default_priority : VARCHAR(10)&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  is_active : BOOLEAN&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=1.5;verticalAlign=top;align=left;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="790" y="100" width="260" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="Log" value="Ticket_Status_Log&#10;+ log_id (PK)&#10;+ ticket_id (FK)&#10;+ to_status&#10;+ changed_at" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
-          <mxGeometry x="650" y="300" width="200" height="120" as="geometry" />
+
+        <!-- ENTITY 4: TICKET (CENTERPIECE) -->
+        <mxCell id="Ticket" value="&lt;div style=&quot;background: #4338CA; color: #FFFFFF; font-weight: 800; font-size: 14px; text-align: center; padding: 7px 0; border-bottom: 2px solid #818CF8;&quot;&gt;TICKET (Phiếu bảo hành)&lt;/div&gt;&lt;div style=&quot;padding: 10px 12px; font-family: &#39;JetBrains Mono&#39;, Consolas, monospace; font-size: 11.5px; line-height: 1.7; color: #F1F5F9;&quot;&gt;&lt;span style=&quot;color: #F59E0B; font-weight: 700;&quot;&gt;PK&lt;/span&gt;  ticket_id : BIGSERIAL&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  ticket_code : VARCHAR(20) &lt;span style=&quot;color: #38BDF8;&quot;&gt;[UQ]&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;color: #06B6D4; font-weight: 700;&quot;&gt;FK&lt;/span&gt;  customer_id : BIGINT&lt;br&gt;&lt;span style=&quot;color: #06B6D4; font-weight: 700;&quot;&gt;FK&lt;/span&gt;  device_id : BIGINT&lt;br&gt;&lt;span style=&quot;color: #06B6D4; font-weight: 700;&quot;&gt;FK&lt;/span&gt;  category_id : INT &lt;span style=&quot;color: #94A3B8;&quot;&gt;(null)&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  center_id : BIGINT&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  issue_desc : TEXT&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  priority : VARCHAR(10)&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  status : VARCHAR(20)&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  received_at : TIMESTAMP&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  due_date : TIMESTAMP &lt;span style=&quot;color: #38BDF8;&quot;&gt;(SLA)&lt;/span&gt;&lt;br&gt;   closed_at : TIMESTAMP&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  is_warranty : BOOLEAN&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#818CF8;strokeWidth=2;verticalAlign=top;align=left;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="410" y="150" width="280" height="340" as="geometry" />
         </mxCell>
-        <mxCell id="EdgeCusDev" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Customer" target="Device">
+
+        <!-- ENTITY 5: TICKET_STATUS_LOG -->
+        <mxCell id="Log" value="&lt;div style=&quot;background: #1E3A8A; color: #FFFFFF; font-weight: 700; font-size: 13px; text-align: center; padding: 6px 0; border-bottom: 2px solid #3B82F6;&quot;&gt;TICKET_STATUS_LOG (Nhật ký xử lý)&lt;/div&gt;&lt;div style=&quot;padding: 10px 12px; font-family: &#39;JetBrains Mono&#39;, Consolas, monospace; font-size: 11.5px; line-height: 1.7; color: #F1F5F9;&quot;&gt;&lt;span style=&quot;color: #F59E0B; font-weight: 700;&quot;&gt;PK&lt;/span&gt;  log_id : BIGSERIAL&lt;br&gt;&lt;span style=&quot;color: #06B6D4; font-weight: 700;&quot;&gt;FK&lt;/span&gt;  ticket_id : BIGINT&lt;br&gt;   from_status : VARCHAR(20)&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  to_status : VARCHAR(20)&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  changed_at : TIMESTAMP&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;* &lt;/span&gt;  changed_by : BIGINT&lt;br&gt;   note : VARCHAR(255)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=1.5;verticalAlign=top;align=left;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="790" y="360" width="260" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- RELATIONSHIP 1: CUSTOMER -> DEVICE (1 : 0..*) -->
+        <mxCell id="EdgeCusDev" value="1 : 0..*&#10;(sở hữu)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERmany;endFill=0;strokeWidth=2;strokeColor=#60A5FA;fontColor=#CBD5E1;fontSize=11;fontStyle=1;" edge="1" parent="1" source="Customer" target="Device">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="EdgeCusTic" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Customer" target="Ticket">
+
+        <!-- RELATIONSHIP 2: CUSTOMER -> TICKET (1 : 0..*) -->
+        <mxCell id="EdgeCusTic" value="1 : 0..* (yêu cầu)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERmany;endFill=0;strokeWidth=2;strokeColor=#60A5FA;fontColor=#CBD5E1;fontSize=11;fontStyle=1;" edge="1" parent="1" source="Customer" target="Ticket">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="EdgeDevTic" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="Device" target="Ticket">
+
+        <!-- RELATIONSHIP 3: DEVICE -> TICKET (1 : 0..*) -->
+        <mxCell id="EdgeDevTic" value="1 : 0..* (bảo hành)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERmany;endFill=0;strokeWidth=2;strokeColor=#60A5FA;fontColor=#CBD5E1;fontSize=11;fontStyle=1;" edge="1" parent="1" source="Device" target="Ticket">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="EdgeCatTic" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="Category" target="Ticket">
+
+        <!-- RELATIONSHIP 4: ISSUE_CATEGORY -> TICKET (1 : 0..*) -->
+        <mxCell id="EdgeCatTic" value="1 : 0..* (phân loại)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERmany;endFill=0;strokeWidth=2;strokeColor=#60A5FA;fontColor=#CBD5E1;fontSize=11;fontStyle=1;" edge="1" parent="1" source="Category" target="Ticket">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="EdgeTicLog" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Ticket" target="Log">
+
+        <!-- RELATIONSHIP 5: TICKET -> TICKET_STATUS_LOG (1 : 1..*) -->
+        <mxCell id="EdgeTicLog" value="1 : 1..* (ghi log)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.45;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERmandMany;endFill=0;strokeWidth=2;strokeColor=#60A5FA;fontColor=#CBD5E1;fontSize=11;fontStyle=1;" edge="1" parent="1" source="Ticket" target="Log">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+
+        <!-- LEGEND BOX -->
+        <mxCell id="legend_box" value="&lt;div style=&quot;font-weight: 700; color: #F8FAFC; margin-bottom: 6px; font-size: 12px; border-bottom: 1px solid #334155; padding-bottom: 4px;&quot;&gt;CHÚ GIẢI KÝ HIỆU (LEGEND)&lt;/div&gt;&lt;div style=&quot;font-size: 11px; line-height: 1.6; color: #94A3B8;&quot;&gt;&lt;span style=&quot;color: #F59E0B; font-weight: 700;&quot;&gt;PK&lt;/span&gt;: Khóa chính (Primary Key)&lt;br&gt;&lt;span style=&quot;color: #06B6D4; font-weight: 700;&quot;&gt;FK&lt;/span&gt;: Khóa ngoại (Foreign Key)&lt;br&gt;&lt;span style=&quot;color: #EF4444; font-weight: 700;&quot;&gt;*&lt;/span&gt;: Bắt buộc (NOT NULL)&lt;br&gt;&lt;span style=&quot;color: #38BDF8;&quot;&gt;[UQ]&lt;/span&gt;: Giá trị duy nhất (UNIQUE)&lt;br&gt;&lt;span style=&quot;color: #60A5FA; font-weight: 700;&quot;&gt;1 : N&lt;/span&gt;: Quan hệ Crow&#39;s Foot (Một - Nhiều)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#475569;strokeWidth=1;align=left;verticalAlign=top;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="560" width="280" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- NOTE BOX REGARDING SLA & BUSINESS RULES -->
+        <mxCell id="rule_box" value="&lt;div style=&quot;font-weight: 700; color: #F8FAFC; margin-bottom: 6px; font-size: 12px; border-bottom: 1px solid #334155; padding-bottom: 4px;&quot;&gt;RÀNG BUỘC NGHIỆP VỤ CỐT LÕI (SRS L2)&lt;/div&gt;&lt;div style=&quot;font-size: 11px; line-height: 1.6; color: #94A3B8;&quot;&gt;• &lt;strong style=&quot;color: #E2E8F0;&quot;&gt;QT-01:&lt;/strong&gt; SĐT khách hàng là UNIQUE. Trùng SĐT sẽ tái sử dụng hồ sơ.&lt;br&gt;• &lt;strong style=&quot;color: #E2E8F0;&quot;&gt;QT-04:&lt;/strong&gt; Hạn SLA sinh tự động theo Priority (CAO: 24h, TRUNG_BÌNH: 72h).&lt;br&gt;• &lt;strong style=&quot;color: #E2E8F0;&quot;&gt;QT-06:&lt;/strong&gt; Chuyển trạng thái 1 chiều, mọi thay đổi đều ghi vào ticket_status_log.&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#475569;strokeWidth=1;align=left;verticalAlign=top;padding=8;" vertex="1" parent="1">
+          <mxGeometry x="360" y="560" width="690" height="120" as="geometry" />
+        </mxCell>
+
       </root>
     </mxGraphModel>
   </diagram>

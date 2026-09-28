@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const app = require('../src/index');
-const TicketService = require('../src/services/ticketService');
+const TicketService = require('../src/backend/services/ticketService');
 
 test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L2)', async (t) => {
   const server = app.listen(0);
