@@ -1,0 +1,40 @@
+<mxfile host="Electron" modified="2023-01-01T00:00:00.000Z" agent="Mozilla/5.0" etag="xxx" version="20.8.16" type="device">
+  <diagram id="diagram_id" name="Page-1">
+    <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Customer" value="Customer&#10;+ customer_id (PK)&#10;+ full_name&#10;+ phone&#10;+ email&#10;+ address" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="50" y="50" width="200" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="Device" value="Device&#10;+ device_id (PK)&#10;+ customer_id (FK)&#10;+ serial_no&#10;+ purchase_date" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="50" y="300" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Ticket" value="Ticket&#10;+ ticket_id (PK)&#10;+ ticket_code&#10;+ customer_id (FK)&#10;+ device_id (FK)&#10;+ category_id (FK)&#10;+ issue_desc&#10;+ status" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="350" y="150" width="200" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="Category" value="Issue_Category&#10;+ category_id (PK)&#10;+ category_name&#10;+ default_priority" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="650" y="50" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="Log" value="Ticket_Status_Log&#10;+ log_id (PK)&#10;+ ticket_id (FK)&#10;+ to_status&#10;+ changed_at" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="650" y="300" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="EdgeCusDev" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Customer" target="Device">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EdgeCusTic" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Customer" target="Ticket">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EdgeDevTic" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="Device" target="Ticket">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EdgeCatTic" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="Category" target="Ticket">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EdgeTicLog" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Ticket" target="Log">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

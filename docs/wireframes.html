@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe - Tiếp nhận bảo hành</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+  .screen { background: #fff; border: 1px solid #ccc; border-radius: 8px; width: 800px; margin-bottom: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
+  .header { background: #1890ff; color: #fff; padding: 15px 20px; font-size: 18px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+  .content { padding: 20px; }
+  .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+  .form-group label { margin-bottom: 5px; font-weight: 600; color: #333; }
+  .form-group input, .form-group select, .form-group textarea { padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; }
+  .row { display: flex; gap: 20px; }
+  .col { flex: 1; }
+  .btn-primary { background: #1890ff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+  .btn-default { background: #fff; color: #333; border: 1px solid #d9d9d9; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+  .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+  .table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  .table th, .table td { border: 1px solid #f0f0f0; padding: 10px; text-align: left; font-size: 14px; }
+  .table th { background: #fafafa; font-weight: 600; }
+  .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+  .badge-new { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
+  .badge-process { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+  .badge-high { background: #fff1f0; color: #f5222d; border: 1px solid #ffa39e; }
+  .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+  .search-bar input { flex: 1; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- MÀN HÌNH 1: DANH SÁCH PHIẾU BẢO HÀNH -->
+<div class="screen">
+  <div class="header">
+    <span>Mekong Mobile - Danh sách phiếu bảo hành</span>
+    <span>Nhân viên: Nguyễn Bá Anh Khôi</span>
+  </div>
+  <div class="content">
+    <div class="search-bar">
+      <input type="text" placeholder="Tìm kiếm theo mã phiếu, số điện thoại khách hàng..." value="0901234567">
+      <select><option>Trạng thái: TẤT CẢ</option><option>MỚI</option><option>ĐÃ PHÂN CÔNG</option></select>
+      <button class="btn-primary">Tìm kiếm (US6)</button>
+      <button class="btn-primary" style="margin-left: auto;">+ Tạo phiếu mới (US2)</button>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Mã phiếu</th>
+          <th>Tên khách hàng</th>
+          <th>SĐT</th>
+          <th>Thiết bị (Serial)</th>
+          <th>Ưu tiên</th>
+          <th>Trạng thái</th>
+          <th>Hạn cam kết (SLA)</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>BH-000231/2026</td>
+          <td>Trần Văn A</td>
+          <td>0901234567</td>
+          <td>iPhone 14 Pro Max (IMEI123)</td>
+          <td><span class="badge badge-high">CAO</span></td>
+          <td><span class="badge badge-new">MỚI</span></td>
+          <td>09/09/2026 14:30</td>
+          <td><a href="#">Xem chi tiết</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MÀN HÌNH 2: TẠO MỚI PHIẾU -->
+<div class="screen">
+  <div class="header">
+    <span>Tạo phiếu bảo hành mới (US2, US3)</span>
+    <span>Quay lại</span>
+  </div>
+  <div class="content">
+    <div class="row">
+      <div class="col">
+        <h3>Thông tin khách hàng</h3>
+        <div class="form-group">
+          <label>Số điện thoại *</label>
+          <div style="display: flex; gap:10px;">
+            <input type="text" value="0901234567" style="flex:1;">
+            <button class="btn-default">Tra cứu (US1)</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Họ và tên *</label>
+          <input type="text" value="Trần Văn A" disabled>
+        </div>
+      </div>
+      <div class="col">
+        <h3>Thông tin thiết bị</h3>
+        <div class="form-group">
+          <label>Số Serial/IMEI *</label>
+          <input type="text" value="IMEI123">
+        </div>
+        <div class="form-group">
+          <label>Trạng thái bảo hành</label>
+          <input type="text" value="Còn bảo hành (Mua: 01/01/2026)" disabled>
+        </div>
+      </div>
+    </div>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <h3>Thông tin sự cố</h3>
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label>Nhóm sự cố *</label>
+          <select>
+            <option>Chọn nhóm sự cố</option>
+            <option selected>PIN (Pin phù, tụt nhanh)</option>
+            <option>MÀN HÌNH</option>
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label>Mức ưu tiên *</label>
+          <select>
+            <option selected>CAO (SLA 24h)</option>
+            <option>TRUNG BÌNH (SLA 72h)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Mô tả chi tiết lỗi (Khách kể) *</label>
+      <textarea rows="3">Máy bị sập nguồn khi pin còn 20%</textarea>
+    </div>
+    <div class="actions">
+      <button class="btn-default">Hủy</button>
+      <button class="btn-primary">Lưu phiếu bảo hành</button>
+    </div>
+  </div>
+</div>
+
+<!-- MÀN HÌNH 3: CHI TIẾT PHIẾU (CẬP NHẬT TRẠNG THÁI) -->
+<div class="screen">
+  <div class="header">
+    <span>Chi tiết phiếu: BH-000231/2026 (US7)</span>
+    <span>Trạng thái hiện tại: <span class="badge badge-new" style="background:#fff;">MỚI</span></span>
+  </div>
+  <div class="content">
+    <div class="row">
+      <div class="col">
+        <p><strong>Khách hàng:</strong> Trần Văn A - 0901234567</p>
+        <p><strong>Thiết bị:</strong> iPhone 14 Pro Max (IMEI123)</p>
+        <p><strong>Lỗi:</strong> Pin sập nguồn khi còn 20%</p>
+      </div>
+      <div class="col">
+        <p><strong>Nhóm sự cố:</strong> PIN</p>
+        <p><strong>Mức ưu tiên:</strong> CAO</p>
+        <p><strong>Hạn cam kết:</strong> 09/09/2026 14:30</p>
+      </div>
+    </div>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <h3>Cập nhật trạng thái (US4, US5)</h3>
+    <div class="form-group">
+      <label>Chuyển trạng thái sang:</label>
+      <select style="width: 50%;">
+        <option>ĐÃ PHÂN CÔNG</option>
+        <option>ĐÃ HỦY</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Ghi chú (Note):</label>
+      <textarea rows="2" style="width: 100%;"></textarea>
+    </div>
+    <button class="btn-primary">Cập nhật trạng thái</button>
+    
+    <h3 style="margin-top: 30px;">Lịch sử trạng thái</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Thời gian</th>
+          <th>Từ trạng thái</th>
+          <th>Sang trạng thái</th>
+          <th>Người thực hiện</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>08/09/2026 14:30</td>
+          <td>(Khởi tạo)</td>
+          <td><span class="badge badge-new">MỚI</span></td>
+          <td>Nguyễn Bá Anh Khôi</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

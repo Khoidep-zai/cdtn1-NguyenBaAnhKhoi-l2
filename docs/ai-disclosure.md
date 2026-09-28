@@ -2,24 +2,17 @@
 
 - **Học phần:** Chuyên đề Tốt nghiệp 1 (CDTN1)
 - **Sinh viên:** Nguyễn Bá Anh Khôi
-- **MSSV:** 237480200247
+- **MSSV:** 2374802010247
 - **Đề tài / Luồng nghiệp vụ:** L2 – Tiếp nhận và phân loại yêu cầu bảo hành
 
 ---
 
-### 1. Cam kết liêm chính học thuật
-Tôi xin cam đoan việc sử dụng các công cụ Trí tuệ Nhân tạo (AI) trong đồ án này tuân thủ đầy đủ quy định về Liêm chính học thuật của Trường Đại học Văn Lang và đề cương học phần Chuyên đề Tốt nghiệp 1. Các công cụ AI chỉ đóng vai trò hỗ trợ gợi ý ý tưởng, kiểm tra cú pháp, rà soát lỗi mã nguồn và định dạng tài liệu; toàn bộ kiến trúc, tư duy thiết kế và tính đúng đắn của giải pháp do sinh viên tự chịu trách nhiệm.
+### Bảng khai báo sử dụng công cụ AI
 
----
+| Tên công cụ | Mục đích sử dụng | Vị trí áp dụng trong bài | Phương pháp kiểm chứng lại |
+| :--- | :--- | :--- | :--- |
+| Gemini (Antigravity Assistant) | Hỗ trợ chuẩn hóa định dạng văn bản markdown và cấu trúc SRS cho đúng rubric. | Bản đặc tả SRS (srs.md), Hợp đồng API và DDL (api-contract.md). | Đọc và đối chiếu lại với quy tắc nghiệp vụ ở Bảng 9.1 tài liệu Case Study. Đảm bảo đúng định dạng bảng. |
+| ChatGPT | Gợi ý lập luận kiến trúc và lựa chọn mô hình phân lớp. | Phần Thiết kế kiến trúc (architecture.md). | Tự đánh giá lại mức độ logic của trade-off so với NFR đã đề ra. |
 
-### 2. Danh mục công cụ AI đã sử dụng
-1. **GitHub Copilot / Gemini / Antigravity Assistant:**
-   - **Mục đích:** Hỗ trợ sinh mã nguồn khung (boilerplate), gợi ý cấu trúc thư mục, đề xuất bộ test case ban đầu và soát lỗi định dạng tài liệu Markdown.
-   - **Mức độ can thiệp:** Hỗ trợ viết mã và hoàn thiện tài liệu theo dàn ý của sinh viên.
-
----
-
-### 3. Phương pháp kiểm chứng và hiệu đính
-- Toàn bộ mã nguồn do AI gợi ý đều được rà soát thủ công từng dòng để loại bỏ rủi ro bảo mật (hardcoded secrets, SQL injection).
-- Chạy kiểm thử tự động (Smoke test, Unit test) để xác nhận hệ thống hoạt động đúng theo đặc tả nghiệp vụ của case study Mekong Mobile.
-- Đối chiếu cấu trúc tài liệu với các chuẩn yêu cầu của môn học do giảng viên cung cấp.
+> *"Tôi xác nhận đã đọc, hiểu và chịu trách nhiệm hoàn toàn về toàn bộ nội dung nộp trong báo cáo này."*  
+> Họ và tên: Nguyễn Bá Anh Khôi ....................................... MSSV: 2374802010247 ................................ Ngày nộp: ........................
