@@ -9,15 +9,37 @@ const config = {
     password: process.env.DB_PASSWORD || '',
   },
   jwtSecret: process.env.JWT_SECRET || 'secret-key-default-for-dev',
+  
+  // Trạng thái phiếu chuẩn hóa theo dataset và SRS luồng L2
   ticketStatuses: {
-    NEW: 'NEW',
-    PENDING_ASSIGNMENT: 'PENDING_ASSIGNMENT',
-    ASSIGNED: 'ASSIGNED',
-    PROCESSING: 'PROCESSING',
-    COMPLETED: 'COMPLETED',
-    CANCELLED: 'CANCELLED',
+    MOI: 'MOI',
+    DA_PHAN_CONG: 'DA_PHAN_CONG',
+    DANG_XU_LY: 'DANG_XU_LY',
+    CHO_LINH_KIEN: 'CHO_LINH_KIEN',
+    HOAN_TAT: 'HOAN_TAT',
+    DA_DONG: 'DA_DONG',
+    DA_HUY: 'DA_HUY',
+
+    // Aliases hỗ trợ tương thích ngược
+    NEW: 'MOI',
+    PENDING_ASSIGNMENT: 'DA_PHAN_CONG',
+    ASSIGNED: 'DA_PHAN_CONG',
+    PROCESSING: 'DANG_XU_LY',
+    COMPLETED: 'HOAN_TAT',
+    CANCELLED: 'DA_HUY',
   },
-  priorities: ['LOW', 'MEDIUM', 'HIGH', 'URGENT'],
+
+  // Mức ưu tiên chuẩn hóa theo dataset
+  priorities: [
+    'CAO',
+    'TRUNG_BINH',
+    'THAP',
+    // Aliases hỗ trợ tương thích ngược
+    'HIGH',
+    'MEDIUM',
+    'LOW',
+    'URGENT',
+  ],
 };
 
 module.exports = config;

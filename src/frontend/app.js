@@ -63,10 +63,36 @@ function resetFilter() {
   showToast('Đã đặt lại bộ lọc danh sách');
 }
 
-// Simulate customer lookup
-function simulateLookup() {
+// Customer lookup with real API & offline fallback (FR1 / QT-01)
+async function simulateLookup() {
   const phone = document.getElementById('custPhoneInput').value.trim();
-  if (phone === '0901234567') {
+  if (!phone) {
+    showToast('Vui lòng nhập số điện thoại khách hàng.');
+    return;
+  }
+
+  // Kết nối API Backend nếu đang chạy trên HTTP/HTTPS
+  if (window.location.protocol.startsWith('http')) {
+    try {
+      const res = await fetch(`/api/customers?phone=${encodeURIComponent(phone)}`);
+      const body = await res.json();
+      if (res.ok && body.found && body.data) {
+        document.getElementById('custNameInput').value = body.data.full_name;
+        document.getElementById('custAddressInput').value = body.data.address || 'TP. Cần Thơ';
+        if (body.data.devices && body.data.devices.length > 0) {
+          document.getElementById('deviceImeiInput').value = body.data.devices[0].serial_imei;
+          document.getElementById('deviceNameInput').value = body.data.devices[0].product_name;
+        }
+        showToast(`Đã tìm thấy hồ sơ: ${body.data.full_name} (QT-01)`);
+        return;
+      }
+    } catch (e) {
+      // Fallback xuống mô phỏng offline
+    }
+  }
+
+  // Chế độ mô phỏng offline
+  if (phone === '0901234567' || phone.includes('901234567')) {
     document.getElementById('custNameInput').value = 'Trần Văn A';
     document.getElementById('custAddressInput').value = '123 Đường 30/4, Quận Ninh Kiều, TP. Cần Thơ';
     document.getElementById('deviceImeiInput').value = '356891238910';
