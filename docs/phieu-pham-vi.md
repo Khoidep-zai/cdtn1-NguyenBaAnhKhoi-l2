@@ -1,7 +1,7 @@
 # PHIẾU PHẠM VI BÀI TOÁN CÁ NHÂN
 
 **Họ tên:** Nguyễn Bá Anh Khôi  
-**MSSV:** 237480200247  
+**MSSV:** 2374802010247  
 **Track:** [X] SE [ ] DA [ ] AI  
 **Học phần:** Chuyên đề Tốt nghiệp 1 (CDTN1) · HK1 2026–2027  
 
