@@ -14,7 +14,7 @@ Hệ thống hỗ trợ nhân viên tiếp nhận tạo phiếu bảo hành từ
 
 ## 2. Yêu cầu môi trường
 - Node.js 20 LTS (hoặc: Node.js 24 LTS)
-- PostgreSQL 16
+- PostgreSQL 16 hoặc 18
 - Biến môi trường: xem .env.example
 
 ## 3. Hướng dẫn chạy
@@ -22,7 +22,7 @@ Hệ thống hỗ trợ nhân viên tiếp nhận tạo phiếu bảo hành từ
 1. cp .env.example .env và điền giá trị
 2. npm install
 3. npm run db:migrate
-4. npm run dev → mở http://localhost:3000/health
+4. npm run dev → mở http://localhost:3000/health (hoặc http://localhost:3000/health/db kiểm tra CSDL)
 
 ## 4. Cấu trúc thư mục
 - `docs/`: Chứa tài liệu đặc tả yêu cầu (SRS, Phiếu phạm vi, AI Disclosure, Deployment guide).
@@ -31,7 +31,7 @@ Hệ thống hỗ trợ nhân viên tiếp nhận tạo phiếu bảo hành từ
 - `data/`: Chứa tài liệu và tập dữ liệu mẫu phục vụ phát triển.
 
 ## 5. Kiểm thử
-npm test → hiển thị số test PASS (6/6 tests passed)
+npm test → hiển thị số test PASS (10/10 tests passed)
 
 ## 6. Trạng thái hiện tại
 - [x] Khởi tạo project, smoke test chạy được (buổi 2)

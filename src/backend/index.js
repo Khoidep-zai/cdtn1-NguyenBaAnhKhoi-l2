@@ -18,6 +18,16 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
+// Endpoint kiểm tra trạng thái kết nối cơ sở dữ liệu PostgreSQL
+app.get('/health/db', async (req, res) => {
+  const { testConnection } = require('./config/db');
+  const dbStatus = await testConnection();
+  if (dbStatus.connected) {
+    return res.status(200).json({ status: 'ok', database: dbStatus });
+  }
+  return res.status(503).json({ status: 'error', database: dbStatus });
+});
+
 // Phân hệ quản lý tiếp nhận bảo hành (L2)
 app.use('/api/tickets', ticketRoutes);
 

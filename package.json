@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node src/index.js",
-    "db:migrate": "node -e \"console.log('Database migration completed successfully.')\"",
+    "db:migrate": "node src/backend/db/migrate.js",
     "test": "node --test tests/*.test.js"
   },
   "repository": {
@@ -17,6 +17,8 @@
   "author": "Nguyen Ba Anh Khoi",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "pg": "^8.23.1"
   }
 }

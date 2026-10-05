@@ -1,12 +1,18 @@
+const path = require('path');
+const dotenv = require('dotenv');
+
+// Nạp biến môi trường từ file .env ở thư mục gốc nếu có
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+
 const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   db: {
     host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432', 10),
+    port: parseInt(process.env.DB_PORT || '5433', 10),
     name: process.env.DB_NAME || 'cdtn1_warranty_db',
     user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || '',
+    password: process.env.DB_PASSWORD !== undefined ? process.env.DB_PASSWORD : '12345',
   },
   jwtSecret: process.env.JWT_SECRET || 'secret-key-default-for-dev',
   
