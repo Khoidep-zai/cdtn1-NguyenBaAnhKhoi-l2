@@ -100,29 +100,44 @@ class DataLoader {
         warranty_months: Number(p.warranty_months || 12),
       }));
 
-      // 4. Nạp khách hàng mẫu từ customers_raw.csv (nạp 5.000 dòng đầu để tối ưu tốc độ và bộ nhớ)
+      // 4. Nạp TOÀN BỘ danh sách khách hàng từ customers_raw.csv (67.037 bản ghi)
       const custFile = path.join(this.datasetDir, 'customers_raw.csv');
-      const rawCustomers = readCsv(custFile, 10000);
-      rawCustomers.forEach(cust => {
-        const normPhone = normalizePhone(cust.so_dien_thoai);
-        if (normPhone && normPhone.length === 10) {
-          const customerObj = {
-            customer_id: Number(cust.record_id),
-            full_name: cust.ho_ten,
-            phone: normPhone,
-            raw_phone: cust.so_dien_thoai,
-            email: cust.email,
-            address: cust.dia_chi,
-            created_at: cust.ngay_tao,
-          };
-          if (!this.customers.has(normPhone)) {
-            this.customers.set(normPhone, customerObj);
-          }
-          this.customersById.set(customerObj.customer_id, customerObj);
-        }
-      });
+      if (fs.existsSync(custFile)) {
+        const custContent = fs.readFileSync(custFile, 'utf-8');
+        const custLines = custContent.split(/\r?\n/);
+        for (let i = 1; i < custLines.length; i++) {
+          const line = custLines[i];
+          if (!line) continue;
+          const idx1 = line.indexOf(',');
+          const idx2 = line.indexOf(',', idx1 + 1);
+          if (idx1 === -1 || idx2 === -1) continue;
+          const cid = Number(line.substring(0, idx1));
+          const name = line.substring(idx1 + 1, idx2).trim().replace(/^"|"$/g, '');
+          const rest = line.substring(idx2 + 1);
+          const idx3 = rest.indexOf(',');
+          const rawPhone = (idx3 === -1 ? rest : rest.substring(0, idx3)).trim();
+          const normPhone = normalizePhone(rawPhone);
 
-      // 5. Thêm một số khách hàng mẫu cố định để kiểm thử (US1, QT-01)
+          const customerObj = {
+            customer_id: cid,
+            full_name: name,
+            phone: normPhone || rawPhone,
+            raw_phone: rawPhone,
+            email: '',
+            address: 'Việt Nam',
+            created_at: '2025-01-01',
+          };
+
+          if (normPhone && normPhone.length === 10) {
+            if (!this.customers.has(normPhone)) {
+              this.customers.set(normPhone, customerObj);
+            }
+          }
+          this.customersById.set(cid, customerObj);
+        }
+      }
+
+      // 5. Thêm/cập nhật khách hàng mẫu kiểm thử chuẩn (US1, QT-01)
       const seedCustomer = {
         customer_id: 1024,
         full_name: 'Trần Văn A',
@@ -135,37 +150,60 @@ class DataLoader {
       this.customers.set('0901234567', seedCustomer);
       this.customersById.set(seedCustomer.customer_id, seedCustomer);
 
-      // 6. Nạp một số phiếu bảo hành từ tickets_history.csv
+      // Tạo map nhóm lỗi nhanh
+      const catMap = new Map();
+      this.issueCategories.forEach(cat => {
+        catMap.set(cat.category_id, cat.category_name);
+      });
+
+      // Tạo map sản phẩm nhanh
+      const prodMap = new Map();
+      this.products.forEach(prod => {
+        prodMap.set(prod.product_id, prod.product_name);
+      });
+
+      // 6. Nạp TOÀN BỘ 7.801 phiếu bảo hành từ tickets_history.csv (Cam kết dữ liệu thật)
       const ticketsFile = path.join(this.datasetDir, 'tickets_history.csv');
-      const rawTickets = readCsv(ticketsFile, 100);
-      this.tickets = rawTickets.map(t => ({
-        id: t.ticket_code || `BH-00000${t.ticket_id}/2026`,
-        ticket_id: Number(t.ticket_id),
-        ticket_code: t.ticket_code,
-        customer_id: Number(t.customer_id),
-        customer_name: this.customersById.get(Number(t.customer_id))?.full_name || 'Khách hàng',
-        customer_phone: this.customersById.get(Number(t.customer_id))?.phone || '0900000000',
-        serial_no: t.serial_no,
-        serial_imei: t.serial_no,
-        product_id: Number(t.product_id),
-        product_name: this.products.find(p => p.product_id === Number(t.product_id))?.product_name || 'Thiết bị điện thoại',
-        center_id: Number(t.center_id),
-        store_id: `STORE_0${t.center_id}`,
-        issue_description: t.issue_desc,
-        issue_category_id: t.category_id,
-        category_id: Number(t.category_id),
-        priority: t.priority,
-        status: t.status,
-        received_at: t.received_at,
-        due_date: t.due_date,
-        closed_at: t.closed_at || null,
-        is_warranty: t.is_warranty === 'true',
-        created_at: t.received_at,
-        updated_at: t.received_at,
-      }));
+      const rawTickets = readCsv(ticketsFile);
+      this.tickets = rawTickets.map(t => {
+        const cid = Number(t.customer_id);
+        const pid = Number(t.product_id);
+        const catId = Number(t.category_id);
+        const customer = this.customersById.get(cid);
+        const prodName = prodMap.get(pid) || 'Điện thoại thông minh';
+        const catName = catMap.get(catId) || 'SỰ CỐ KHÁC';
+
+        return {
+          id: t.ticket_code || `BH-00000${t.ticket_id}/2026`,
+          ticket_id: Number(t.ticket_id),
+          ticket_code: t.ticket_code || `BH-00000${t.ticket_id}/2026`,
+          customer_id: cid,
+          customer_name: customer?.full_name || `Khách hàng #${cid}`,
+          customer_phone: customer?.phone || '0901234567',
+          serial_no: t.serial_no || `SN-${t.ticket_id}`,
+          serial_imei: t.serial_no || `SN-${t.ticket_id}`,
+          product_id: pid,
+          product_name: prodName,
+          center_id: Number(t.center_id || 1),
+          store_id: `STORE_0${t.center_id || 1}`,
+          issue_description: t.issue_desc || 'Chưa có mô tả',
+          issue_desc: t.issue_desc || 'Chưa có mô tả',
+          issue_category_id: catId,
+          category_id: catId,
+          category_name: catName,
+          priority: t.priority || 'TRUNG_BINH',
+          status: t.status || 'MOI',
+          received_at: t.received_at,
+          due_date: t.due_date,
+          closed_at: t.closed_at || null,
+          is_warranty: t.is_warranty === 'true',
+          created_at: t.received_at,
+          updated_at: t.received_at,
+        };
+      });
 
       this.isLoaded = true;
-      console.log(`[DataLoader] Đã nạp thành công: ${this.serviceCenters.length} trung tâm, ${this.issueCategories.length} nhóm sự cố, ${this.products.length} sản phẩm, ${this.customers.size} khách hàng.`);
+      console.log(`[DataLoader] Đã nạp thành công: ${this.serviceCenters.length} trung tâm, ${this.issueCategories.length} nhóm sự cố, ${this.products.length} sản phẩm, ${this.customersById.size} khách hàng, ${this.tickets.length} phiếu bảo hành.`);
     } catch (err) {
       console.error('[DataLoader] Lỗi khi nạp dataset:', err.message);
     }

@@ -1,40 +1,46 @@
-const config = require('../config');
-const dataLoader = require('../data/dataLoader');
-const { calculateDueDate } = require('../utils/slaHelper');
+/**
+ * TicketService.js — Lớp nghiệp vụ cốt lõi
+ *
+ * Chứa TOÀN BỘ quy tắc nghiệp vụ (QT-01 đến QT-06).
+ * KHÔNG biết công nghệ lưu trữ (SQL, in-memory, hay bất kỳ DB nào).
+ * Giao tiếp với tầng dữ liệu duy nhất qua giao diện Repository.
+ *
+ * Thuộc: LAYERED Pattern — Layer 3 (Business Service Layer)
+ */
 
-// Bộ nhớ lưu trữ dữ liệu mô phỏng
-let tickets = [];
-let statusLogs = [];
-let ticketCounter = 1000;
+const config = require('../config');
+const { calculateDueDate } = require('../utils/slaHelper');
+// Phụ thuộc vào GIAO DIỆN Repository, không phụ thuộc vào cài đặt cụ thể
+const ticketRepo = require('../repositories/ticketRepository');
+
+// -------------------------------------------------------------------------
+// Danh sách chuyển trạng thái hợp lệ (QT-06 — Vòng đời một chiều)
+// -------------------------------------------------------------------------
+const VALID_TRANSITIONS = {
+  MOI:          ['DA_PHAN_CONG', 'DA_HUY'],
+  DA_PHAN_CONG: ['DANG_XU_LY', 'DA_HUY'],
+  DANG_XU_LY:  ['CHO_LINH_KIEN', 'HOAN_TAT', 'DA_HUY'],
+  CHO_LINH_KIEN: ['DANG_XU_LY', 'HOAN_TAT', 'DA_HUY'],
+  HOAN_TAT:    [],
+  DA_HUY:      [],
+};
 
 class TicketService {
   /**
-   * Khởi tạo dữ liệu từ dataset nếu danh sách đang rỗng
-   */
-  static initFromDataset() {
-    if (tickets.length === 0 && dataLoader.tickets.length > 0) {
-      tickets = [...dataLoader.tickets];
-      ticketCounter = 1000 + tickets.length;
-    }
-  }
-
-  /**
-   * Tạo phiếu bảo hành mới (US1 / US2 / FR2 / QT-04)
+   * Tạo phiếu bảo hành mới (US2 / FR2 / QT-04 / QT-06 / NFR3)
+   * Toàn bộ quy tắc nghiệp vụ được thi hành TẠI ĐÂY, không ở Controller.
    */
   static createTicket(data) {
-    TicketService.initFromDataset();
-    ticketCounter += 1;
-
+    const counter = ticketRepo.nextCounter();
     const currentYear = new Date().getFullYear();
-    const codeSeq = String(ticketCounter).padStart(6, '0');
+    const codeSeq = String(counter).padStart(6, '0');
     const ticketCode = `BH-${codeSeq}/${currentYear}`;
-    // Hỗ trợ cả mã TKT- cho test cũ và BH- chuẩn dataset
-    const ticketId = data.id || `TKT-${ticketCounter}`;
+    const ticketId = data.id || `TKT-${counter}`;
 
     const now = new Date();
     const nowIso = now.toISOString();
 
-    // Chuẩn hóa Priority
+    // QT-06: Chuẩn hóa Priority về 3 giá trị xác định
     const rawPriority = data.priority ? String(data.priority).toUpperCase() : 'TRUNG_BINH';
     let normalizedPriority = 'TRUNG_BINH';
     if (rawPriority === 'CAO' || rawPriority === 'HIGH' || rawPriority === 'URGENT') {
@@ -43,16 +49,13 @@ class TicketService {
       normalizedPriority = 'THAP';
     }
 
-    // Tự động tính toán hạn cam kết theo quy tắc ngày làm việc QT-04 (loại trừ Chủ Nhật)
+    // QT-04: Tự động tính hạn cam kết, loại trừ ngày Chủ Nhật (SLA Engine)
     const dueDateObj = calculateDueDate(now, normalizedPriority);
     const dueDateIso = dueDateObj.toISOString();
 
-    // Chuẩn hóa status
-    const initialStatus = config.ticketStatuses.MOI;
-
     const newTicket = {
       id: ticketId,
-      ticket_id: ticketCounter,
+      ticket_id: counter,
       ticket_code: ticketCode,
       customer_id: data.customer_id || 1024,
       customer_name: data.customer_name || 'Khách hàng',
@@ -68,7 +71,8 @@ class TicketService {
       issue_desc: data.issue_description || data.issue_desc || '',
       issue_description: data.issue_description || data.issue_desc || '',
       priority: normalizedPriority,
-      status: initialStatus,
+      // QT-06: Khởi tạo trạng thái ban đầu là MOI
+      status: config.ticketStatuses.MOI,
       is_warranty: data.is_warranty !== undefined ? Boolean(data.is_warranty) : true,
       received_at: nowIso,
       due_date: dueDateIso,
@@ -77,17 +81,16 @@ class TicketService {
       updated_at: nowIso,
     };
 
-    tickets.unshift(newTicket);
+    // Lưu qua Repository (không biết đây là in-memory hay PostgreSQL)
+    ticketRepo.save(newTicket);
 
-    // Ghi nhận bản ghi lịch sử trạng thái đầu tiên (US4 / FR4 / QT-06)
-    statusLogs.push({
-      log_id: statusLogs.length + 1,
-      id: statusLogs.length + 1,
+    // NFR3: Ghi nhận bản ghi lịch sử trạng thái đầu tiên (QT-06 Audit Trail)
+    ticketRepo.addStatusLog({
       ticket_id: ticketId,
       from_status: null,
       old_status: null,
-      to_status: initialStatus,
-      new_status: initialStatus,
+      to_status: newTicket.status,
+      new_status: newTicket.status,
       changed_by: data.created_by || 'Nhân viên tiếp nhận (NV_KHOI)',
       updated_by: data.created_by || 'Nhân viên tiếp nhận (NV_KHOI)',
       note: 'Khởi tạo phiếu tiếp nhận bảo hành mới tại quầy',
@@ -98,86 +101,52 @@ class TicketService {
   }
 
   /**
-   * Xem và lọc danh sách phiếu (US5 / FR5 / US6)
+   * Lấy danh sách phiếu có bộ lọc và phân trang (FR6 / US6 / FR7 / US7)
    */
-  static getTickets({ status, store_id, center_id, q, limit = 50, offset = 0 } = {}) {
-    TicketService.initFromDataset();
-    let result = [...tickets];
-
-    if (status) {
-      const normStatus = (config.ticketStatuses[status.toUpperCase()] || status).toUpperCase();
-      result = result.filter((t) => t.status.toUpperCase() === normStatus || t.status.toUpperCase() === status.toUpperCase());
-    }
-
-    if (center_id) {
-      result = result.filter((t) => Number(t.center_id) === Number(center_id));
-    } else if (store_id) {
-      result = result.filter((t) => t.store_id === store_id || String(t.center_id) === String(store_id).replace(/\D/g, ''));
-    }
-
-    if (q) {
-      const query = q.toLowerCase().trim();
-      result = result.filter((t) => 
-        (t.ticket_code && t.ticket_code.toLowerCase().includes(query)) ||
-        (t.id && t.id.toLowerCase().includes(query)) ||
-        (t.customer_name && t.customer_name.toLowerCase().includes(query)) ||
-        (t.customer_phone && t.customer_phone.includes(query)) ||
-        (t.serial_no && t.serial_no.toLowerCase().includes(query))
-      );
-    }
-
-    const total = result.length;
-    const paginated = result.slice(Number(offset), Number(offset) + Number(limit));
-
-    return {
-      total,
-      limit: Number(limit),
-      offset: Number(offset),
-      data: paginated,
-    };
+  static getTickets({ status, store_id, center_id, q, page, limit = 50, offset = 0 } = {}) {
+    const pageNum = page !== undefined ? Number(page) : Math.floor(offset / limit) + 1;
+    return ticketRepo.findAll({ status, center_id, store_id, q }, pageNum, limit);
   }
 
   /**
-   * Xem chi tiết một phiếu bảo hành kèm lịch sử trạng thái (US7)
+   * Xem chi tiết một phiếu kèm lịch sử trạng thái (FR5 / US5)
    */
   static getTicketById(ticketId) {
-    TicketService.initFromDataset();
-    const ticket = tickets.find((t) => t.id === ticketId || t.ticket_code === ticketId || String(t.ticket_id) === String(ticketId));
+    const ticket = ticketRepo.findById(ticketId);
     if (!ticket) return null;
 
-    const history = statusLogs.filter((log) => log.ticket_id === ticket.id || log.ticket_id === ticket.ticket_code);
-    return {
-      ...ticket,
-      status_history: history,
-    };
+    const history = ticketRepo.getStatusLogs(ticket.id);
+    return { ...ticket, status_history: history };
   }
 
   /**
-   * Phân loại phiếu và cập nhật thông tin sự cố (US3)
+   * Phân loại phiếu và cập nhật thông tin sự cố (FR2 / US3)
    */
   static classifyTicket(ticketId, { issue_category_id, category_id, priority, note, updated_by }) {
-    TicketService.initFromDataset();
-    const ticket = tickets.find((t) => t.id === ticketId || t.ticket_code === ticketId || String(t.ticket_id) === String(ticketId));
+    const ticket = ticketRepo.findById(ticketId);
     if (!ticket) return null;
 
     const cat = category_id || issue_category_id;
+    const updates = {};
+
     if (cat) {
-      ticket.category_id = Number(cat);
-      ticket.issue_category_id = String(cat);
+      updates.category_id = Number(cat);
+      updates.issue_category_id = String(cat);
     }
 
     if (priority) {
       const pUpper = priority.toUpperCase();
-      ticket.priority = pUpper === 'HIGH' || pUpper === 'CAO' ? 'CAO' : pUpper === 'LOW' || pUpper === 'THAP' ? 'THAP' : 'TRUNG_BINH';
-      // Tính lại SLA
-      ticket.due_date = calculateDueDate(ticket.received_at, ticket.priority).toISOString();
+      updates.priority =
+        pUpper === 'HIGH' || pUpper === 'CAO' ? 'CAO'
+          : pUpper === 'LOW' || pUpper === 'THAP' ? 'THAP'
+          : 'TRUNG_BINH';
+      // QT-04: Tính lại SLA khi đổi mức ưu tiên
+      updates.due_date = calculateDueDate(ticket.received_at, updates.priority).toISOString();
     }
 
-    ticket.updated_at = new Date().toISOString();
+    const updatedTicket = ticketRepo.update(ticketId, updates);
 
-    statusLogs.push({
-      log_id: statusLogs.length + 1,
-      id: statusLogs.length + 1,
+    ticketRepo.addStatusLog({
       ticket_id: ticket.id,
       from_status: ticket.status,
       old_status: ticket.status,
@@ -186,33 +155,41 @@ class TicketService {
       changed_by: updated_by || 'Nhân viên tiếp nhận',
       updated_by: updated_by || 'Nhân viên tiếp nhận',
       note: note || `Cập nhật phân loại sự cố: ${cat || ''}`,
-      changed_at: ticket.updated_at,
     });
 
-    return ticket;
+    return updatedTicket;
   }
 
   /**
-   * Cập nhật trạng thái phiếu và ghi nhận nhật ký (US4 / FR4 / QT-06)
+   * Cập nhật trạng thái phiếu và ghi nhật ký (FR3 / US3 / QT-06 / NFR3)
+   * QT-06: Kiểm tra vòng đời trạng thái một chiều tại ĐÂY (tầng nghiệp vụ)
    */
   static updateStatus(ticketId, { status, updated_by, note }) {
-    TicketService.initFromDataset();
-    const ticket = tickets.find((t) => t.id === ticketId || t.ticket_code === ticketId || String(t.ticket_id) === String(ticketId));
+    const ticket = ticketRepo.findById(ticketId);
     if (!ticket) return null;
 
-    const oldStatus = ticket.status;
+    const oldStatus = ticket.status.toUpperCase();
     const targetStatus = (config.ticketStatuses[status.toUpperCase()] || status).toUpperCase();
 
-    ticket.status = targetStatus;
-    ticket.updated_at = new Date().toISOString();
-
-    if (targetStatus === 'HOAN_TAT' || targetStatus === 'DA_DONG' || targetStatus === 'COMPLETED') {
-      ticket.closed_at = ticket.updated_at;
+    // QT-06: Xác thực chuyển trạng thái một chiều — NGHIỆP VỤ NẰM Ở ĐÂY
+    const allowed = VALID_TRANSITIONS[oldStatus] || [];
+    if (!allowed.includes(targetStatus)) {
+      const err = new Error(
+        `Quy tắc vòng đời trạng thái là một chiều: không thể chuyển từ ${oldStatus} sang ${targetStatus}.`
+      );
+      err.statusCode = 400;
+      throw err;
     }
 
-    statusLogs.push({
-      log_id: statusLogs.length + 1,
-      id: statusLogs.length + 1,
+    const updates = { status: targetStatus };
+    if (targetStatus === 'HOAN_TAT' || targetStatus === 'DA_DONG') {
+      updates.closed_at = new Date().toISOString();
+    }
+
+    const updatedTicket = ticketRepo.update(ticketId, updates);
+
+    // NFR3: Ghi nhật ký trong cùng giao dịch (prototype: gọi tuần tự)
+    ticketRepo.addStatusLog({
       ticket_id: ticket.id,
       from_status: oldStatus,
       old_status: oldStatus,
@@ -221,19 +198,16 @@ class TicketService {
       changed_by: updated_by || 'Nhân viên tiếp nhận',
       updated_by: updated_by || 'Nhân viên tiếp nhận',
       note: note || `Chuyển trạng thái từ ${oldStatus} sang ${targetStatus}`,
-      changed_at: ticket.updated_at,
     });
 
-    return ticket;
+    return updatedTicket;
   }
 
   /**
-   * Reset store phục vụ testing
+   * Reset store — chỉ dùng trong bộ kiểm thử
    */
   static resetStore() {
-    tickets = [];
-    statusLogs = [];
-    ticketCounter = 1000;
+    ticketRepo.reset();
   }
 }
 
