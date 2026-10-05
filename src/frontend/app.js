@@ -542,12 +542,12 @@ function checkWarrantyStatus(product) {
   const alertText = document.getElementById('warrantyAlertText');
   if (!alertBox || !alertText) return;
 
-  // Nếu số serial là SN-A52-778901 như ảnh 3, hiển thị hết hạn bảo hành
+  // Nếu số serial là SN-A52-778901 hoặc có đuôi hết hạn
   if (serial.includes('778901') || serial.includes('SN-A52')) {
     alertBox.className = 'warranty-alert-box';
     alertText.innerHTML = `⚠ Thiết bị ${escapeHtml(serial)} đã hết hạn bảo hành (QT-01).`;
   } else {
-    // Mặc định thiết bị hợp lệ còn hạn bảo hành
+    // Thiết bị hợp lệ còn hạn bảo hành
     alertBox.className = 'warranty-alert-box valid';
     alertText.innerHTML = `✔ Thiết bị ${escapeHtml(serial || 'chính hãng')} đối soát ERP hợp lệ: Còn hạn bảo hành chính hãng (QT-05).`;
   }
@@ -565,15 +565,86 @@ async function simulateLookup() {
     return;
   }
 
-  // Gọi API Backend tra cứu trên 67.037 khách hàng thật
+  // Chuẩn hóa số điện thoại tra cứu (loại bỏ khoảng trắng, dấu chấm, dấu gạch)
+  const cleanPhone = phone.replace(/[\s.-]/g, '');
+
+  // 1. Gọi API Backend tra cứu trên 67.037 khách hàng thật và 7.800 phiếu lịch sử
   if (window.location.protocol.startsWith('http')) {
     try {
-      const res = await fetch(`/api/customers?phone=${encodeURIComponent(phone)}`);
+      const res = await fetch(`/api/customers?phone=${encodeURIComponent(cleanPhone)}`);
       const body = await res.json();
       if (res.ok && body.found && body.data) {
-        document.getElementById('custNameInput').value = body.data.full_name;
-        showToast(`Đã tìm thấy hồ sơ: ${body.data.full_name} (QT-01)`);
-        checkWarrantyStatus();
+        const cust = body.data;
+
+        // Điền họ tên khách hàng
+        const nameInput = document.getElementById('custNameInput');
+        if (nameInput) nameInput.value = cust.full_name || '';
+
+        // Điền địa chỉ khách hàng
+        const addrInput = document.getElementById('custAddressInput');
+        if (addrInput) addrInput.value = cust.address || 'Việt Nam';
+
+        // Điền thông tin thiết bị và lịch sử gắn liền với khách hàng
+        if (cust.devices && cust.devices.length > 0) {
+          const dev = cust.devices[0];
+
+          if (dev.product_name) {
+            const devNameInput = document.getElementById('deviceNameInput');
+            if (devNameInput) devNameInput.value = dev.product_name;
+          }
+
+          if (dev.serial_no || dev.serial_imei) {
+            const serialInput = document.getElementById('deviceImeiInput');
+            if (serialInput) serialInput.value = dev.serial_no || dev.serial_imei;
+          }
+
+          if (dev.category_id) {
+            const catSel = document.getElementById('issueCatSelect');
+            if (catSel) catSel.value = String(dev.category_id);
+          }
+
+          if (dev.issue_desc) {
+            const descArea = document.getElementById('issueDescText');
+            if (descArea) {
+              descArea.value = dev.issue_desc;
+              onIssueDescInput(dev.issue_desc);
+            }
+          }
+
+          if (dev.priority) {
+            const radio = document.querySelector(`input[name="priorityRadio"][value="${dev.priority}"]`);
+            if (radio) {
+              radio.checked = true;
+              onPriorityRadioChange(dev.priority);
+            }
+          }
+
+          // Cập nhật thông báo tình trạng bảo hành chính xác từ dữ liệu thực
+          const alertBox = document.getElementById('warrantyAlertBox');
+          const alertText = document.getElementById('warrantyAlertText');
+          if (alertBox && alertText) {
+            const s = dev.serial_no || dev.serial_imei;
+            const p = dev.product_name;
+            if (dev.is_warranty === false) {
+              alertBox.className = 'warranty-alert-box';
+              alertText.innerHTML = `⚠ Thiết bị ${escapeHtml(s)} (${escapeHtml(p)}) đã hết hạn bảo hành (QT-01).`;
+            } else {
+              alertBox.className = 'warranty-alert-box valid';
+              alertText.innerHTML = `✔ Thiết bị ${escapeHtml(s)} (${escapeHtml(p)}) đối soát ERP hợp lệ: Còn hạn bảo hành chính hãng (QT-05).`;
+            }
+          }
+
+          showToast(`Đã tìm thấy hồ sơ: ${cust.full_name} (${dev.product_name})`);
+        } else {
+          // Khách hàng đã có trong CRM nhưng chưa tiếp nhận thiết bị này trước đó
+          const alertBox = document.getElementById('warrantyAlertBox');
+          const alertText = document.getElementById('warrantyAlertText');
+          if (alertBox && alertText) {
+            alertBox.className = 'warranty-alert-box valid';
+            alertText.innerHTML = `✔ Khách hàng hợp lệ: ${escapeHtml(cust.full_name)}. Vui lòng chọn dòng máy và nhập serial tiếp nhận.`;
+          }
+          showToast(`Đã tìm thấy hồ sơ khách hàng: ${cust.full_name}`);
+        }
         return;
       }
     } catch (e) {
@@ -581,15 +652,40 @@ async function simulateLookup() {
     }
   }
 
-  // Fallback tra cứu offline trên mẫu dữ liệu
-  if (phone.includes('0909123456') || phone.includes('0901234567')) {
-    document.getElementById('custNameInput').value = 'Nguyễn Văn An';
-    showToast('Đã tìm thấy thông tin khách hàng: Nguyễn Văn An (QT-01)');
-    checkWarrantyStatus();
-  } else {
-    showToast('Khách hàng mới! Họ tên sẽ được lưu hồ sơ tự động khi tạo phiếu.');
-    document.getElementById('custNameInput').focus();
+  // 2. Fallback tra cứu offline trên mẫu dữ liệu thực tế
+  let foundSample = null;
+  if (window.OFFLINE_TICKETS_SAMPLE && window.OFFLINE_TICKETS_SAMPLE.length > 0) {
+    foundSample = window.OFFLINE_TICKETS_SAMPLE.find(t => {
+      const p = (t.customer_phone || '').replace(/[\s.-]/g, '');
+      return p === cleanPhone || p.endsWith(cleanPhone) || cleanPhone.endsWith(p);
+    });
   }
+
+  if (foundSample) {
+    document.getElementById('custNameInput').value = foundSample.customer_name;
+    const addrInput = document.getElementById('custAddressInput');
+    if (addrInput) addrInput.value = foundSample.customer_address || 'Việt Nam';
+    document.getElementById('deviceNameInput').value = foundSample.product_name;
+    document.getElementById('deviceImeiInput').value = foundSample.serial_no || foundSample.serial_imei;
+
+    const alertBox = document.getElementById('warrantyAlertBox');
+    const alertText = document.getElementById('warrantyAlertText');
+    if (alertBox && alertText) {
+      if (foundSample.is_warranty === false) {
+        alertBox.className = 'warranty-alert-box';
+        alertText.innerHTML = `⚠ Thiết bị ${escapeHtml(foundSample.serial_no)} (${escapeHtml(foundSample.product_name)}) đã hết hạn bảo hành (QT-01).`;
+      } else {
+        alertBox.className = 'warranty-alert-box valid';
+        alertText.innerHTML = `✔ Thiết bị ${escapeHtml(foundSample.serial_no)} (${escapeHtml(foundSample.product_name)}) đối soát ERP hợp lệ: Còn hạn bảo hành chính hãng (QT-05).`;
+      }
+    }
+    showToast(`Đã tìm thấy thông tin khách hàng: ${foundSample.customer_name}`);
+    return;
+  }
+
+  // 3. Khách hàng mới chưa có trong hệ thống
+  showToast('Khách hàng mới! Họ tên sẽ được lưu hồ sơ tự động khi tạo phiếu.');
+  document.getElementById('custNameInput').focus();
 }
 
 // -------------------------------------------------------------

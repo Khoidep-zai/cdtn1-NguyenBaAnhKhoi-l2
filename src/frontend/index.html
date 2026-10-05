@@ -112,21 +112,6 @@
     </div>
 
     <div class="screen-body">
-      <!-- Banner Cam kết Liêm chính Dữ liệu & Tuân thủ Luật AI -->
-      <div class="data-commitment-badge">
-        <div class="commitment-left">
-          <span class="pulse-indicator"></span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: #34D399; flex-shrink: 0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          <div>
-            <strong>Tuân thủ Nguyên tắc AI & Dữ liệu Thực nghiệm:</strong>
-            <span>Hệ thống cam kết sử dụng dữ liệu chuẩn hóa và thật 100% từ Dataset thực tế Mekong Mobile CRM (<span id="totalTicketsBadge">7.800</span> phiếu lịch sử, 67.037 khách hàng, 320 thiết bị điện thoại). Tuyệt đối không dùng dữ liệu mô phỏng ảo.</span>
-          </div>
-        </div>
-        <div class="dataset-stats-pill" id="datasetStatsPill">
-          Dataset 7.800 phiếu · 6 Chi nhánh · 6 Nhóm lỗi
-        </div>
-      </div>
-
       <!-- Toolbar Tra cứu & Bộ lọc nâng cao -->
       <div class="toolbar">
         <div class="search-box">
@@ -220,12 +205,12 @@
     </div>
   </section>
 
-  <!-- SCREEN 2: TẠO PHIẾU BẢO HÀNH MỚI (CHUẨN HÓA THEO YÊU CẦU ẢNH 3) -->
+  <!-- SCREEN 2: TẠO PHIẾU BẢO HÀNH MỚI -->
   <section class="screen" id="screen-create">
     <div class="screen-header">
       <div class="screen-title">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--secondary);"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-        <h2>Mỗi trường trên màn hình phải chỉ ra được cột dữ liệu và yêu cầu</h2>
+        <h2>Khởi tạo phiếu tiếp nhận bảo hành mới</h2>
         <span class="screen-tag">FR1 + FR2 + FR3 · QT-01 · QT-03 · QT-04</span>
       </div>
       <button class="btn btn-secondary" onclick="switchTab('screen-list')">
@@ -234,12 +219,11 @@
     </div>
 
     <div class="screen-body">
-      <!-- Bố cục lưới 2 cột: Bên trái là Form Tạo phiếu, Bên phải là Bảng Ánh xạ ERD (Khớp 100% Ảnh 3) -->
-      <div class="create-grid-layout">
+      <!-- Container form tạo phiếu bảo hành chuẩn hóa giao diện sạch sẽ -->
+      <div class="create-form-container">
 
-        <!-- CỘT TRÁI: FORM TẠO PHIẾU BẢO HÀNH (MOCKUP WIREDRAME) -->
-        <div class="form-card" style="background: rgba(15, 23, 42, 0.65); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);">
-          <!-- Header mô phỏng giao diện chuẩn như trong ảnh 3 -->
+        <div class="form-card" style="background: rgba(15, 23, 42, 0.65); padding: 28px 32px; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);">
+          <!-- Header quầy tiếp nhận -->
           <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px; margin-bottom: 22px;">
             <div style="display: flex; align-items: center;">
               <div class="mockup-header-dots">
@@ -247,7 +231,7 @@
                 <span class="mockup-dot yellow"></span>
                 <span class="mockup-dot green"></span>
               </div>
-              <h3 style="font-size: 16px; font-weight: 700; color: #FFFFFF; margin: 0;">Tạo phiếu bảo hành</h3>
+              <h3 style="font-size: 16px; font-weight: 700; color: #FFFFFF; margin: 0;">Phiếu tiếp nhận thiết bị tại quầy</h3>
             </div>
             <span style="font-size: 11px; color: var(--secondary); font-family: 'JetBrains Mono', monospace; font-weight: 600;">MẪU TIẾP NHẬN QUẦY (L2)</span>
           </div>
@@ -255,15 +239,14 @@
           <!-- (1) Số điện thoại khách -->
           <div class="form-group">
             <div class="field-label-group">
-              <div class="field-title"><span class="field-num">1</span> Số điện thoại khách <span class="req">*</span></div>
-              <span class="field-erd-tag">customer.phone (UNIQUE) · FR1 · US1</span>
+              <div class="field-title"><span class="field-num">1</span> Số điện thoại khách hàng <span class="req">*</span></div>
             </div>
             <div style="display: flex; gap: 10px;">
               <div class="input-wrapper" style="flex: 1;">
                 <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                <input type="text" id="custPhoneInput" value="0909123456" placeholder="0909 123 456" onkeyup="if(event.key==='Enter') simulateLookup()">
+                <input type="text" id="custPhoneInput" value="0909123456" placeholder="Nhập số điện thoại khách hàng..." onkeyup="if(event.key==='Enter') simulateLookup()">
               </div>
-              <button class="btn btn-secondary" type="button" onclick="simulateLookup()" style="padding: 10px 18px;">
+              <button class="btn btn-secondary" type="button" onclick="simulateLookup()" style="padding: 10px 20px;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 Tra cứu
               </button>
@@ -271,19 +254,26 @@
           </div>
 
           <!-- (2) Họ tên khách -->
-          <div class="form-group">
-            <div class="field-label-group">
-              <div class="field-title"><span class="field-num">2</span> Họ tên khách <span class="req">*</span></div>
-              <span class="field-erd-tag">customer.full_name · FR1</span>
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <div class="form-group">
+              <div class="field-label-group">
+                <div class="field-title"><span class="field-num">2</span> Họ tên khách hàng <span class="req">*</span></div>
+              </div>
+              <input type="text" id="custNameInput" value="Nguyễn Văn An" placeholder="Họ và tên khách hàng (tự điền khi tra cứu)">
             </div>
-            <input type="text" id="custNameInput" value="Nguyễn Văn An" placeholder="Nguyễn Văn An (tự điền khi tra cứu hoặc nhập mới)">
+
+            <div class="form-group">
+              <div class="field-label-group">
+                <div class="field-title" style="margin-left: 4px;">Địa chỉ liên hệ</div>
+              </div>
+              <input type="text" id="custAddressInput" value="123 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh" placeholder="Địa chỉ liên hệ (tự điền khi tra cứu)">
+            </div>
           </div>
 
           <!-- (3) Ô chọn thiết bị & model (Combobox gợi ý tìm kiếm toàn bộ các dòng máy trong hệ thống) -->
           <div class="form-group">
             <div class="field-label-group">
               <div class="field-title"><span class="field-num">3</span> Chọn thiết bị & Model <span class="req">*</span></div>
-              <span class="field-erd-tag">device.product_name / model · Dataset</span>
             </div>
             
             <div class="combobox-wrapper" id="deviceCombobox">
@@ -309,6 +299,7 @@
                     <button type="button" class="brand-chip" onclick="filterDeviceBrand('vivo', event)">vivo</button>
                     <button type="button" class="brand-chip" onclick="filterDeviceBrand('realme', event)">realme</button>
                     <button type="button" class="brand-chip" onclick="filterDeviceBrand('Nokia', event)">Nokia</button>
+                    <button type="button" class="brand-chip" onclick="filterDeviceBrand('TECNO', event)">TECNO</button>
                   </div>
                 </div>
                 <div class="combobox-list" id="deviceList">
@@ -318,15 +309,14 @@
             </div>
           </div>
 
-          <!-- (3) Số serial thiết bị (Cột ERD device.serial_no trong ảnh 3) -->
+          <!-- (3b) Số serial thiết bị -->
           <div class="form-group">
             <div class="field-label-group">
-              <div class="field-title" style="margin-left: 30px;">Số serial thiết bị <span class="req">*</span></div>
-              <span class="field-erd-tag">device.serial_no · FR1 · QT-01</span>
+              <div class="field-title" style="margin-left: 30px;">Số serial / IMEI thiết bị <span class="req">*</span></div>
             </div>
             <div class="input-wrapper">
               <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M4 17v3h16v-3M9 9h6v6H9z"></path></svg>
-              <input type="text" id="deviceImeiInput" value="SN-A52-778901" placeholder="SN-A52-778901" oninput="checkWarrantyStatus()">
+              <input type="text" id="deviceImeiInput" value="SN-A52-778901" placeholder="Nhập số Serial/IMEI thiết bị..." oninput="checkWarrantyStatus()">
             </div>
           </div>
 
@@ -334,19 +324,15 @@
           <div class="form-group">
             <div class="field-label-group">
               <div class="field-title"><span class="field-num">4</span> Mô tả sự cố <span class="req">*</span></div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="char-counter valid" id="descCharCounter">32 ký tự (≥ 10)</span>
-                <span class="field-erd-tag">ticket.issue_desc (≥ 10 ký tự) · FR1 · QT-03</span>
-              </div>
+              <span class="char-counter valid" id="descCharCounter">32 ký tự (≥ 10)</span>
             </div>
-            <textarea id="issueDescText" rows="3" placeholder="Máy không lên nguồn sau khi sạc..." oninput="onIssueDescInput(this.value)">Máy không lên nguồn sau khi sạc...</textarea>
+            <textarea id="issueDescText" rows="3" placeholder="Mô tả chi tiết tình trạng sự cố (tối thiểu 10 ký tự)..." oninput="onIssueDescInput(this.value)">Máy không lên nguồn sau khi sạc...</textarea>
           </div>
 
           <!-- Nhóm sự cố hỗ trợ phân loại kỹ thuật -->
           <div class="form-group">
             <div class="field-label-group">
               <div class="field-title" style="margin-left: 30px;">Nhóm sự cố kỹ thuật <span class="req">*</span></div>
-              <span class="field-erd-tag">ticket.category_id · issue_category</span>
             </div>
             <select id="issueCatSelect" onchange="updateSlaPrediction()">
               <option value="1">1 - MAN_HINH (Màn hình cảm ứng, sọc mực)</option>
@@ -358,24 +344,23 @@
             </select>
           </div>
 
-          <!-- (5) Mức ưu tiên (Radio buttons theo đúng ảnh 3) -->
+          <!-- (5) Mức ưu tiên -->
           <div class="form-group">
             <div class="field-label-group">
-              <div class="field-title"><span class="field-num">5</span> Mức ưu tiên <span class="req">*</span></div>
-              <span class="field-erd-tag">ticket.priority · FR2</span>
+              <div class="field-title"><span class="field-num">5</span> Mức ưu tiên tiếp nhận <span class="req">*</span></div>
             </div>
             <div class="priority-radio-group">
               <label class="priority-radio-label">
                 <input type="radio" name="priorityRadio" value="CAO" onchange="onPriorityRadioChange('CAO')">
-                Cao (24h)
+                Cao (24h làm việc)
               </label>
               <label class="priority-radio-label">
                 <input type="radio" name="priorityRadio" value="TRUNG_BINH" checked onchange="onPriorityRadioChange('TRUNG_BINH')">
-                Trung bình (72h)
+                Trung bình (72h làm việc)
               </label>
               <label class="priority-radio-label">
                 <input type="radio" name="priorityRadio" value="THAP" onchange="onPriorityRadioChange('THAP')">
-                Thấp (120h)
+                Thấp (120h làm việc)
               </label>
             </div>
             <div style="margin-top: 8px; font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
@@ -384,11 +369,10 @@
             </div>
           </div>
 
-          <!-- (6) Thông báo lỗi / cảnh báo bảo hành (Khớp đúng ảnh 3) -->
+          <!-- (6) Thông báo lỗi / cảnh báo bảo hành -->
           <div class="form-group" style="margin-bottom: 22px;">
             <div class="field-label-group">
-              <div class="field-title"><span class="field-num">6</span> Thông báo lỗi</div>
-              <span class="field-erd-tag">— (không lưu) · UC01 · luồng E1</span>
+              <div class="field-title"><span class="field-num">6</span> Thông báo tình trạng bảo hành</div>
             </div>
             <div class="warranty-alert-box" id="warrantyAlertBox">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -397,83 +381,12 @@
           </div>
 
           <!-- Nút hành động "Hủy" và "Tạo phiếu" -->
-          <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-subtle); padding-top: 18px; flex-wrap: wrap; gap: 10px;">
-            <span class="field-erd-tag" style="font-size: 11px;">INSERT ticket + ticket_status_log · UC01 · US1</span>
-            <div style="display: flex; gap: 12px;">
-              <button class="btn btn-secondary" type="button" onclick="switchTab('screen-list')">Hủy</button>
-              <button class="btn btn-primary" type="button" onclick="submitTicket()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Tạo phiếu
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- CỘT PHẢI: BẢNG ĐỐI CHIẾU KIỂM HAI CHIỀU (BIDIRECTIONAL MAPPING TABLE - KHỚP 100% ẢNH 3) -->
-        <div class="mapping-card">
-          <h3>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--secondary);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-            Mỗi trường trên màn hình phải chỉ ra được cột dữ liệu và yêu cầu
-          </h3>
-          <p class="subtitle">Bảng đối chiếu kiểm toán hai chiều giữa Giao diện Wireframe ↔ Cột cơ sở dữ liệu ERD 3NF ↔ Nguồn yêu cầu nghiệp vụ:</p>
-
-          <table class="mapping-table">
-            <thead>
-              <tr>
-                <th style="width: 32px; text-align: center;">#</th>
-                <th>Trên màn hình</th>
-                <th>Cột trong ERD</th>
-                <th>Nguồn</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="text-align: center; font-weight: 800; color: #F59E0B;">1</td>
-                <td>Số điện thoại khách</td>
-                <td class="mono">customer.phone (UNIQUE)</td>
-                <td class="source-tag">FR1 · US1</td>
-              </tr>
-              <tr>
-                <td style="text-align: center; font-weight: 800; color: #F59E0B;">2</td>
-                <td>Họ tên khách</td>
-                <td class="mono">customer.full_name</td>
-                <td class="source-tag">FR1</td>
-              </tr>
-              <tr>
-                <td style="text-align: center; font-weight: 800; color: #F59E0B;">3</td>
-                <td>Số serial thiết bị</td>
-                <td class="mono">device.serial_no</td>
-                <td class="source-tag">FR1 · QT-01</td>
-              </tr>
-              <tr>
-                <td style="text-align: center; font-weight: 800; color: #F59E0B;">4</td>
-                <td>Mô tả sự cố</td>
-                <td class="mono">ticket.issue_desc (≥ 10 ký tự)</td>
-                <td class="source-tag">FR1 · QT-03</td>
-              </tr>
-              <tr>
-                <td style="text-align: center; font-weight: 800; color: #F59E0B;">5</td>
-                <td>Mức ưu tiên</td>
-                <td class="mono">ticket.priority</td>
-                <td class="source-tag">FR2</td>
-              </tr>
-              <tr>
-                <td style="text-align: center; font-weight: 800; color: #F59E0B;">6</td>
-                <td>Thông báo lỗi</td>
-                <td class="mono" style="color: var(--text-muted);">— (không lưu)</td>
-                <td class="source-tag">UC01 · luồng E1</td>
-              </tr>
-              <tr style="background: rgba(99, 102, 241, 0.1); font-weight: 600;">
-                <td style="text-align: center; color: var(--secondary);">✦</td>
-                <td>Nút "Tạo phiếu"</td>
-                <td class="mono">INSERT ticket + ticket_status_log</td>
-                <td class="source-tag">UC01 · US1</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="bidirectional-note">
-            <strong>Kiểm hai chiều:</strong> mọi trường trên màn hình có cột tương ứng; ngược lại mọi cột <code>NOT NULL</code> của ticket đều được nhập hoặc được hệ thống tự sinh (<code>ticket_code</code>, <code>due_date</code>, <code>status</code>).
+          <div style="display: flex; align-items: center; justify-content: flex-end; border-top: 1px solid var(--border-subtle); padding-top: 20px; gap: 14px;">
+            <button class="btn btn-secondary" type="button" onclick="switchTab('screen-list')" style="padding: 10px 22px;">Hủy</button>
+            <button class="btn btn-primary" type="button" onclick="submitTicket()" style="padding: 10px 26px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Tạo phiếu tiếp nhận
+            </button>
           </div>
         </div>
 

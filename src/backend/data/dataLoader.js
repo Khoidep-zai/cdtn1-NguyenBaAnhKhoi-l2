@@ -61,6 +61,7 @@ class DataLoader {
     this.products = [];
     this.customers = new Map(); // key: normalizedPhone, value: customer object
     this.customersById = new Map();
+    this.customerDevices = new Map(); // key: customer_id, value: array of devices/tickets
     this.tickets = [];
     this.statusLogs = [];
     this.isLoaded = false;
@@ -104,28 +105,26 @@ class DataLoader {
       const custFile = path.join(this.datasetDir, 'customers_raw.csv');
       if (fs.existsSync(custFile)) {
         const custContent = fs.readFileSync(custFile, 'utf-8');
-        const custLines = custContent.split(/\r?\n/);
+        const custLines = custContent.split(/\r?\n/).filter(Boolean);
         for (let i = 1; i < custLines.length; i++) {
-          const line = custLines[i];
-          if (!line) continue;
-          const idx1 = line.indexOf(',');
-          const idx2 = line.indexOf(',', idx1 + 1);
-          if (idx1 === -1 || idx2 === -1) continue;
-          const cid = Number(line.substring(0, idx1));
-          const name = line.substring(idx1 + 1, idx2).trim().replace(/^"|"$/g, '');
-          const rest = line.substring(idx2 + 1);
-          const idx3 = rest.indexOf(',');
-          const rawPhone = (idx3 === -1 ? rest : rest.substring(0, idx3)).trim();
+          const parts = parseCsvLine(custLines[i]);
+          if (parts.length < 3) continue;
+          const cid = Number(parts[0]);
+          const name = parts[1] ? parts[1].trim() : `Khách hàng #${cid}`;
+          const rawPhone = parts[2] ? parts[2].trim() : '';
           const normPhone = normalizePhone(rawPhone);
+          const email = parts[3] ? parts[3].trim() : '';
+          const address = parts[4] ? parts[4].trim() : 'Việt Nam';
+          const createdAt = parts[5] ? parts[5].trim() : '2025-01-01';
 
           const customerObj = {
             customer_id: cid,
             full_name: name,
             phone: normPhone || rawPhone,
             raw_phone: rawPhone,
-            email: '',
-            address: 'Việt Nam',
-            created_at: '2025-01-01',
+            email: email,
+            address: address,
+            created_at: createdAt,
           };
 
           if (normPhone && normPhone.length === 10) {
@@ -150,6 +149,18 @@ class DataLoader {
       this.customers.set('0901234567', seedCustomer);
       this.customersById.set(seedCustomer.customer_id, seedCustomer);
 
+      const defaultDemoCustomer = {
+        customer_id: 2048,
+        full_name: 'Nguyễn Văn An',
+        phone: '0909123456',
+        raw_phone: '0909123456',
+        email: 'nguyenvanan@gmail.com',
+        address: '123 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh',
+        created_at: '2025-01-01',
+      };
+      this.customers.set('0909123456', defaultDemoCustomer);
+      this.customersById.set(defaultDemoCustomer.customer_id, defaultDemoCustomer);
+
       // Tạo map nhóm lỗi nhanh
       const catMap = new Map();
       this.issueCategories.forEach(cat => {
@@ -159,10 +170,10 @@ class DataLoader {
       // Tạo map sản phẩm nhanh
       const prodMap = new Map();
       this.products.forEach(prod => {
-        prodMap.set(prod.product_id, prod.product_name);
+        prodMap.set(prod.product_id, prod);
       });
 
-      // 6. Nạp TOÀN BỘ 7.801 phiếu bảo hành từ tickets_history.csv (Cam kết dữ liệu thật)
+      // 6. Nạp TOÀN BỘ 7.800 phiếu bảo hành từ tickets_history.csv (Cam kết dữ liệu thật)
       const ticketsFile = path.join(this.datasetDir, 'tickets_history.csv');
       const rawTickets = readCsv(ticketsFile);
       this.tickets = rawTickets.map(t => {
@@ -170,8 +181,30 @@ class DataLoader {
         const pid = Number(t.product_id);
         const catId = Number(t.category_id);
         const customer = this.customersById.get(cid);
-        const prodName = prodMap.get(pid) || 'Điện thoại thông minh';
+        const prod = prodMap.get(pid);
+        const prodName = prod?.product_name || 'Điện thoại thông minh';
         const catName = catMap.get(catId) || 'SỰ CỐ KHÁC';
+
+        const dev = {
+          serial_no: t.serial_no || `SN-${t.ticket_id}`,
+          serial_imei: t.serial_no || `SN-${t.ticket_id}`,
+          product_id: pid,
+          product_name: prodName,
+          brand: prod?.thuong_hieu || '',
+          category_id: catId,
+          category_name: catName,
+          issue_desc: t.issue_desc || '',
+          priority: t.priority || 'TRUNG_BINH',
+          is_warranty: t.is_warranty === 'true',
+          received_at: t.received_at,
+          due_date: t.due_date,
+          status: t.status || 'MOI',
+        };
+
+        if (!this.customerDevices.has(cid)) {
+          this.customerDevices.set(cid, []);
+        }
+        this.customerDevices.get(cid).push(dev);
 
         return {
           id: t.ticket_code || `BH-00000${t.ticket_id}/2026`,
@@ -180,6 +213,7 @@ class DataLoader {
           customer_id: cid,
           customer_name: customer?.full_name || `Khách hàng #${cid}`,
           customer_phone: customer?.phone || '0901234567',
+          customer_address: customer?.address || 'Việt Nam',
           serial_no: t.serial_no || `SN-${t.ticket_id}`,
           serial_imei: t.serial_no || `SN-${t.ticket_id}`,
           product_id: pid,
@@ -202,6 +236,36 @@ class DataLoader {
         };
       });
 
+      // Gắn thiết bị mẫu cho demo/test customers
+      this.customerDevices.set(1024, [{
+        serial_no: 'SN-A52-778901',
+        serial_imei: 'SN-A52-778901',
+        product_id: 1,
+        product_name: 'Samsung Galaxy S23',
+        brand: 'Samsung',
+        category_id: 3,
+        category_name: 'SAC',
+        issue_desc: 'Máy không lên nguồn sau khi sạc...',
+        priority: 'TRUNG_BINH',
+        is_warranty: false,
+        received_at: '2025-01-01',
+        due_date: '2025-01-04'
+      }]);
+      this.customerDevices.set(2048, [{
+        serial_no: 'SN-A52-778901',
+        serial_imei: 'SN-A52-778901',
+        product_id: 1,
+        product_name: 'Samsung Galaxy S23',
+        brand: 'Samsung',
+        category_id: 3,
+        category_name: 'SAC',
+        issue_desc: 'Máy không lên nguồn sau khi sạc...',
+        priority: 'TRUNG_BINH',
+        is_warranty: false,
+        received_at: '2025-01-01',
+        due_date: '2025-01-04'
+      }]);
+
       this.isLoaded = true;
       console.log(`[DataLoader] Đã nạp thành công: ${this.serviceCenters.length} trung tâm, ${this.issueCategories.length} nhóm sự cố, ${this.products.length} sản phẩm, ${this.customersById.size} khách hàng, ${this.tickets.length} phiếu bảo hành.`);
     } catch (err) {
@@ -212,6 +276,10 @@ class DataLoader {
   findCustomerByPhone(phone) {
     const norm = normalizePhone(phone);
     return this.customers.get(norm) || null;
+  }
+
+  getCustomerDevices(customerId) {
+    return this.customerDevices.get(customerId) || [];
   }
 
   addCustomer(customer) {

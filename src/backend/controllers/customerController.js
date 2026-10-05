@@ -34,6 +34,8 @@ class CustomerController {
         });
       }
 
+      const devices = dataLoader.getCustomerDevices(customer.customer_id);
+
       return res.status(200).json({
         success: true,
         found: true,
@@ -44,16 +46,7 @@ class CustomerController {
           email: customer.email,
           address: customer.address,
           created_at: customer.created_at,
-          // Mẫu thiết bị liên kết gần nhất phục vụ tự động điền form
-          devices: [
-            {
-              serial_imei: '356891238910',
-              product_name: 'iPhone 14 Pro Max 256GB',
-              purchase_date: '2025-12-15',
-              warranty_months: 12,
-              is_warranty: true,
-            }
-          ]
+          devices: devices, // Danh sách thiết bị và lịch sử bảo hành thực tế từ Dataset
         },
       });
     } catch (error) {

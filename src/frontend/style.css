@@ -1084,13 +1084,15 @@ table.data-table tbody tr:hover {
 }
 
 /* ==========================================================
-   SCREEN CREATE: WIREFRAME + BIDIRECTIONAL MAPPING TABLE (ẢNH 3)
+   SCREEN CREATE: KHỞI TẠO PHIẾU BẢO HÀNH CHUẨN HÓA
    ========================================================== */
+.create-form-container {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
 .create-grid-layout {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 28px;
-  align-items: start;
+  display: block;
 }
 
 /* Header bar resembling OS window mockup in Image 3 */

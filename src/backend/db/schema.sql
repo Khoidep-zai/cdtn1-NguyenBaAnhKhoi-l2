@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS device (
     device_id       BIGSERIAL PRIMARY KEY,
     customer_id     BIGINT NOT NULL,
     serial_no       VARCHAR(50) NOT NULL UNIQUE, -- Số IMEI / Serial duy nhất
+    device_name     VARCHAR(150),                -- Tên dòng máy / model từ Dataset
     purchase_date   DATE,
     warranty_months SMALLINT NOT NULL DEFAULT 12 CHECK (warranty_months > 0),
     CONSTRAINT fk_device_customer FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE RESTRICT
@@ -57,9 +58,9 @@ CREATE TABLE IF NOT EXISTS ticket (
     -- QT-06: Mức ưu tiên chỉ nhận 3 giá trị cố định
     priority      VARCHAR(20) NOT NULL CHECK (priority IN ('CAO', 'TRUNG_BINH', 'THAP')),
 
-    -- QT-06: Vòng đời trạng thái một chiều, chỉ nhận 6 giá trị hợp lệ
+    -- QT-06: Vòng đời trạng thái một chiều
     status        VARCHAR(30) NOT NULL DEFAULT 'MOI'
-                  CHECK (status IN ('MOI', 'DA_PHAN_CONG', 'DANG_XU_LY', 'CHO_LINH_KIEN', 'HOAN_TAT', 'DA_HUY')),
+                  CHECK (status IN ('MOI', 'DA_PHAN_CONG', 'DANG_XU_LY', 'CHO_LINH_KIEN', 'HOAN_TAT', 'DA_DONG', 'DA_HUY')),
 
     received_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     due_date      TIMESTAMPTZ NOT NULL,        -- QT-04: Tự động tính toán theo SLA Engine
