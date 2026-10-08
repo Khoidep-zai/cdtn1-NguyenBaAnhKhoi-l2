@@ -15,4 +15,4 @@
 | ChatGPT | Gợi ý lập luận kiến trúc và lựa chọn mô hình phân lớp. | Phần Thiết kế kiến trúc (architecture.md). | Tự đánh giá lại mức độ logic của trade-off so với NFR đã đề ra. |
 
 > *"Tôi xác nhận đã đọc, hiểu và chịu trách nhiệm hoàn toàn về toàn bộ nội dung nộp trong báo cáo này."*  
-> Họ và tên: Nguyễn Bá Anh Khôi ....................................... MSSV: 2374802010247 ................................ Ngày nộp: ........................
+> Họ và tên: Nguyễn Bá Anh Khôi — MSSV: 2374802010247 — Ngày nộp: 08/10/2026
