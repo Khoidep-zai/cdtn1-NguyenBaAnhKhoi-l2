@@ -10,3 +10,4 @@ coverage/
 data/raw/
 *.csv.gz
 *.zip
+.codegraph/

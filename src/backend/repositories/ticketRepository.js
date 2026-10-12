@@ -47,6 +47,22 @@ class TicketRepository extends ITicketRepository {
   }
 
   /**
+   * Tìm danh sách phiếu theo số serial / IMEI (QT-09)
+   * @param {string} serialNo
+   * @returns {object[]}
+   */
+  findBySerial(serialNo) {
+    this._ensureInit();
+    if (!serialNo) return [];
+    const sn = String(serialNo).trim().toLowerCase();
+    return this._tickets.filter(
+      (t) =>
+        (t.serial_no && t.serial_no.toLowerCase() === sn) ||
+        (t.serial_imei && t.serial_imei.toLowerCase() === sn)
+    );
+  }
+
+  /**
    * Lấy danh sách phiếu với bộ lọc và phân trang (FR6, FR7, US6, US7)
    */
   findAll(filters = {}, page = 1, limit = 50) {

@@ -1,5 +1,29 @@
 const TicketService = require('../services/ticketService');
 
+// Bảng ánh xạ MÃ NGHIỆP VỤ (Service) -> MÃ HTTP (Controller / Routes)
+const HTTP_BY_CODE = {
+  DU_LIEU_KHONG_HOP_LE: 400,
+  KHACH_KHONG_TON_TAI: 404,
+  PHIEU_DANG_MO: 409,
+  UU_TIEN_KHONG_HOP_LE: 400,
+  TRANG_THAI_KHONG_HOP_LE: 400,
+  KTV_KHONG_KHA_DUNG: 404,
+  KTV_QUA_TAI: 422,
+};
+
+function handleControllerError(res, error) {
+  if (error.code && HTTP_BY_CODE[error.code]) {
+    return res.status(HTTP_BY_CODE[error.code]).json({
+      success: false,
+      error: error.code,
+      message: error.message,
+      chi_tiet: error.chiTiet,
+    });
+  }
+  const status = error.statusCode || 500;
+  return res.status(status).json({ success: false, message: error.message });
+}
+
 class TicketController {
   // US1: Tạo phiếu mới
   static create(req, res) {
@@ -11,7 +35,7 @@ class TicketController {
         data: ticket,
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return handleControllerError(res, error);
     }
   }
 
@@ -24,7 +48,7 @@ class TicketController {
         ...result,
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return handleControllerError(res, error);
     }
   }
 
@@ -43,7 +67,7 @@ class TicketController {
         data: ticket,
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return handleControllerError(res, error);
     }
   }
 
@@ -63,7 +87,7 @@ class TicketController {
         data: ticket,
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return handleControllerError(res, error);
     }
   }
 
@@ -83,9 +107,10 @@ class TicketController {
         data: ticket,
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return handleControllerError(res, error);
     }
   }
 }
 
 module.exports = TicketController;
+

@@ -15,6 +15,13 @@ class ITicketRepository {
   findById(ticketId) { throw new Error('Not implemented'); }
 
   /**
+   * Tìm danh sách phiếu theo số serial / IMEI (QT-09)
+   * @param {string} serialNo
+   * @returns {object[]}
+   */
+  findBySerial(serialNo) { throw new Error('Not implemented'); }
+
+  /**
    * Lấy danh sách phiếu với bộ lọc và phân trang
    * @param {object} filters - { status, center_id, overdue }
    * @param {number} page

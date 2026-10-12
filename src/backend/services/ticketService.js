@@ -10,6 +10,7 @@
 
 const config = require('../config');
 const { calculateDueDate } = require('../utils/slaHelper');
+const { AppError } = require('../errors/AppError');
 // Phụ thuộc vào GIAO DIỆN Repository, không phụ thuộc vào cài đặt cụ thể
 const ticketRepo = require('../repositories/ticketRepository');
 
@@ -27,10 +28,41 @@ const VALID_TRANSITIONS = {
 
 class TicketService {
   /**
-   * Tạo phiếu bảo hành mới (US2 / FR2 / QT-04 / QT-06 / NFR3)
+   * QT-05: Kiểm tra thiết bị còn hạn bảo hành hay không
+   * Còn bảo hành nếu (now <= expiry), trong đó expiry = soldAt + warrantyMonths
+   * @param {string|Date} soldAt - Ngày mua / bán thiết bị
+   * @param {number} warrantyMonths - Số tháng bảo hành chính hãng
+   * @param {Date} now - Thời điểm đối soát
+   * @returns {boolean}
+   */
+  static isUnderWarranty(soldAt, warrantyMonths = 12, now = new Date()) {
+    if (!soldAt) return true;
+    const expiry = new Date(soldAt);
+    expiry.setMonth(expiry.getMonth() + Number(warrantyMonths));
+    return new Date(now) <= expiry;
+  }
+
+  /**
+   * Tạo phiếu bảo hành mới (US2 / FR2 / QT-04 / QT-05 / QT-06 / QT-09 / NFR3)
    * Toàn bộ quy tắc nghiệp vụ được thi hành TẠI ĐÂY, không ở Controller.
    */
   static createTicket(data) {
+    const serial = data.serial_no || data.serial_imei;
+
+    // QT-09: Một số Serial/IMEI không có hai phiếu đang mở cùng lúc
+    if (serial) {
+      const existing = ticketRepo.findBySerial(serial);
+      const openOne = existing.find(
+        (t) => !['HOAN_TAT', 'DA_HUY', 'DA_DONG'].includes((t.status || '').toUpperCase())
+      );
+      if (openOne) {
+        throw new AppError(
+          'PHIEU_DANG_MO',
+          `Thiết bị ${serial} đã có phiếu ${openOne.ticket_code || openOne.id} đang xử lý.`
+        );
+      }
+    }
+
     const counter = ticketRepo.nextCounter();
     const currentYear = new Date().getFullYear();
     const codeSeq = String(counter).padStart(6, '0');
@@ -53,6 +85,14 @@ class TicketService {
     const dueDateObj = calculateDueDate(now, normalizedPriority);
     const dueDateIso = dueDateObj.toISOString();
 
+    // QT-05: Kiểm tra điều kiện bảo hành nếu có thông tin ngày mua
+    let isWarranty = data.is_warranty !== undefined ? Boolean(data.is_warranty) : true;
+    if (data.sold_at || data.purchase_date) {
+      const soldDate = data.sold_at || data.purchase_date;
+      const wMonths = Number(data.warranty_months) || 12;
+      isWarranty = TicketService.isUnderWarranty(soldDate, wMonths, now);
+    }
+
     const newTicket = {
       id: ticketId,
       ticket_id: counter,
@@ -73,7 +113,7 @@ class TicketService {
       priority: normalizedPriority,
       // QT-06: Khởi tạo trạng thái ban đầu là MOI
       status: config.ticketStatuses.MOI,
-      is_warranty: data.is_warranty !== undefined ? Boolean(data.is_warranty) : true,
+      is_warranty: isWarranty,
       received_at: nowIso,
       due_date: dueDateIso,
       closed_at: null,
@@ -174,7 +214,8 @@ class TicketService {
     // QT-06: Xác thực chuyển trạng thái một chiều — NGHIỆP VỤ NẰM Ở ĐÂY
     const allowed = VALID_TRANSITIONS[oldStatus] || [];
     if (!allowed.includes(targetStatus)) {
-      const err = new Error(
+      const err = new AppError(
+        'TRANG_THAI_KHONG_HOP_LE',
         `Quy tắc vòng đời trạng thái là một chiều: không thể chuyển từ ${oldStatus} sang ${targetStatus}.`
       );
       err.statusCode = 400;
