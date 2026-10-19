@@ -11,3 +11,4 @@ data/raw/
 *.csv.gz
 *.zip
 .codegraph/
+.agent/

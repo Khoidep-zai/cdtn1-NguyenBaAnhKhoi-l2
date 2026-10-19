@@ -102,40 +102,42 @@ async function loadTickets(page = 1) {
   const sizeSelect = document.getElementById('pageSizeFilter');
   if (sizeSelect) pageSize = Number(sizeSelect.value) || 25;
 
-  tbody.innerHTML = `
-    <tr>
-      <td colspan="9" style="text-align: center; padding: 32px; color: var(--text-muted);">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-          <span class="pulse-indicator"></span>
-          Đang truy vấn dữ liệu thực nghiệm từ CSDL hệ thống...
-        </div>
-      </td>
-    </tr>
-  `;
+  // Trạng thái 1: Đang tải dữ liệu (Loading State - Buổi 9 A3)
+  if (window.dataState) {
+    window.dataState.renderLoading(tbody);
+  } else {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" style="text-align: center; padding: 32px; color: var(--text-muted);">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <span class="pulse-indicator"></span>
+            Đang truy vấn dữ liệu thực nghiệm từ CSDL hệ thống...
+          </div>
+        </td>
+      </tr>
+    `;
+  }
 
   let tickets = [];
   let total = 0;
 
-  // Gọi API Backend nếu có kết nối HTTP
-  if (window.location.protocol.startsWith('http')) {
+  // Gọi API Backend qua lớp ticketsApi chuyên dụng (Buổi 9 A1-A2)
+  if (window.ticketsApi) {
     try {
-      const params = new URLSearchParams({
-        page: String(currentPage),
-        limit: String(pageSize),
+      const body = await window.ticketsApi.danhSach({
+        page: currentPage,
+        limit: pageSize,
+        q: searchVal,
+        status: statusVal,
+        center_id: centerVal,
       });
-      if (searchVal) params.append('q', searchVal);
-      if (statusVal && statusVal !== 'ALL') params.append('status', statusVal);
-      if (centerVal && centerVal !== 'ALL') params.append('center_id', centerVal);
-
-      const res = await fetch(`/api/tickets?${params.toString()}`);
-      if (res.ok) {
-        const body = await res.json();
-        tickets = body.data || [];
-        total = body.total || 0;
+      if (body) {
+        tickets = body.data || (Array.isArray(body) ? body : []);
+        total = body.total ?? tickets.length;
         totalPages = body.totalPages || Math.ceil(total / pageSize) || 1;
       }
     } catch (err) {
-      console.warn('Không thể kết nối API /api/tickets, sử dụng dữ liệu cục bộ:', err);
+      console.warn('[Frontend SE] Lỗi khi gọi ticketsApi.danhSach, chuyển sang dữ liệu dự phòng:', err);
     }
   }
 
@@ -181,14 +183,28 @@ async function loadTickets(page = 1) {
 function renderTicketsTable(tickets, total) {
   const tbody = document.getElementById('ticketsTableBody');
   if (!tickets || tickets.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">
-          <div style="font-size: 15px; font-weight: 600; color: #CBD5E1; margin-bottom: 6px;">Không tìm thấy phiếu bảo hành nào phù hợp</div>
-          <div style="font-size: 12.5px;">Vui lòng kiểm tra lại từ khóa tra cứu hoặc thay đổi bộ lọc trạng thái / chi nhánh.</div>
-        </td>
-      </tr>
-    `;
+    const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value.trim() : '';
+    const statusVal = document.getElementById('statusFilter') ? document.getElementById('statusFilter').value : 'ALL';
+    const centerVal = document.getElementById('centerFilter') ? document.getElementById('centerFilter').value : 'ALL';
+    const isFiltered = Boolean(searchVal || (statusVal && statusVal !== 'ALL') || (centerVal && centerVal !== 'ALL'));
+
+    // Trạng thái 2: Rỗng - phân biệt do bộ lọc hay CSDL chưa có dữ liệu (Buổi 9 A3)
+    if (window.dataState) {
+      window.dataState.renderEmpty(tbody, {
+        isFiltered,
+        onClearFilter: resetFilters,
+        onCreateNew: goToCreate,
+      });
+    } else {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <div style="font-size: 15px; font-weight: 600; color: #CBD5E1; margin-bottom: 6px;">Không tìm thấy phiếu bảo hành nào phù hợp</div>
+            <div style="font-size: 12.5px;">Vui lòng kiểm tra lại từ khóa tra cứu hoặc thay đổi bộ lọc trạng thái / chi nhánh.</div>
+          </td>
+        </tr>
+      `;
+    }
     return;
   }
 
@@ -324,18 +340,15 @@ function resetFilter() {
 // 3. SEARCHABLE COMBOBOX CHO THIẾT BỊ & MODEL (ẢNH 3 & YÊU CẦU 3)
 // -------------------------------------------------------------
 async function initPhoneModels() {
-  // Thử tải từ API Backend
-  if (window.location.protocol.startsWith('http')) {
+  // Thử tải từ API Backend qua ticketsApi (Buổi 9 SE)
+  if (window.ticketsApi) {
     try {
-      const res = await fetch('/api/catalog/products?phonesOnly=true&limit=all');
-      if (res.ok) {
-        const body = await res.json();
-        if (body.data && body.data.length > 0) {
-          allPhoneModels = body.data;
-        }
+      const data = await window.ticketsApi.layDanhSachDienThoai();
+      if (data && data.length > 0) {
+        allPhoneModels = data;
       }
     } catch (e) {
-      console.warn('Chưa thể kết nối API /api/catalog/products:', e.message);
+      console.warn('Chưa thể kết nối API danh mục điện thoại:', e.message);
     }
   }
 
@@ -568,12 +581,11 @@ async function simulateLookup() {
   // Chuẩn hóa số điện thoại tra cứu (loại bỏ khoảng trắng, dấu chấm, dấu gạch)
   const cleanPhone = phone.replace(/[\s.-]/g, '');
 
-  // 1. Gọi API Backend tra cứu trên 67.037 khách hàng thật và 7.800 phiếu lịch sử
-  if (window.location.protocol.startsWith('http')) {
+  // 1. Gọi API Backend tra cứu qua ticketsApi (Buổi 9 SE)
+  if (window.ticketsApi) {
     try {
-      const res = await fetch(`/api/customers?phone=${encodeURIComponent(cleanPhone)}`);
-      const body = await res.json();
-      if (res.ok && body.found && body.data) {
+      const body = await window.ticketsApi.traCuuKhachHang(cleanPhone);
+      if (body && body.found && body.data) {
         const cust = body.data;
 
         // Điền họ tên khách hàng
@@ -810,23 +822,15 @@ async function submitTicket() {
 
   let newTicketCode = `BH-${String(Math.floor(100000 + Math.random() * 900000))}/2026`;
 
-  // Gửi API Backend
-  if (window.location.protocol.startsWith('http')) {
+  // Gửi API Backend qua ticketsApi (Buổi 9 SE)
+  if (window.ticketsApi) {
     try {
-      const res = await fetch('/api/tickets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.ok) {
-        const body = await res.json();
-        if (body.data && body.data.ticket_code) {
-          newTicketCode = body.data.ticket_code;
-        }
+      const data = await window.ticketsApi.tiepNhan(payload);
+      if (data && data.ticket_code) {
+        newTicketCode = data.ticket_code;
       }
     } catch (err) {
-      console.warn('Lỗi khi gửi API /api/tickets:', err);
+      console.warn('Lỗi khi gửi API tạo phiếu bảo hành:', err);
     }
   }
 
@@ -847,16 +851,15 @@ async function loadTicketDetail(ticketIdentifier) {
 
   let ticket = null;
 
-  // Gọi API lấy thông tin chi tiết
-  if (window.location.protocol.startsWith('http')) {
+  // Gọi API lấy thông tin chi tiết qua ticketsApi (Buổi 9 SE)
+  if (window.ticketsApi) {
     try {
-      const res = await fetch(`/api/tickets/${encodeURIComponent(ticketIdentifier)}`);
-      if (res.ok) {
-        const body = await res.json();
-        ticket = body.data;
+      const data = await window.ticketsApi.chiTiet(ticketIdentifier);
+      if (data) {
+        ticket = data;
       }
     } catch (e) {
-      console.warn('Lỗi khi tải chi tiết phiếu:', e);
+      console.warn('Lỗi khi tải chi tiết phiếu qua ticketsApi:', e);
     }
   }
 
