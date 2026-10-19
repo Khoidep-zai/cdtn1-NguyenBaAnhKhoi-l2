@@ -40,21 +40,27 @@ Prompt Người Dùng
       │
       ▼
 [BƯỚC B: PHÂN LOẠI Ý ĐỊNH & XÁC ĐỊNH VAI TRÒ CHÍNH (Intent Classification)]
-  ├─ Ý tưởng / Clarify / Yêu cầu chưa rõ ──► BA (interview-me / idea-refine)
-  ├─ Viết SRS / User Story / Bổ sung quy tắc ─► BA (spec-driven-development / doc-coauthoring / documentation-and-adrs)
-  ├─ Phân rã Task Sprint / WBS ────────────► BA (planning-and-task-breakdown)
-  ├─ Viết API / Xử lý nghiệp vụ / Node.js ──► BE (api-and-interface-design / incremental-implementation)
-  ├─ Thiết kế CSDL / DDL / Migration / SQL ─► BE (postgres-best-practices)
-  ├─ Tối ưu code BE / Fix lỗi / Refactor ──► BE (debugging-and-error-recovery / source-driven-development)
-  ├─ Thiết kế UI / HTML / CSS / Wireframes ─► FE (frontend-design / frontend-ui-engineering / ui-ux-pro-max)
-  ├─ Viết Unit Test / Mock Repo / Test 3 loại ► TESTER (test-driven-development)
-  ├─ Test API / Endpoint / Postman ────────► TESTER (api-skill)
-  ├─ Test Trình duyệt / E2E Web ───────────► TESTER (playwright-skill / webapp-testing / browser-testing-with-devtools)
-  ├─ Review Code / Kiểm tra đối chiếu Spec ─► QC (spec-to-code-compliance / code-review-and-quality)
-  ├─ Rà soát Diff / Quét an toàn bảo mật ──► QC (differential-review / security-and-hardening / insecure-defaults)
-  ├─ Cổng chất lượng / DoD / Quy ước commit ─► QA (git-workflow-and-versioning / constraint-driven-development)
-  ├─ Phát hành phiên bản / Tổng kết Sprint ─► QA (shipping-and-launch / doubt-driven-development)
-  └─ Báo cáo học phần BT1, BT2, BT3, Slide ─► Office (officecli / officecli-docx / officecli-pptx / officecli-xlsx)
+  ├─ Phỏng vấn sâu / Đào bới yêu cầu / Làm sắc nét kế hoạch ──► BA (grill-with-docs / interview-me / idea-refine)
+  ├─ Chuẩn hóa thuật ngữ & mô hình nghiệp vụ / GLOSSARY / ADR ─► BA (domain-modeling / documentation-and-adrs)
+  ├─ Chuyển hội thoại thành đặc tả SRS & User Stories ────────► BA (to-spec / spec-driven-development)
+  ├─ Phân rã spec thành vertical slices / tracer bullets ─────► BA (to-tickets / planning-and-task-breakdown)
+  ├─ Lập bản đồ điều hướng công việc quy mô lớn (decision tree) ► BA (wayfinder / to-questionnaire)
+  ├─ Thiết kế Deep Modules / Ousterhout seams / Tách lớp ──────► BE (codebase-design / api-and-interface-design)
+  ├─ Quét mã tìm cơ hội làm sâu module & báo cáo trực quan ────► BE (improve-codebase-architecture / source-driven-development)
+  ├─ Hiện thực hóa mã nguồn từ spec & tickets ────────────────► BE (implement-spec / incremental-implementation / implement)
+  ├─ Chẩn đoán lỗi khó, bẫy hồi quy & feedback loop đỏ ───────► BE (diagnosing-bugs / debugging-and-error-recovery)
+  ├─ Tự động hóa hướng dẫn thao tác môi trường / migration ────► BE (wizard / ci-cd-and-automation / postgres-best-practices)
+  ├─ Prototype nhanh kiểm chứng state model / logic / UI ──────► FE (prototype / frontend-design / ui-ux-pro-max)
+  ├─ Lập trình giao diện SPA 3 màn hình tiếp nhận ─────────────► FE (frontend-ui-engineering / code-simplification)
+  ├─ TDD nâng cao (Red-Green-Refactor, test seams, contracts) ─► TESTER (tdd / test-driven-development)
+  ├─ Test API / Postman / E2E Playwright / Webapp ─────────────► TESTER (api-skill / playwright-skill / webapp-testing)
+  ├─ Review mã nguồn 2 trục song song (Standards vs Spec) ────► QC (code-review / spec-to-code-compliance)
+  ├─ Soát Diff / Bẫy JS / Quét an toàn bảo mật ────────────────► QC (differential-review / sharp-edges / security-and-hardening)
+  ├─ Phân loại & chuẩn bị briefs cho issue / PRs (State Machine)► QA (triage / git-workflow-and-versioning)
+  ├─ Soạn thảo PR chất lượng cao & thiết lập Pre-commit hook ──► QA (pr / setup-pre-commit / constraint-driven-development)
+  ├─ Tổ chức Retrospective sau sprint / Nghiệm thu release ────► QA (retro / shipping-and-launch / doubt-driven-development)
+  ├─ Bàn giao ngữ cảnh agent / Tinh gọn hội thoại / Định tuyến ─► _shared (handoff / grill-me / writing-for-agents / ask-matt)
+  └─ Báo cáo học phần BT1, BT2, BT3, Slide thuyết trình ───────► Office (officecli / officecli-docx / officecli-pptx / officecli-xlsx)
       │
       ▼
 [BƯỚC C: PHÂN GIẢI ĐA Ý ĐỊNH THEO CHUỖI (Multi-Intent Pipeline Decomposition)]
@@ -72,11 +78,22 @@ Prompt Người Dùng
 | Dấu hiệu từ khóa trong Prompt (Việt / Anh) | Vai trò | File `SKILL.md` DUY NHẤT cần nạp |
 | :--- | :---: | :--- |
 | Mơ hồ, chưa rõ, phỏng vấn, clarify, hỏi thêm yêu cầu | **BA** | `.agent/BA/interview-me/SKILL.md` |
+| Phỏng vấn sâu, thử thách kế hoạch kèm tự động tạo ADR & GLOSSARY | **BA** | `.agent/BA/grill-with-docs/SKILL.md` |
+| Chuẩn hóa mô hình nghiệp vụ, thuật ngữ miền (Ubiquitous Language), ADR | **BA** | `.agent/BA/domain-modeling/SKILL.md` |
+| Chuyển đổi hội thoại thành đặc tả SRS đầy đủ danh sách User Story | **BA** | `.agent/BA/to-spec/SKILL.md` |
+| Phân rã spec thành tracer-bullet vertical slices có dependency edges | **BA** | `.agent/BA/to-tickets/SKILL.md` |
+| Lập bản đồ điều hướng công việc phức tạp đa session thành decision tickets | **BA** | `.agent/BA/wayfinder/SKILL.md` |
+| Biến các quyết định chưa đủ dữ kiện thành phiếu câu hỏi khảo sát | **BA** | `.agent/BA/to-questionnaire/SKILL.md` |
 | Tinh chỉnh ý tưởng, mở rộng tính năng mới, giới hạn phạm vi | **BA** | `.agent/BA/idea-refine/SKILL.md` |
 | Viết SRS, đặc tả yêu cầu, cập nhật `docs/srs.md` | **BA** | `.agent/BA/spec-driven-development/SKILL.md` |
 | Viết nhật ký thay đổi thiết kế `docs/thay-doi-thiet-ke.md`, ADR | **BA** | `.agent/BA/documentation-and-adrs/SKILL.md` |
 | Đồng biên soạn tài liệu kỹ thuật, kiến trúc phân hệ L2 | **BA** | `.agent/BA/doc-coauthoring/SKILL.md` |
 | Phân rã công việc Sprint, chia Task WBS, lập kế hoạch buổi học | **BA** | `.agent/BA/planning-and-task-breakdown/SKILL.md` |
+| Thiết kế Deep Modules, seams, tăng leverage và locality 4 tầng | **BE** | `.agent/BE/codebase-design/SKILL.md` |
+| Quét codebase tìm cơ hội làm sâu module, xuất báo cáo visual HTML | **BE** | `.agent/BE/improve-codebase-architecture/SKILL.md` |
+| Hiện thực hóa mã nguồn từ kết quả đặc tả /to-spec và /to-tickets | **BE** | `.agent/BE/implement-spec/SKILL.md` |
+| Chẩn đoán lỗi hóc búa và sụt giảm hiệu năng qua feedback loop đỏ | **BE** | `.agent/BE/diagnosing-bugs/SKILL.md` |
+| Tạo script wizard tương tác hướng dẫn thao tác môi trường, migration | **BE** | `.agent/BE/wizard/SKILL.md` |
 | Thiết kế RESTful API, Route Contract, mã lỗi HTTP/Nghiệp vụ | **BE** | `.agent/BE/api-and-interface-design/SKILL.md` |
 | Viết mã Service, Repository, Controller, quy tắc nghiệp vụ QT | **BE** | `.agent/BE/incremental-implementation/SKILL.md` |
 | Viết PostgreSQL DDL, schema 3NF, index, migration `migrate.js` | **BE** | `.agent/BE/postgres-best-practices/SKILL.md` |
@@ -85,15 +102,18 @@ Prompt Người Dùng
 | Bảo mật dữ liệu, chống SQL Injection, che giấu stack trace 500 | **BE** | `.agent/BE/security-and-hardening/SKILL.md` |
 | Giám sát hệ thống, log chuẩn cấu trúc, endpoint `/health`, `/health/db` | **BE** | `.agent/BE/observability-and-instrumentation/SKILL.md` |
 | Script tự động hóa npm, cấu hình môi trường `.env`, Docker | **BE** | `.agent/BE/ci-cd-and-automation/SKILL.md` |
+| Xây dựng prototype nhanh kiểm chứng logic UI, state model | **FE** | `.agent/FE/prototype/SKILL.md` |
 | Thiết kế UI/UX giao diện tiếp nhận bảo hành, màu sắc, bố cục | **FE** | `.agent/FE/frontend-design/SKILL.md` + `.agent/FE/ui-ux-pro-max/SKILL.md` |
 | Lập trình HTML/CSS/JS frontend, hiển thị timeline phiếu, SPA | **FE** | `.agent/FE/frontend-ui-engineering/SKILL.md` |
 | Tối giản hóa code CSS/JS, loại bỏ mã thừa, tăng tính mô-đun | **FE** | `.agent/FE/code-simplification/SKILL.md` |
 | Tối ưu tốc độ tải trang, caching, render form tiếp nhận nhanh | **FE** | `.agent/FE/performance-optimization/SKILL.md` |
+| Test-Driven Development (Red-Green-Refactor, test seams, unit/integration) | **TESTER** | `.agent/TESTER/tdd/SKILL.md` |
 | Viết Unit Test độc lập với Mock Repository (3 loại test Buổi 7) | **TESTER** | `.agent/TESTER/test-driven-development/SKILL.md` |
 | Kiểm thử tích hợp API qua HTTP, Postman collections, status code | **TESTER** | `.agent/TESTER/api-skill/SKILL.md` |
 | Kiểm thử tự động E2E giao diện web bằng Playwright | **TESTER** | `.agent/TESTER/playwright-skill/SKILL.md` |
 | Kiểm thử thủ công trên trình duyệt qua DevTools | **TESTER** | `.agent/TESTER/browser-testing-with-devtools/SKILL.md` |
 | Kiểm thử kịch bản tiếp nhận thực tế người dùng quầy | **TESTER** | `.agent/TESTER/webapp-testing/SKILL.md` |
+| Review Code 2 trục song song (Standards & Fowler smells vs Spec) | **QC** | `.agent/QC/code-review/SKILL.md` |
 | Đối chiếu Code với Spec (QT-01..QT-09, SRS, 100% khớp quy tắc) | **QC** | `.agent/QC/spec-to-code-compliance/SKILL.md` |
 | Review Pull Request, đánh giá clean code 4 tầng phân lớp | **QC** | `.agent/QC/code-review-and-quality/SKILL.md` |
 | Soát Git Diff trước khi commit, đảm bảo tính nguyên tử | **QC** | `.agent/QC/differential-review/SKILL.md` |
@@ -101,10 +121,19 @@ Prompt Người Dùng
 | Rà soát bẫy JavaScript (async/await, prototype, closure, scope) | **QC** | `.agent/QC/sharp-edges/SKILL.md` |
 | Phân tích tĩnh mã nguồn, linting, kiểm tra chất lượng code | **QC** | `.agent/QC/static-analysis/SKILL.md` |
 | Mô hình đe dọa an toàn dữ liệu khách hàng và lịch sử bảo hành | **QC** | `.agent/QC/security-threat-model/SKILL.md` |
+| Phân loại Issue/PR theo cỗ máy trạng thái, xác minh và tạo brief | **QA** | `.agent/QA/triage/SKILL.md` |
+| Soạn thảo mô tả Pull Request (PR) chuẩn mực và chuyên nghiệp | **QA** | `.agent/QA/pr/SKILL.md` |
+| Tổ chức hồi tưởng (Retrospective) đúc kết bài học sau sprint | **QA** | `.agent/QA/retro/SKILL.md` |
+| Thiết lập Husky pre-commit hooks (lint, typecheck, test) | **QA** | `.agent/QA/setup-pre-commit/SKILL.md` |
 | Kiểm soát tiêu chuẩn bàn giao Definition of Done, checklist CDTN1 | **QA** | `.agent/QA/constraint-driven-development/SKILL.md` |
 | Thách thức giả định, tìm điểm mù trong luồng bảo hành | **QA** | `.agent/QA/doubt-driven-development/SKILL.md` |
 | Chuẩn Conventional Commits, gắn tag phiên bản (v0.1, v0.2, v1.0) | **QA** | `.agent/QA/git-workflow-and-versioning/SKILL.md` |
 | Đóng gói release, kiểm tra 16/16 test pass, sẵn sàng nghiệm thu | **QA** | `.agent/QA/shipping-and-launch/SKILL.md` |
+| Phỏng vấn đào sâu, thử thách kế hoạch đa vai trò (General Grill) | **_shared** | `.agent/_shared/productivity/grill-me/SKILL.md` |
+| Đóng gói bàn giao ngữ cảnh phiên làm việc cho agent tiếp theo | **_shared** | `.agent/_shared/productivity/handoff/SKILL.md` |
+| Kỹ năng viết tài liệu, đặc tả và prompt dành cho AI Agent | **_shared** | `.agent/_shared/productivity/writing-for-agents/SKILL.md` |
+| Điều phối đa sub-agents song song cho mục tiêu dài hạn | **_shared** | `.agent/_shared/productivity/chief-of-staff/SKILL.md` |
+| Định tuyến nhanh tìm kiếm skill phù hợp nhất trong kho | **_shared** | `.agent/_shared/productivity/ask-matt/SKILL.md` |
 | Tạo / sửa báo cáo Word (`.docx`) nộp BT1, BT2, BT3, đồ án tốt nghiệp | **Office** | `OfficeCLI-main/skills/officecli-docx/SKILL.md` |
 | Tạo bảng tính Excel (`.xlsx`) ma trận RTM, số liệu thống kê test | **Office** | `OfficeCLI-main/skills/officecli-xlsx/SKILL.md` |
 | Tạo slide thuyết trình PowerPoint (`.pptx`) bảo vệ Sprint / Đồ án | **Office** | `OfficeCLI-main/skills/officecli-pptx/SKILL.md` |
@@ -237,25 +266,38 @@ Toàn bộ các kỹ năng được lưu trữ có cấu trúc bên dưới thư
 ├── BA/                                # Kỹ năng dành cho Business Analyst
 │   ├── doc-coauthoring/               # Đồng soạn thảo tài liệu kỹ thuật
 │   ├── documentation-and-adrs/        # Viết tài liệu thiết kế và quyết định kiến trúc ADR
+│   ├── domain-modeling/               # [MỚI] Xây dựng & chuẩn hóa mô hình nghiệp vụ, GLOSSARY, ADR
+│   ├── grill-with-docs/               # [MỚI] Phỏng vấn sâu đào bới yêu cầu kèm lập tức ghi nhận ADR & Glossary
 │   ├── idea-refine/                   # Tinh chỉnh ý tưởng & phạm vi
 │   ├── interview-me/                  # Phỏng vấn làm rõ yêu cầu mập mờ
 │   ├── planning-and-task-breakdown/   # Phân rã WBS và kế hoạch Sprint
-│   └── spec-driven-development/       # Phát triển hướng đặc tả (SDD / SRS)
+│   ├── spec-driven-development/       # Phát triển hướng đặc tả (SDD / SRS)
+│   ├── to-questionnaire/              # [MỚI] Chuyển quyết định còn bỏ ngỏ thành phiếu câu hỏi khảo sát
+│   ├── to-spec/                       # [MỚI] Chuyển đổi hội thoại thành đặc tả SRS & User Stories
+│   ├── to-tickets/                    # [MỚI] Phân rã spec thành tracer-bullet vertical slices có blocking edges
+│   └── wayfinder/                     # [MỚI] Lập bản đồ điều hướng chuỗi decision tickets quy mô lớn
 ├── BE/                                # Kỹ năng dành cho Backend Developer (Node.js/Express)
 │   ├── api-and-interface-design/      # Thiết kế RESTful API contract & mã lỗi
 │   ├── ci-cd-and-automation/          # Tự động hóa npm scripts & Docker
+│   ├── codebase-design/               # [MỚI] Thiết kế Deep Modules (John Ousterhout), seams, leverage & locality
 │   ├── debugging-and-error-recovery/  # Gỡ lỗi runtime và xử lý Exception
+│   ├── diagnosing-bugs/               # [MỚI] Chẩn đoán lỗi hóc búa & suy giảm hiệu năng qua feedback loop đỏ
+│   ├── implement/                     # [MỚI] Quy trình hiện thực hóa công việc dựa trên đặc tả/ticket
+│   ├── implement-spec/                # [MỚI] Hiện thực hóa chính xác kết quả đầu ra từ to-spec và to-tickets
+│   ├── improve-codebase-architecture/ # [MỚI] Quét codebase tìm cơ hội làm sâu module, xuất báo cáo visual HTML
 │   ├── incremental-implementation/    # Hiện thực code từng bước theo 4 tầng phân lớp
 │   ├── observability-and-instrumentation/ # Health check, logger, requestId
 │   ├── postgres-best-practices/       # DDL 3NF, transaction, tối ưu pg.Pool
 │   ├── security-and-hardening/        # Phòng chống SQL Injection, input validation
-│   └── source-driven-development/     # Clean code, bám sát kiến trúc hiện hữu
+│   ├── source-driven-development/     # Clean code, bám sát kiến trúc hiện hữu
+│   └── wizard/                        # [MỚI] Sinh bash script wizard tương tác cho thao tác thủ công, migration
 ├── FE/                                # Kỹ năng dành cho Frontend Developer
 │   ├── browser-testing-with-devtools/ # Test trực tiếp trên Chrome DevTools
 │   ├── code-simplification/           # Tối giản hóa cấu trúc CSS/JS
 │   ├── frontend-design/               # Thiết kế bảng màu, typography, layout
 │   ├── frontend-ui-engineering/       # Xây dựng giao diện web 3 màn hình tiếp nhận
 │   ├── performance-optimization/      # Tối ưu DOM render và thời gian tải
+│   ├── prototype/                     # [MỚI] Xây dựng throwaway prototype kiểm chứng mô hình trạng thái & logic UI
 │   ├── source-driven-development/     # Giao diện bám sát API backend
 │   └── ui-ux-pro-max/                 # Chuẩn UI/UX cao cấp, design system tokens
 ├── QA/                                # Kỹ năng dành cho Quality Assurance
@@ -264,8 +306,12 @@ Toàn bộ các kỹ năng được lưu trữ có cấu trúc bên dưới thư
 │   ├── constraint-driven-development/ # Kiểm soát các ràng buộc phi chức năng (NFR)
 │   ├── doubt-driven-development/      # Đặt câu hỏi hoài nghi, tìm lỗ hổng logic
 │   ├── git-workflow-and-versioning/   # Chuẩn Conventional Commits & Git Tagging
+│   ├── pr/                            # [MỚI] Soạn thảo PR body chuẩn mực, bối cảnh, giải pháp, checklist
+│   ├── retro/                         # [MỚI] Tổ chức hồi tưởng (Retrospective) sau sprint đúc kết cải tiến
+│   ├── setup-pre-commit/              # [MỚI] Thiết lập Husky, lint-staged, Prettier, type checking và tests
 │   └── shipping-and-launch/           # Nghiệm thu sản phẩm, bàn giao release
 ├── QC/                                # Kỹ năng dành cho Quality Control & Security
+│   ├── code-review/                   # [MỚI] Review code 2 trục song song (Standards & Fowler smells vs Spec)
 │   ├── differential-review/           # Soát xét git diff trước khi commit
 │   ├── insecure-defaults/             # Rà soát cấu hình thiếu an toàn
 │   ├── performance-optimization/      # Kiểm tra hiệu năng truy vấn và thuật toán SLA
@@ -273,15 +319,29 @@ Toàn bộ các kỹ năng được lưu trữ có cấu trúc bên dưới thư
 │   ├── security-best-practices/       # Thực hành an toàn dữ liệu khách hàng
 │   ├── security-threat-model/         # Phân tích mô hình đe dọa (Threat Modeling)
 │   ├── sharp-edges/                   # Cảnh báo bẫy ngữ nghĩa trong JavaScript
+│   ├── spec-to-code-compliance/       # Đối chiếu code với đặc tả quy tắc nghiệp vụ
 │   └── static-analysis/               # Phân tích tĩnh chất lượng mã nguồn
 ├── TESTER/                            # Kỹ năng dành cho Tester / Automation QA
 │   ├── api-skill/                     # Kiểm thử API endpoint & Postman
 │   ├── browser-testing-with-devtools/ # Kiểm thử thao tác trên trình duyệt
 │   ├── debugging-and-error-recovery/  # Phân tích nguyên nhân test thất bại
 │   ├── playwright-skill/              # Tự động hóa kiểm thử UI bằng Playwright
+│   ├── tdd/                           # [MỚI] Test-Driven Development (Red-Green-Refactor, test seams, contracts)
 │   ├── test-driven-development/       # Quy trình TDD, bộ test 3 loại Buổi 7
 │   └── webapp-testing/                # Kiểm thử chức năng toàn diện trên web
 └── _shared/
+    ├── productivity/                  # [MỚI] Kỹ năng năng suất & điều phối dùng chung
+    │   ├── ask-matt/                  # Bộ định tuyến tìm skill phù hợp nhất
+    │   ├── chief-of-staff/            # Điều phối sub-agents đa nhiệm cho mục tiêu dài hạn
+    │   ├── claude-handoff/            # Chuyển giao công việc sang agent nền
+    │   ├── grill-me/                  # Phỏng vấn đào sâu, thử thách tư duy đa vai trò
+    │   ├── grilling/                  # Giao thức phỏng vấn theo frontier & design tree
+    │   ├── handoff/                   # Bàn giao ngữ cảnh phiên làm việc cho sub-agent tiếp theo
+    │   ├── research/                  # Nghiên cứu câu hỏi chuyên sâu từ tài liệu gốc đáng tin cậy
+    │   ├── setup-matt-pocock-skills/  # Cấu hình tracker, nhãn triage, domain docs
+    │   ├── teach/                     # Hướng dẫn học tập kỹ năng mới trong workspace
+    │   ├── wait-what/                 # Ngắt nhịp và định hình lại thông điệp khi lệch hướng
+    │   └── writing-for-agents/        # Kỹ thuật viết tài liệu kỹ thuật & prompt chuẩn cho Agent
     └── references/                    # Danh mục tài liệu tham chiếu chuẩn
         ├── accessibility-checklist.md # Checklist khả năng truy cập
         ├── definition-of-done.md      # Tiêu chí hoàn thành (DoD) buổi học / BT
