@@ -19,11 +19,43 @@ Hệ thống hỗ trợ nhân viên quầy tiếp nhận tra cứu hồ sơ khá
 - PostgreSQL 15, 16 hoặc 18 (Cổng mặc định: 5432 hoặc 5433)
 - Biến môi trường: xem file `.env.example` (`DATABASE_URL`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `PORT`)
 
-## 3. Hướng dẫn chạy (≤ 4 bước theo yêu cầu BT2 & Buổi 8)
-1. `cp .env.example .env` (hoặc cấu hình các biến kết nối DB trong `.env`)
-2. `npm install`
-3. `npm run db:migrate` (tạo bảng schema 3NF và nạp master data: 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67.037 khách hàng, 7.800 phiếu)
-4. `npm run dev` → mở trình duyệt tại http://localhost:3000 (kiểm tra `/health` hoặc `/health/db`)
+## 3. Hướng dẫn khởi chạy hệ thống (Đúng 4 bước theo yêu cầu BT2 & Buổi 10)
+
+Hệ thống được thiết kế theo nguyên tắc "Phép thử thư mục trống" (Clean-slate test): người khác clone repo về có thể chạy ngay mà không cần cấu hình phức tạp.
+
+### 4 bước khởi chạy hệ thống (mỗi bước 1 lệnh):
+
+```bash
+# Bước 1: Sao chép tệp cấu hình môi trường mẫu
+cp .env.example .env
+# (Trên Windows Command Prompt / PowerShell dùng: copy .env.example .env)
+
+# Bước 2: Cài đặt các gói thư viện phụ thuộc
+npm install
+
+# Bước 3: Khởi tạo bảng CSDL PostgreSQL và nạp Master Data thực tế
+npm run db:migrate
+
+# Bước 4: Khởi động máy chủ ứng dụng (Web + REST API)
+npm run dev
+# (hoặc: npm start)
+```
+
+Sau khi chạy Bước 4, mở trình duyệt web truy cập:
+👉 **http://localhost:3000** (Giao diện Quầy tiếp nhận bảo hành 3 màn hình kết nối API thật)
+
+### Các Endpoint kiểm tra nhanh hệ thống:
+- **Giao diện Web Frontend (3 màn hình):** `http://localhost:3000/`
+- **Smoke Test hệ thống:** `http://localhost:3000/health` (Trả về `{"status":"ok"}`)
+- **Kiểm tra kết nối CSDL PostgreSQL:** `http://localhost:3000/health/db` (Trả về `{"status":"ok","database":{...}}`)
+- **API danh sách phiếu bảo hành:** `http://localhost:3000/api/tickets?page=1&limit=25`
+- **API tra cứu khách hàng theo SĐT (QT-01):** `http://localhost:3000/api/customers?phone=0901234567`
+- **API danh mục nhóm sự cố kỹ thuật:** `http://localhost:3000/api/categories`
+- **API danh mục trung tâm bảo hành:** `http://localhost:3000/api/centers`
+
+> [!TIP]
+> **Lưu ý trên Windows PowerShell:** Nếu gặp lỗi hạn chế script execution policy (`PSSecurityException`), bạn có thể dùng `npm.cmd run dev` và `npm.cmd test`, hoặc chạy trực tiếp bằng lệnh `node src/index.js`.
+
 
 ## 4. Cấu trúc thư mục mã nguồn (Chuẩn 4 tầng phân lớp)
 - `docs/`: Bộ tài liệu đặc tả và kiểm chứng chất lượng theo chuẩn ĐH Văn Lang:
