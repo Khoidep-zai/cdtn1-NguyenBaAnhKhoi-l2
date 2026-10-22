@@ -434,9 +434,9 @@
             Thiết bị & Bảo hành
           </div>
           <div class="info-box-content">
-            <p><span class="label">Model:</span> <span class="value">iPhone 14 Pro Max</span></p>
-            <p><span class="label">Serial/IMEI:</span> <span class="value" style="font-family: monospace;">356891238910</span></p>
-            <p><span class="label">Chế độ:</span> <span class="value" style="color: #34D399; font-weight: 600;">Còn bảo hành (Hạn: 12/2026)</span></p>
+            <p><span class="label">Model:</span> <span class="value" id="detailDeviceModel">iPhone 14 Pro Max</span></p>
+            <p><span class="label">Serial/IMEI:</span> <span class="value" id="detailDeviceSerial" style="font-family: monospace;">356891238910</span></p>
+            <p><span class="label">Chế độ:</span> <span class="value" id="detailWarrantyStatus" style="color: #34D399; font-weight: 600;">Còn bảo hành (Hạn: 12/2026)</span></p>
           </div>
         </div>
 
@@ -447,9 +447,9 @@
             Phân loại & Cam kết SLA
           </div>
           <div class="info-box-content">
-            <p><span class="label">Nhóm lỗi:</span> <span class="value">PIN (Pin sụt nhanh, sập nguồn)</span></p>
-            <p><span class="label">Ưu tiên:</span> <span class="badge badge-priority-high" style="padding: 2px 8px; font-size: 11px;">CAO</span></p>
-            <p><span class="label">Hạn SLA:</span> <span class="value" style="color: #F87171; font-family: monospace; font-weight: 700;">09/09/2026 14:30</span></p>
+            <p><span class="label">Nhóm lỗi:</span> <span class="value" id="detailCategoryName">PIN (Pin sụt nhanh, sập nguồn)</span></p>
+            <p><span class="label">Ưu tiên:</span> <span class="badge badge-priority-high" id="detailPriorityBadge" style="padding: 2px 8px; font-size: 11px;">CAO</span></p>
+            <p><span class="label">Hạn SLA:</span> <span class="value" id="detailDueDate" style="color: #F87171; font-family: monospace; font-weight: 700;">09/09/2026 14:30</span></p>
           </div>
         </div>
       </div>
@@ -459,7 +459,7 @@
         <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px;">
           Mô tả triệu chứng tiếp nhận từ khách hàng:
         </div>
-        <p style="font-size: 13.5px; color: #E2E8F0; line-height: 1.6; font-style: italic;">
+        <p id="detailIssueDesc" style="font-size: 13.5px; color: #E2E8F0; line-height: 1.6; font-style: italic;">
           "Máy thường xuyên bị sập nguồn đột ngột khi mức pin còn khoảng 20-25%. Khi cắm sạc củ sạc zin thì thân máy nóng rát, sạc 2 tiếng chỉ tăng 10% pin."
         </p>
       </div>

@@ -121,6 +121,7 @@ async function loadTickets(page = 1) {
   let tickets = [];
   let total = 0;
 
+  let apiError = null;
   // Gọi API Backend qua lớp ticketsApi chuyên dụng (Buổi 9 A1-A2)
   if (window.ticketsApi) {
     try {
@@ -137,11 +138,22 @@ async function loadTickets(page = 1) {
         totalPages = body.totalPages || Math.ceil(total / pageSize) || 1;
       }
     } catch (err) {
-      console.warn('[Frontend SE] Lỗi khi gọi ticketsApi.danhSach, chuyển sang dữ liệu dự phòng:', err);
+      console.warn('[Frontend SE] Lỗi khi gọi ticketsApi.danhSach:', err);
+      apiError = err;
     }
   }
 
-  // Fallback sang dữ liệu mẫu cục bộ nạp sẵn từ dataset
+  // Khi tắt backend hoặc lỗi mạng: Hiển thị Error State có nút Thử lại (Tiêu chí Buổi 10)
+  if (apiError && !window.__FORCE_OFFLINE__) {
+    if (window.dataState) {
+      window.dataState.renderError(tbody, apiError, () => loadTickets(page));
+    }
+    const badge = document.getElementById('totalTicketsBadge');
+    if (badge) badge.innerText = '0';
+    return;
+  }
+
+  // Fallback sang dữ liệu mẫu cục bộ nạp sẵn từ dataset khi chủ động bật chế độ offline
   if (tickets.length === 0 && window.OFFLINE_TICKETS_SAMPLE) {
     let dataset = [...window.OFFLINE_TICKETS_SAMPLE];
     if (statusVal && statusVal !== 'ALL') {
@@ -820,34 +832,42 @@ async function submitTicket() {
     center_id: 1,
   };
 
-  let newTicketCode = `BH-${String(Math.floor(100000 + Math.random() * 900000))}/2026`;
+  let newTicketCode = null;
 
-  // Gửi API Backend qua ticketsApi (Buổi 9 SE)
+  // Gửi API Backend qua ticketsApi (Buổi 9 & 10 SE)
   if (window.ticketsApi) {
     try {
       const data = await window.ticketsApi.tiepNhan(payload);
-      if (data && data.ticket_code) {
-        newTicketCode = data.ticket_code;
+      if (data && (data.ticket_code || data.id)) {
+        newTicketCode = data.ticket_code || data.id;
       }
     } catch (err) {
       console.warn('Lỗi khi gửi API tạo phiếu bảo hành:', err);
+      const msg = err.message || 'Lỗi khi gửi yêu cầu tiếp nhận bảo hành tới máy chủ';
+      alert(`Không thể tạo phiếu bảo hành: ${msg}`);
+      return;
     }
+  }
+
+  if (!newTicketCode) {
+    newTicketCode = `BH-${String(Math.floor(100000 + Math.random() * 900000))}/2026`;
   }
 
   showToast(`Tạo phiếu thành công: ${newTicketCode} (Ghi log kiểm toán QT-06)!`);
 
-  // Tải lại danh sách phiếu
+  // Tải lại danh sách phiếu và chuyển hướng sang xem chi tiết
   setTimeout(() => {
     loadTickets(1);
     goToDetail(newTicketCode);
-  }, 500);
+  }, 400);
 }
 
 // -------------------------------------------------------------
 // 8. CHI TIẾT PHIẾU BẢO HÀNH & CHUYỂN TRẠNG THÁI (SCREEN 3)
 // -------------------------------------------------------------
 async function loadTicketDetail(ticketIdentifier) {
-  document.getElementById('detailTicketCode').innerText = ticketIdentifier;
+  const codeEl = document.getElementById('detailTicketCode');
+  if (codeEl) codeEl.innerText = ticketIdentifier;
 
   let ticket = null;
 
@@ -880,21 +900,137 @@ async function loadTicketDetail(ticketIdentifier) {
       statusBadge.className = `badge ${getStatusBadgeClass(ticket.status)}`;
       statusBadge.innerText = `Trạng thái: ${formatStatusLabel(ticket.status)}`;
     }
+
+    const devModel = document.getElementById('detailDeviceModel');
+    if (devModel) devModel.innerText = ticket.product_name || 'Thiết bị di động';
+
+    const devSerial = document.getElementById('detailDeviceSerial');
+    if (devSerial) devSerial.innerText = ticket.serial_no || ticket.serial_imei || '—';
+
+    const warrantyStatus = document.getElementById('detailWarrantyStatus');
+    if (warrantyStatus) {
+      const isW = ticket.is_warranty !== false;
+      warrantyStatus.innerText = isW ? 'Còn bảo hành chính hãng' : 'Hết hạn bảo hành';
+      warrantyStatus.style.color = isW ? '#34D399' : '#F87171';
+    }
+
+    const catName = document.getElementById('detailCategoryName');
+    if (catName) {
+      const catText = CATEGORY_MAP[ticket.category_id || ticket.issue_category_id] || ticket.category_name || 'Sự cố kỹ thuật';
+      catName.innerText = catText;
+    }
+
+    const priorityBadge = document.getElementById('detailPriorityBadge');
+    if (priorityBadge) {
+      const p = ticket.priority || 'TRUNG_BINH';
+      priorityBadge.className = `badge ${getPriorityBadgeClass(p)}`;
+      priorityBadge.innerText = formatPriorityLabel(p);
+    }
+
+    const dueDateEl = document.getElementById('detailDueDate');
+    if (dueDateEl) {
+      dueDateEl.innerText = formatDateTime(ticket.due_date);
+    }
+
+    const descEl = document.getElementById('detailIssueDesc');
+    if (descEl) {
+      descEl.innerText = `"${ticket.issue_description || 'Mô tả triệu chứng tiếp nhận từ khách hàng.'}"`;
+    }
+
+    // Cập nhật các bước chuyển trạng thái hợp lệ (Vòng đời một chiều QT-06)
+    const selectEl = document.getElementById('nextStatusSelect');
+    if (selectEl) {
+      const currentSt = (ticket.status || 'MOI').toUpperCase();
+      const validNextMap = {
+        'MOI': [
+          { val: 'DA_PHAN_CONG', label: 'ĐÃ PHÂN CÔNG (Bàn giao kỹ thuật viên)' },
+          { val: 'DA_HUY', label: 'ĐÃ HỦY (Khách không đồng ý để lại máy)' }
+        ],
+        'DA_PHAN_CONG': [
+          { val: 'DANG_XU_LY', label: 'ĐANG XỬ LÝ (KTV tiếp nhận khám máy)' },
+          { val: 'DA_HUY', label: 'ĐÃ HỦY (Khách lấy lại máy)' }
+        ],
+        'DANG_XU_LY': [
+          { val: 'CHO_LINH_KIEN', label: 'CHỜ LINH KIỆN (Yêu cầu kho cung ứng)' },
+          { val: 'HOAN_TAT', label: 'HOÀN TẤT (Đã sửa chữa và kiểm tra)' },
+          { val: 'DA_HUY', label: 'ĐÃ HỦY (Không sửa chữa được)' }
+        ],
+        'CHO_LINH_KIEN': [
+          { val: 'DANG_XU_LY', label: 'ĐANG XỬ LÝ (Linh kiện đã về)' },
+          { val: 'HOAN_TAT', label: 'HOÀN TẤT (Hoàn tất thay thế)' },
+          { val: 'DA_HUY', label: 'ĐÃ HỦY' }
+        ],
+        'HOAN_TAT': [],
+        'DA_HUY': []
+      };
+
+      const nextOptions = validNextMap[currentSt] || [];
+      if (nextOptions.length === 0) {
+        selectEl.innerHTML = `<option value="">(Phiếu đã đóng - không thể chuyển tiếp)</option>`;
+        selectEl.disabled = true;
+      } else {
+        selectEl.disabled = false;
+        selectEl.innerHTML = nextOptions.map(opt => `<option value="${opt.val}">${opt.label}</option>`).join('');
+      }
+    }
+
+    // Render timeline lịch sử trạng thái Audit Trail (NFR3 / QT-06)
+    const timeline = document.getElementById('activityTimeline');
+    if (timeline && ticket.status_history && Array.isArray(ticket.status_history) && ticket.status_history.length > 0) {
+      timeline.innerHTML = ticket.status_history.map(item => `
+        <div class="timeline-item">
+          <div class="timeline-time">${escapeHtml(formatDateTime(item.created_at))}</div>
+          <div class="timeline-text">
+            ${item.old_status ? `${escapeHtml(formatStatusLabel(item.old_status))} → ` : ''}
+            <span class="badge ${getStatusBadgeClass(item.new_status || item.to_status)}" style="font-size: 11px; padding: 2px 8px;">
+              ${escapeHtml(formatStatusLabel(item.new_status || item.to_status))}
+            </span>
+          </div>
+          <div class="timeline-author">Thực hiện bởi: <strong>${escapeHtml(item.changed_by || item.updated_by || 'Nhân viên')}</strong></div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Ghi chú: ${escapeHtml(item.note || item.notes || 'Khởi tạo / chuyển trạng thái')}</div>
+        </div>
+      `).join('');
+    }
   }
 }
 
-function updateTicketStatus() {
-  const nextStatus = document.getElementById('nextStatusSelect').value;
-  const note = document.getElementById('transitionNoteText').value;
-  const ticketCode = document.getElementById('detailTicketCode').innerText;
+async function updateTicketStatus() {
+  const selectEl = document.getElementById('nextStatusSelect');
+  if (!selectEl || selectEl.disabled) {
+    alert('Phiếu bảo hành này đã kết thúc vòng đời, không thể chuyển tiếp trạng thái!');
+    return;
+  }
+  const nextStatus = selectEl.value;
+  const note = (document.getElementById('transitionNoteText') ? document.getElementById('transitionNoteText').value : '').trim();
+  const ticketCode = document.getElementById('detailTicketCode').innerText.trim();
 
+  if (!nextStatus) {
+    alert('Vui lòng chọn trạng thái tiếp theo!');
+    return;
+  }
+
+  // Gọi API Backend qua ticketsApi (Buổi 9 & 10 SE)
+  if (window.ticketsApi) {
+    try {
+      await window.ticketsApi.chuyenTrangThai(ticketCode, nextStatus, note);
+      showToast('Đã cập nhật trạng thái phiếu và ghi nhận nhật ký kiểm toán!');
+      await loadTicketDetail(ticketCode);
+      if (typeof loadTickets === 'function') loadTickets(currentPage);
+      return;
+    } catch (err) {
+      console.error('Lỗi khi chuyển trạng thái phiếu:', err);
+      alert(`Không thể chuyển trạng thái: ${err.message || 'Lỗi quy tắc chuyển đổi'}`);
+      return;
+    }
+  }
+
+  // Fallback offline nếu không kết nối được ticketsApi
   const statusBadge = document.getElementById('detailStatusBadge');
   if (statusBadge) {
     statusBadge.className = `badge ${getStatusBadgeClass(nextStatus)}`;
     statusBadge.innerText = `Trạng thái: ${formatStatusLabel(nextStatus)}`;
   }
 
-  // Ghi nhận vào dòng thời gian Audit Trail
   const timeline = document.getElementById('activityTimeline');
   if (timeline) {
     const timeStr = formatDateTime(new Date());

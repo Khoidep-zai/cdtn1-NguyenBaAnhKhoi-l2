@@ -43,9 +43,10 @@ Hệ thống hỗ trợ nhân viên quầy tiếp nhận tra cứu hồ sơ khá
   - `errors/`: Lớp lỗi nghiệp vụ ứng dụng (`AppError.js`).
   - `utils/`: Tiện ích SLA Engine (`slaHelper.js`), chuẩn hóa SĐT (`phoneHelper.js`), structured logging & requestId (`logger.js`).
   - `db/`: Schema DDL PostgreSQL (`schema.sql`) và migration script (`migrate.js`).
-- `src/frontend/`: Giao diện 3 màn hình tiếp nhận bảo hành tương tác API thực (`index.html`, `app.js`, `style.css`).
-- `tests/`: Bộ kiểm thử tự động gồm 21 tests (100% PASS):
+- `src/frontend/`: Giao diện 3 màn hình tiếp nhận bảo hành tương tác API thực (`index.html`, `app.js`, `style.css`, `api/client.js`, `api/tickets.api.js`, `components/dataState.js`).
+- `tests/`: Bộ kiểm thử tự động gồm 25 tests (100% PASS):
   - `smoke.test.js`: Smoke test kiểm tra endpoint /health và kết nối DB.
+  - `ticket.contract.test.js`: Unit test kiểm thử hợp đồng dữ liệu ranh giới (CT-01..CT-04, chuẩn Buổi 9 SE D1 & D3).
   - `ticket.service.test.js`: Unit test lớp Service độc lập với Mock repository (đủ 3 loại test: Luồng đúng, Biên, Dữ liệu sai theo chuẩn Buổi 7).
   - `ticket.validator.test.js`: Unit test tầng kiểm tra dữ liệu đầu vào (TV-01..TV-05).
   - `ticket.test.js`: Integration test toàn bộ quy trình tiếp nhận và lọc dữ liệu qua HTTP thực.
@@ -56,16 +57,17 @@ Chạy một lệnh duy nhất:
 npm test
 # hoặc: node --test --test-concurrency=1 tests/*.test.js
 ```
-Kết quả kiểm thử: **21/21 tests passed (100% PASS)**
+Kết quả kiểm thử: **25/25 tests passed (100% PASS)**
 
-## 6. Trạng thái hiện tại (Buổi 8 / Workshop Sprint 1)
-- [x] Đã đọc hết phản hồi BT1 và ghi lại quyết định điều chỉnh thiết kế vào `docs/thay-doi-thiet-ke.md` (TD-01..TD-06).
-- [x] Cấu trúc mã nguồn dựng theo đúng sơ đồ kiến trúc 4 tầng phân lớp (`src/backend/{controllers, services, repositories, validators, utils, db}`).
-- [x] Khởi tạo project, smoke test chạy được, kết nối CSDL PostgreSQL thành công (`/health`, `/health/db`).
-- [x] CSDL đã tạo bảng theo DDL 3NF, nạp đầy đủ dữ liệu mẫu (6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67.037 KH, 7.800 phiếu).
-- [x] Module cốt lõi tiếp nhận & phân loại bảo hành chạy được, đáp ứng đầy đủ quy tắc QT-01, QT-04 (SLA Engine), QT-05, QT-06 (Vòng đời một chiều), QT-09 (Chống trùng Serial).
-- [x] Đã bổ sung lớp ghi log có cấu trúc có che giấu secret/PII và gán RequestId truy vết sự cố (`src/backend/utils/logger.js`).
-- [x] Bộ kiểm thử 3 loại chuẩn Buổi 7 đạt **21/21 test PASS (100%)**.
-- [x] Đã lưu minh chứng kết quả chạy và ảnh chụp màn hình vào `docs/ket-qua-chay-buoi-8.md`.
-- [x] Đầy đủ các tài liệu chất lượng: `bug-log.md`, `checklist-bao-mat.md`, `test-plan.md`, `test-report.md`, `toi-uu.md`.
-- [ ] Module phân công kỹ thuật viên (Bài tập 3 / Sprint 2).
+## 6. Trạng thái hiện tại (Buổi 10 / Workshop Sprint 2 — Tích hợp End-to-End & Module mở rộng)
+- [x] 1. Module mở rộng theo track SE đã hiện thực: Frontend 3 màn hình (Danh sách, Tiếp nhận, Chi tiết) kết nối API thật qua `tickets.api.js` và `client.js`.
+- [x] 2. Luồng chính chạy END-TO-END không lỗi treo: Tra cứu SĐT → Chọn model/serial → Kiểm tra bảo hành → Sinh mã phiếu BH-xxxxxx/2026 → Tự động tính hạn SLA loại trừ CN → Phân loại & Chuyển trạng thái một chiều.
+- [x] 3. Đã chạy trên dữ liệu mẫu THẬT: CSDL nạp 67.037 khách hàng, 320 dòng điện thoại, 6 trung tâm, 6 nhóm sự cố, 7.800 phiếu bảo hành từ Dataset thực tế.
+- [x] 4. Đã chụp ảnh kết quả toàn luồng và lưu trữ minh chứng vào `docs/` và báo cáo BT2.
+- [x] 5. ≥ 5 unit test nghiệp vụ chạy PASS: Đạt 25/25 test tự động hiển thị trực quan số lượng pass trên terminal.
+- [x] 6. Đã kiểm thử đầy đủ các trường hợp BIÊN: Biên hạn bảo hành cuối cùng, biên ca trực SLA chuyển giao qua ngày Chủ Nhật (QT-04, QT-05).
+- [x] 7. Đã hiện thực trọn vẹn 3 trạng thái giao diện (Đang tải, Rỗng, Lỗi kết nối có nút thử lại) qua module `src/frontend/components/dataState.js`.
+- [x] 8. README mục 3 đã điền đủ 4 bước chạy, mỗi bước đúng một lệnh tiêu chuẩn.
+- [x] 9. ĐÃ THỬ clone repo vào thư mục mới và chạy theo đúng README (Phép thử thư mục trống PASS).
+- [x] 10. Đã commit theo quy ước Conventional Commits; lịch sử commit rõ ràng, minh bạch.
+
