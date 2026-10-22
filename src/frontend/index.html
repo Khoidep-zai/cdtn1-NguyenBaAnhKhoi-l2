@@ -26,32 +26,19 @@
     </div>
   </a>
 
-  <!-- Screen Navigation Tabs -->
-  <div class="nav-pills">
-    <button class="nav-pill active" onclick="switchTab('screen-list', this)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-      Danh sách phiếu
-    </button>
-    <button class="nav-pill" onclick="switchTab('screen-create', this)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-      Tạo phiếu mới
-    </button>
-    <button class="nav-pill" onclick="switchTab('screen-detail', this)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-      Chi tiết & Xử lý
-    </button>
-    <button class="nav-pill" onclick="switchTab('all', this)">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-      Xem toàn bộ Wireframe
-    </button>
-  </div>
-
-  <div class="user-badge">
-    <div class="avatar">AK</div>
+  <div class="user-badge" id="userBadge">
+    <div class="avatar" id="userAvatar">NV</div>
     <div class="user-info">
-      <div class="user-name">Nguyễn Bá Anh Khôi</div>
-      <div class="user-role">Nhân viên tiếp nhận (Chi nhánh 01)</div>
+      <div class="user-name" id="userName">Nguyễn Bá Anh Khôi</div>
+      <div class="user-role" id="userRole">
+        <span class="role-tag role-staff" id="userRoleTag">👤 Nhân viên tiếp nhận</span>
+        <span class="branch-tag" id="userBranchTag">Chi nhánh 01</span>
+      </div>
     </div>
+    <button class="btn-role-switch" onclick="openLoginModal()" title="Đổi vai trò hoặc đăng xuất">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      <span>Đổi vai trò</span>
+    </button>
   </div>
 </nav>
 
@@ -244,7 +231,7 @@
             <div style="display: flex; gap: 10px;">
               <div class="input-wrapper" style="flex: 1;">
                 <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                <input type="text" id="custPhoneInput" value="0909123456" placeholder="Nhập số điện thoại khách hàng..." onkeyup="if(event.key==='Enter') simulateLookup()">
+                <input type="text" id="custPhoneInput" value="" placeholder="Nhập số điện thoại khách hàng (VD: 0909123456)..." onkeyup="if(event.key==='Enter') simulateLookup()">
               </div>
               <button class="btn btn-secondary" type="button" onclick="simulateLookup()" style="padding: 10px 20px;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -259,14 +246,14 @@
               <div class="field-label-group">
                 <div class="field-title"><span class="field-num">2</span> Họ tên khách hàng <span class="req">*</span></div>
               </div>
-              <input type="text" id="custNameInput" value="Nguyễn Văn An" placeholder="Họ và tên khách hàng (tự điền khi tra cứu)">
+              <input type="text" id="custNameInput" value="" placeholder="Nhập họ và tên khách hàng...">
             </div>
 
             <div class="form-group">
               <div class="field-label-group">
                 <div class="field-title" style="margin-left: 4px;">Địa chỉ liên hệ</div>
               </div>
-              <input type="text" id="custAddressInput" value="123 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh" placeholder="Địa chỉ liên hệ (tự điền khi tra cứu)">
+              <input type="text" id="custAddressInput" value="" placeholder="Nhập địa chỉ liên hệ của khách hàng...">
             </div>
           </div>
 
@@ -279,7 +266,7 @@
             <div class="combobox-wrapper" id="deviceCombobox">
               <div class="input-wrapper">
                 <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                <input type="text" id="deviceNameInput" value="Samsung Galaxy S23" placeholder="Nhấp để xem danh sách hoặc gõ tên dòng máy (VD: iPhone, Samsung, Xiaomi...)" autocomplete="off" onfocus="openDeviceDropdown()" oninput="onDeviceInput(this.value)" onkeydown="onDeviceKeydown(event)">
+                <input type="text" id="deviceNameInput" value="" placeholder="Nhấp để xem danh sách hoặc gõ tên dòng máy (VD: iPhone 15, Galaxy S23, Redmi...)" autocomplete="off" onfocus="openDeviceDropdown()" oninput="onDeviceInput(this.value)" onkeydown="onDeviceKeydown(event)">
                 <span class="combobox-arrow">▼</span>
               </div>
 
@@ -316,7 +303,7 @@
             </div>
             <div class="input-wrapper">
               <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M4 17v3h16v-3M9 9h6v6H9z"></path></svg>
-              <input type="text" id="deviceImeiInput" value="SN-A52-778901" placeholder="Nhập số Serial/IMEI thiết bị..." oninput="checkWarrantyStatus()">
+              <input type="text" id="deviceImeiInput" value="" placeholder="Nhập số Serial/IMEI thiết bị..." oninput="checkWarrantyStatus()">
             </div>
           </div>
 
@@ -324,9 +311,9 @@
           <div class="form-group">
             <div class="field-label-group">
               <div class="field-title"><span class="field-num">4</span> Mô tả sự cố <span class="req">*</span></div>
-              <span class="char-counter valid" id="descCharCounter">32 ký tự (≥ 10)</span>
+              <span class="char-counter" id="descCharCounter">0 ký tự (tối thiểu 10)</span>
             </div>
-            <textarea id="issueDescText" rows="3" placeholder="Mô tả chi tiết tình trạng sự cố (tối thiểu 10 ký tự)..." oninput="onIssueDescInput(this.value)">Máy không lên nguồn sau khi sạc...</textarea>
+            <textarea id="issueDescText" rows="3" placeholder="Mô tả chi tiết tình trạng sự cố (tối thiểu 10 ký tự theo quy tắc QT-03)..." oninput="onIssueDescInput(this.value)"></textarea>
           </div>
 
           <!-- Nhóm sự cố hỗ trợ phân loại kỹ thuật -->
@@ -364,7 +351,7 @@
               </label>
             </div>
             <div style="margin-top: 8px; font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
-              <span>Hạn cam kết (SLA) dự kiến: <strong id="slaPreviewText" style="color: #FBBF24; font-family: 'JetBrains Mono', monospace;">11/09/2026 14:30</strong></span>
+              <span>Hạn cam kết (SLA) dự kiến: <strong id="slaPreviewText" style="color: #FBBF24; font-family: 'JetBrains Mono', monospace;">Chưa tính</strong></span>
               <span style="color: var(--text-muted);">(QT-04: Tự động trừ Chủ Nhật)</span>
             </div>
           </div>
@@ -374,9 +361,9 @@
             <div class="field-label-group">
               <div class="field-title"><span class="field-num">6</span> Thông báo tình trạng bảo hành</div>
             </div>
-            <div class="warranty-alert-box" id="warrantyAlertBox">
+            <div class="warranty-alert-box" id="warrantyAlertBox" style="display: none;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-              <span id="warrantyAlertText">⚠ Thiết bị SN-A52-778901 đã hết hạn bảo hành (QT-01).</span>
+              <span id="warrantyAlertText"></span>
             </div>
           </div>
 
@@ -404,6 +391,9 @@
       </div>
       <div style="display: flex; align-items: center; gap: 10px;">
         <span class="badge badge-new" id="detailStatusBadge" style="font-size: 13px; padding: 6px 14px;">Trạng thái: MỚI</span>
+        <button class="btn btn-secondary" style="padding: 7px 12px; font-size: 12.5px;" onclick="goToList()">
+          ← Quay lại danh sách
+        </button>
         <button class="btn btn-secondary" style="padding: 7px 12px; font-size: 12.5px;" onclick="printReceipt()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
           In biên nhận
@@ -512,6 +502,81 @@
     </div>
   </section>
 
+</div>
+
+<!-- MODAL ĐĂNG NHẬP PHÂN QUYỀN (NHÂN VIÊN VS QUẢN LÝ) -->
+<div class="login-modal-overlay" id="loginModal" style="display: none;">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-brand-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+      </div>
+      <h2>ĐĂNG NHẬP HỆ THỐNG CRM</h2>
+      <p>Phân hệ Quản lý & Tiếp nhận Bảo hành Mekong Mobile</p>
+    </div>
+
+    <!-- Quick Role Switch Selection (1-Click Demo) -->
+    <div class="login-quick-roles">
+      <div class="quick-role-title">Chọn vai trò truy cập nhanh (Trực quan):</div>
+      <div class="quick-role-grid">
+        <button type="button" class="quick-role-card" onclick="quickLogin('NHAN_VIEN')">
+          <div class="quick-role-icon staff">👤</div>
+          <div class="quick-role-meta">
+            <div class="role-meta-name">Nhân viên tiếp nhận</div>
+            <div class="role-meta-desc">Chi nhánh 01 (Cần Thơ) · Tiếp nhận quầy, tra cứu & tạo phiếu mới</div>
+          </div>
+          <span class="quick-role-arrow">→</span>
+        </button>
+
+        <button type="button" class="quick-role-card" onclick="quickLogin('QUAN_LY')">
+          <div class="quick-role-icon manager">🛡️</div>
+          <div class="quick-role-meta">
+            <div class="role-meta-name">Quản lý chi nhánh / Hệ thống</div>
+            <div class="role-meta-desc">Toàn hệ thống · Điều phối kỹ thuật, duyệt ngoại lệ SLA, xem toàn bộ chi nhánh</div>
+          </div>
+          <span class="quick-role-arrow">→</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="login-divider">
+      <span>hoặc đăng nhập thủ công</span>
+    </div>
+
+    <!-- Form đăng nhập thủ công -->
+    <form id="loginForm" onsubmit="handleManualLogin(event)">
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Tên đăng nhập</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <input type="text" id="loginUsernameInput" placeholder="Nhập tên tài khoản (vd: nhanvien01, quanly01)" required>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Mật khẩu</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <input type="password" id="loginPasswordInput" placeholder="Nhập mật khẩu..." value="123456" required>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Vai trò và Quyền hạn</label>
+        <select id="loginRoleSelect" style="width: 100%; padding: 10px 14px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-subtle); border-radius: 8px; color: white;">
+          <option value="NHAN_VIEN">Nhân viên tiếp nhận (Chi nhánh 01 - Cần Thơ)</option>
+          <option value="QUAN_LY">Quản lý chi nhánh (Giám sát toàn hệ thống CN 01 - 06)</option>
+        </select>
+      </div>
+
+      <div id="loginErrorMsg" style="display: none; padding: 10px 14px; margin-bottom: 16px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 12.5px;"></div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" class="btn btn-secondary" onclick="closeLoginModal()">Đóng</button>
+        <button type="submit" class="btn btn-primary" style="padding: 10px 24px;">Đăng nhập</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- Interactive Toast Alert -->

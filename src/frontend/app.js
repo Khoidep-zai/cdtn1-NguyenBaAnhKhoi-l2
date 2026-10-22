@@ -43,51 +43,192 @@ const CENTER_MAP = {
 };
 
 // -------------------------------------------------------------
-// 1. TAB SWITCHING LOGIC
+// 1. SCREEN NAVIGATION & AUTHENTICATION (RBAC)
 // -------------------------------------------------------------
-function switchTab(screenId, element) {
-  const screens = document.querySelectorAll('.screen');
-  const pills = document.querySelectorAll('.nav-pill');
-
-  if (element) {
-    pills.forEach(p => p.classList.remove('active'));
-    element.classList.add('active');
-  } else {
-    pills.forEach(p => {
-      const onclickAttr = p.getAttribute('onclick') || '';
-      if (onclickAttr.includes(screenId)) {
-        p.classList.add('active');
-      } else {
-        p.classList.remove('active');
-      }
-    });
+const USER_ROLES = {
+  NHAN_VIEN: {
+    role: 'NHAN_VIEN',
+    name: 'Nguyễn Bá Anh Khôi',
+    username: 'nhanvien01',
+    roleLabel: 'Nhân viên tiếp nhận',
+    avatar: 'AK',
+    badgeClass: 'role-staff',
+    badgeIcon: '👤',
+    branchId: 1,
+    branchName: 'Chi nhánh 01 (Cần Thơ)',
+    canViewAllCenters: false,
+    canOverrideSla: false,
+    canReassignTechnician: false
+  },
+  QUAN_LY: {
+    role: 'QUAN_LY',
+    name: 'Võ Thành Long',
+    username: 'quanly01',
+    roleLabel: 'Quản lý chi nhánh / Hệ thống',
+    avatar: 'TL',
+    badgeClass: 'role-manager',
+    badgeIcon: '🛡️',
+    branchId: null,
+    branchName: 'Toàn hệ thống (CN 01 - 06)',
+    canViewAllCenters: true,
+    canOverrideSla: true,
+    canReassignTechnician: true
   }
+};
 
-  if (screenId === 'all') {
-    screens.forEach(s => (s.style.display = 'block'));
-    showToast('Đang hiển thị toàn bộ 3 màn hình Wireframe');
+let currentUser = USER_ROLES.NHAN_VIEN;
+
+function initAuth() {
+  try {
+    const savedRole = localStorage.getItem('mekong_crm_role');
+    if (savedRole && USER_ROLES[savedRole]) {
+      currentUser = USER_ROLES[savedRole];
+    }
+  } catch (e) {
+    currentUser = USER_ROLES.NHAN_VIEN;
+  }
+  applyUserRoleToUI();
+}
+
+function applyUserRoleToUI() {
+  const avatarEl = document.getElementById('userAvatar');
+  const nameEl = document.getElementById('userName');
+  const roleTagEl = document.getElementById('userRoleTag');
+  const branchTagEl = document.getElementById('userBranchTag');
+  const centerFilter = document.getElementById('centerFilter');
+
+  if (avatarEl) avatarEl.textContent = currentUser.avatar;
+  if (nameEl) nameEl.textContent = currentUser.name;
+  if (roleTagEl) {
+    roleTagEl.className = `role-tag ${currentUser.badgeClass}`;
+    roleTagEl.textContent = `${currentUser.badgeIcon} ${currentUser.roleLabel}`;
+  }
+  if (branchTagEl) branchTagEl.textContent = currentUser.branchName;
+
+  // Thiết lập quyền lọc chi nhánh theo Role
+  if (centerFilter) {
+    if (currentUser.role === 'NHAN_VIEN') {
+      centerFilter.value = String(currentUser.branchId || 1);
+    } else {
+      if (centerFilter.value === '1' && !localStorage.getItem('mekong_crm_manual_center')) {
+        centerFilter.value = 'ALL';
+      }
+    }
+  }
+}
+
+function openLoginModal() {
+  const modal = document.getElementById('loginModal');
+  const errorMsg = document.getElementById('loginErrorMsg');
+  if (errorMsg) errorMsg.style.display = 'none';
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeLoginModal() {
+  const modal = document.getElementById('loginModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function quickLogin(roleKey) {
+  if (USER_ROLES[roleKey]) {
+    currentUser = USER_ROLES[roleKey];
+    try {
+      localStorage.setItem('mekong_crm_role', roleKey);
+    } catch (e) {}
+    applyUserRoleToUI();
+    closeLoginModal();
+    showToast(`Đã chuyển sang vai trò: ${currentUser.roleLabel}`);
+    loadTickets(1);
+  }
+}
+
+function handleManualLogin(event) {
+  event.preventDefault();
+  const username = (document.getElementById('loginUsernameInput').value || '').trim();
+  const password = (document.getElementById('loginPasswordInput').value || '').trim();
+  const roleSelect = document.getElementById('loginRoleSelect').value;
+  const errorMsg = document.getElementById('loginErrorMsg');
+
+  if (!username) {
+    if (errorMsg) {
+      errorMsg.textContent = 'Vui lòng nhập tên đăng nhập!';
+      errorMsg.style.display = 'block';
+    }
     return;
   }
 
+  const baseRole = USER_ROLES[roleSelect] || USER_ROLES.NHAN_VIEN;
+  currentUser = {
+    ...baseRole,
+    username: username,
+    name: username.toLowerCase().includes('quan') ? 'Võ Thành Long' : (baseRole.name || username)
+  };
+
+  try {
+    localStorage.setItem('mekong_crm_role', roleSelect);
+  } catch (e) {}
+
+  applyUserRoleToUI();
+  closeLoginModal();
+  showToast(`Đăng nhập thành công với vai trò: ${currentUser.roleLabel}`);
+  loadTickets(1);
+}
+
+function switchTab(screenId) {
+  const screens = document.querySelectorAll('.screen');
   screens.forEach(s => {
     if (s.id === screenId) {
       s.style.display = 'block';
-      s.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       s.style.display = 'none';
     }
   });
 }
 
+function goToList() {
+  switchTab('screen-list');
+}
+
 function goToCreate() {
-  const createPill = document.querySelectorAll('.nav-pill')[1];
-  switchTab('screen-create', createPill);
+  clearCreateForm();
+  switchTab('screen-create');
 }
 
 function goToDetail(ticketIdentifier) {
   loadTicketDetail(ticketIdentifier);
-  const detailPill = document.querySelectorAll('.nav-pill')[2];
-  switchTab('screen-detail', detailPill);
+  switchTab('screen-detail');
+}
+
+function clearCreateForm() {
+  const phone = document.getElementById('custPhoneInput');
+  const name = document.getElementById('custNameInput');
+  const addr = document.getElementById('custAddressInput');
+  const dev = document.getElementById('deviceNameInput');
+  const imei = document.getElementById('deviceImeiInput');
+  const desc = document.getElementById('issueDescText');
+  const counter = document.getElementById('descCharCounter');
+  const alertBox = document.getElementById('warrantyAlertBox');
+  const alertText = document.getElementById('warrantyAlertText');
+  const slaText = document.getElementById('slaPreviewText');
+
+  if (phone) phone.value = '';
+  if (name) name.value = '';
+  if (addr) addr.value = '';
+  if (dev) dev.value = '';
+  if (imei) imei.value = '';
+  if (desc) desc.value = '';
+  if (counter) {
+    counter.className = 'char-counter';
+    counter.textContent = '0 ký tự (tối thiểu 10)';
+  }
+  if (alertBox) alertBox.style.display = 'none';
+  if (alertText) alertText.textContent = '';
+  if (slaText) slaText.textContent = 'Chưa tính (chọn mức ưu tiên)';
+
+  selectedPriority = 'TRUNG_BINH';
+  const radio = document.querySelector('input[name="priorityRadio"][value="TRUNG_BINH"]');
+  if (radio) radio.checked = true;
 }
 
 // -------------------------------------------------------------
@@ -562,19 +703,26 @@ function highlightSubstring(text, query) {
 // 4. KIỂM TRA BẢO HÀNH & HIỂN THỊ THÔNG BÁO LỖI (ẢNH 3 - TRƯỜNG 6)
 // -------------------------------------------------------------
 function checkWarrantyStatus(product) {
-  const serial = document.getElementById('deviceImeiInput').value.trim();
+  const serialInput = document.getElementById('deviceImeiInput');
+  const serial = serialInput ? serialInput.value.trim() : '';
   const alertBox = document.getElementById('warrantyAlertBox');
   const alertText = document.getElementById('warrantyAlertText');
   if (!alertBox || !alertText) return;
 
-  // Nếu số serial là SN-A52-778901 hoặc có đuôi hết hạn
+  if (!serial) {
+    alertBox.style.display = 'none';
+    alertText.textContent = '';
+    return;
+  }
+
+  alertBox.style.display = 'flex';
   if (serial.includes('778901') || serial.includes('SN-A52')) {
     alertBox.className = 'warranty-alert-box';
     alertText.innerHTML = `⚠ Thiết bị ${escapeHtml(serial)} đã hết hạn bảo hành (QT-01).`;
   } else {
     // Thiết bị hợp lệ còn hạn bảo hành
     alertBox.className = 'warranty-alert-box valid';
-    alertText.innerHTML = `✔ Thiết bị ${escapeHtml(serial || 'chính hãng')} đối soát ERP hợp lệ: Còn hạn bảo hành chính hãng (QT-05).`;
+    alertText.innerHTML = `✔ Thiết bị ${escapeHtml(serial)} đối soát ERP hợp lệ: Còn hạn bảo hành chính hãng (QT-05).`;
   }
 }
 
@@ -854,6 +1002,7 @@ async function submitTicket() {
   }
 
   showToast(`Tạo phiếu thành công: ${newTicketCode} (Ghi log kiểm toán QT-06)!`);
+  clearCreateForm();
 
   // Tải lại danh sách phiếu và chuyển hướng sang xem chi tiết
   setTimeout(() => {
@@ -1144,9 +1293,8 @@ document.addEventListener('click', e => {
 // 10. KHỞI TẠO ỨNG DỤNG KHI TẢI TRANG
 // -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
-  switchTab('screen-list', document.querySelectorAll('.nav-pill')[0]);
+  initAuth();
+  switchTab('screen-list');
   await initPhoneModels();
   await loadTickets(1);
-  updateSlaPrediction();
-  checkWarrantyStatus();
 });

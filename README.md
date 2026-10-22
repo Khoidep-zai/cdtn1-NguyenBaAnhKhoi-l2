@@ -39,6 +39,11 @@ npm run db:migrate
 # Bước 4: Khởi động máy chủ ứng dụng (Web + REST API)
 npm run dev
 # (hoặc: npm start)
+
+Lưu ý khi chạy chạy trên tiếp terminal bên ngoài 
+chạy lệnh cd cdtn1-NguyenBaAnhKhoi-l2 để vào thư mục dự án
+chạy cd src 
+cuối cùng là chạy test và run : npm test hoặc npm run dev 
 ```
 
 Sau khi chạy Bước 4, mở trình duyệt web truy cập:

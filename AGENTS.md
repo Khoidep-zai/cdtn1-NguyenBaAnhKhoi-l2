@@ -351,3 +351,13 @@ Toàn bộ các kỹ năng được lưu trữ có cấu trúc bên dưới thư
         ├── security-checklist.md      # Checklist bảo mật ứng dụng
         └── testing-patterns.md        # Mẫu thiết kế bộ test 3 loại (Happy/Edge/Error)
 ```
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as GitHub issues (`gh` CLI). See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context layout (`GLOSSARY.md` + `docs/adr/`). See `docs/agents/domain.md`.
