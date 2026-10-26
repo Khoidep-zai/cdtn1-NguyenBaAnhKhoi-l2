@@ -14,24 +14,38 @@ L2 – Tiếp nhận và phân loại yêu cầu bảo hành (Warranty Reception
 ## 1. Mục tiêu hệ thống
 Hệ thống hỗ trợ nhân viên quầy tiếp nhận tra cứu hồ sơ khách hàng theo SĐT (QT-01), tạo phiếu bảo hành điện tử (BH-xxxxxx/yyyy - QT-07), tự động tính hạn cam kết SLA loại trừ ngày Chủ Nhật (QT-04) và phân loại sơ bộ sự cố kỹ thuật theo quy tắc vòng đời một chiều (QT-06), ngăn chặn tạo phiếu trùng lặp trên cùng Serial/IMEI (QT-09). Giải pháp giúp số hóa hoàn toàn quy trình quầy tiếp nhận, triệt tiêu 20% trùng lặp khách hàng và giảm thiểu tối đa tỷ lệ trễ hạn SLA.
 
-## 2. Yêu cầu môi trường
-- Node.js 20 LTS (hoặc 22/24 LTS), npm 10+
-- PostgreSQL 15, 16 hoặc 18 (Cổng mặc định: 5432 hoặc 5433)
-- Biến môi trường: xem file `.env.example` (`DATABASE_URL`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `PORT`)
+## 2. Yêu cầu môi trường & Quản lý phụ thuộc (Chuẩn Buổi 11 SE)
+- **Phiên bản Runtime chuẩn:** **Node.js 20 LTS** (hỗ trợ Node.js 20, 22, 24; đã xác nhận tương thích hoàn toàn trên Node v24 LTS).
+- **Tệp khoá phiên bản (Lockfile):** `package-lock.json` được commit trực tiếp vào repo (tiêu chí **C6** BT2). Khuyến nghị cài đặt bằng lệnh `npm ci` để đảm bảo cài đúng 100% phiên bản đã khoá, loại trừ lỗi "trên máy em chạy được".
+- **Hệ quản trị CSDL:** PostgreSQL 15, 16 hoặc 18 (hoặc chạy tự động qua container `postgres:16-alpine`).
+- **Biến môi trường:** Xem file `.env.example` liệt kê đầy đủ tên biến cấu hình (`PORT`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `LOG_LEVEL`).
 
-## 3. Hướng dẫn khởi chạy hệ thống (Đúng 4 bước theo yêu cầu BT2 & Buổi 10)
+## 3. Hướng dẫn khởi chạy hệ thống
 
-Hệ thống được thiết kế theo nguyên tắc "Phép thử thư mục trống" (Clean-slate test): người khác clone repo về có thể chạy ngay mà không cần cấu hình phức tạp.
+Hệ thống được thiết kế theo nguyên tắc "Phép thử thư mục trống" (Clean-slate test): người khác clone repo về có thể chạy ngay theo 2 cách:
 
-### 4 bước khởi chạy hệ thống (mỗi bước 1 lệnh):
+### Cách 1: Khởi chạy bằng Docker Compose (≤ 2 lệnh theo chuẩn Buổi 11 & Bài tập 3)
 
 ```bash
-# Bước 1: Sao chép tệp cấu hình môi trường mẫu
+# Lệnh 1: Sao chép file cấu hình môi trường mẫu
 cp .env.example .env
-# (Trên Windows Command Prompt / PowerShell dùng: copy .env.example .env)
+# (Trên Windows CMD / PowerShell: copy .env.example .env)
 
-# Bước 2: Cài đặt các gói thư viện phụ thuộc
-npm install
+# Lệnh 2: Dựng ảnh và khởi động toàn bộ dịch vụ (CSDL + API Backend + Web UI)
+docker compose up -d --build
+```
+> [!NOTE]
+> `docker-compose.yml` sử dụng cơ chế `condition: service_healthy` để đảm bảo backend chỉ khởi động sau khi PostgreSQL đã sẵn sàng nhận kết nối, loại trừ hoàn toàn lỗi `ECONNREFUSED`. CSDL tự động nạp `schema.sql` ngay khi khởi tạo volume sạch.
+
+### Cách 2: Khởi chạy thủ công từ máy trạm (4 bước chuẩn)
+
+```bash
+# Bước 1: Tạo file cấu hình từ mẫu
+cp .env.example .env
+
+# Bước 2: Cài đặt chính xác các phụ thuộc đã khoá phiên bản
+npm ci
+# (hoặc: npm install)
 
 # Bước 3: Khởi tạo bảng CSDL PostgreSQL và nạp Master Data thực tế
 npm run db:migrate
@@ -39,27 +53,17 @@ npm run db:migrate
 # Bước 4: Khởi động máy chủ ứng dụng (Web + REST API)
 npm run dev
 # (hoặc: npm start)
-
-Lưu ý khi chạy chạy trên tiếp terminal bên ngoài 
-chạy lệnh cd cdtn1-NguyenBaAnhKhoi-l2 để vào thư mục dự án
-chạy cd src 
-cuối cùng là chạy test và run : npm test hoặc npm run dev 
 ```
 
-Sau khi chạy Bước 4, mở trình duyệt web truy cập:
+Sau khi khởi chạy, mở trình duyệt web truy cập:
 👉 **http://localhost:3000** (Giao diện Quầy tiếp nhận bảo hành 3 màn hình kết nối API thật)
 
-### Các Endpoint kiểm tra nhanh hệ thống:
-- **Giao diện Web Frontend (3 màn hình):** `http://localhost:3000/`
-- **Smoke Test hệ thống:** `http://localhost:3000/health` (Trả về `{"status":"ok"}`)
-- **Kiểm tra kết nối CSDL PostgreSQL:** `http://localhost:3000/health/db` (Trả về `{"status":"ok","database":{...}}`)
-- **API danh sách phiếu bảo hành:** `http://localhost:3000/api/tickets?page=1&limit=25`
-- **API tra cứu khách hàng theo SĐT (QT-01):** `http://localhost:3000/api/customers?phone=0901234567`
-- **API danh mục nhóm sự cố kỹ thuật:** `http://localhost:3000/api/categories`
-- **API danh mục trung tâm bảo hành:** `http://localhost:3000/api/centers`
-
-> [!TIP]
-> **Lưu ý trên Windows PowerShell:** Nếu gặp lỗi hạn chế script execution policy (`PSSecurityException`), bạn có thể dùng `npm.cmd run dev` và `npm.cmd test`, hoặc chạy trực tiếp bằng lệnh `node src/index.js`.
+### Phép thử tự kiểm 5 bước (Self-check Buổi 11 SE - A4):
+1. **Kiểm tra trạng thái dịch vụ:** `docker compose ps` (Cột STATUS của `postgres` và `api` phải là `healthy` / `Up`).
+2. **Smoke Test hệ thống:** `curl -s http://localhost:3000/health` (Trả về `{"status":"ok"}`).
+3. **Kiểm tra kết nối CSDL PostgreSQL:** `curl -s http://localhost:3000/health/db` (Trả về `{"status":"ok","database":{...}}`).
+4. **Mở giao diện Web Frontend:** `http://localhost:3000/` (Thao tác tra cứu SĐT, tạo phiếu, chuyển trạng thái).
+5. **Đọc log có cấu trúc:** `docker compose logs api --tail 20` (Log định dạng JSON, có thời điểm ISO, `requestId`, và đã che thông tin nhạy cảm PII theo QT-15).
 
 
 ## 4. Cấu trúc thư mục mã nguồn (Chuẩn 4 tầng phân lớp)

@@ -17,4 +17,27 @@ class AppError extends Error {
   }
 }
 
-module.exports = { AppError };
+/**
+ * LoiNghiepVu — Vi phạm quy tắc nghiệp vụ (QT-01..QT-09) theo chuẩn Buổi 11
+ */
+class LoiNghiepVu extends AppError {
+  constructor(code, message, httpStatus = 409, chiTiet = undefined) {
+    super(code, message, chiTiet);
+    this.name = 'LoiNghiepVu';
+    this.httpStatus = httpStatus;
+  }
+}
+
+/**
+ * LoiTruyCapDuLieu — Lỗi tầng dữ liệu/CSDL theo chuẩn Buổi 11
+ */
+class LoiTruyCapDuLieu extends Error {
+  constructor(message = 'Lỗi truy cập dữ liệu', cause = undefined) {
+    super(message, cause ? { cause } : undefined);
+    this.name = 'LoiTruyCapDuLieu';
+    this.cause = cause;
+  }
+}
+
+module.exports = { AppError, LoiNghiepVu, LoiTruyCapDuLieu };
+

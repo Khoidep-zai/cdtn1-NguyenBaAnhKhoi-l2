@@ -57,9 +57,13 @@ function formatTicketContract(ticket) {
     isoDueDate = !isNaN(d.getTime()) ? d.toISOString() : String(rawDueDate);
   }
 
+  const safeCustomerName = (ticket.customer_name ?? ticket.customerName ?? ticket.customer?.full_name ?? '').trim() || '(không rõ)';
+
   return {
     ticket_code: ticket.ticket_code || ticket.ticketCode || ticket.id || '',
-    customer_name: ticket.customer_name || ticket.customerName || '',
+    ticketCode: ticket.ticket_code || ticket.ticketCode || ticket.id || '',
+    customer_name: safeCustomerName,
+    tenKhach: safeCustomerName,
     customer_address: ticket.customer_address || ticket.customerAddress || ticket.address || '',
     customer_phone_masked: maskPhoneNumber(ticket.customer_phone || ticket.customerPhone || ''),
     customer_phone_raw: ticket.customer_phone || ticket.customerPhone || '',
@@ -74,6 +78,13 @@ function formatTicketContract(ticket) {
     center_id: ticket.center_id || null,
     status_logs: Array.isArray(ticket.status_logs) ? ticket.status_logs : [],
   };
+}
+
+/**
+ * toTicketView — Chuẩn hóa view phiếu bảo hành ra ranh giới (chuẩn Buổi 11 SE)
+ */
+function toTicketView(ticket) {
+  return formatTicketContract(ticket);
 }
 
 /**
@@ -98,4 +109,5 @@ module.exports = {
   maskPhoneNumber,
   formatTicketContract,
   validateTicketContract,
+  toTicketView,
 };

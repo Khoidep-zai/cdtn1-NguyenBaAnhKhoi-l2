@@ -49,17 +49,42 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-// Middleware xử lý lỗi hệ thống cuối cùng: KHÔNG để lộ vết ngăn xếp (stack trace) ra client
+const { AppError, LoiNghiepVu, LoiTruyCapDuLieu } = require('./errors/AppError');
+
+// Middleware xử lý lỗi duy nhất xuyên lớp (Chuẩn Buổi 11 SE - Slide 24 & Tài liệu tự học A3)
 app.use((err, req, res, _next) => {
-  logger.error('Lỗi không lường trước', {
+  if (err instanceof AppError || err instanceof LoiNghiepVu || err.name === 'AppError' || err.name === 'LoiNghiepVu') {
+    logger.info('Vi phạm quy tắc nghiệp vụ', {
+      requestId: req.requestId,
+      ma: err.code || err.ma,
+      thong_diep: err.message,
+    });
+    const status = err.httpStatus || err.statusCode || (err.code === 'PHIEU_DANG_MO' ? 409 : err.code === 'KHACH_KHONG_TON_TAI' ? 404 : 400);
+    return res.status(status).json({
+      success: false,
+      error: err.code || err.ma,
+      message: err.message,
+      chi_tiet: err.chiTiet,
+      requestId: req.requestId,
+    });
+  }
+
+  // Lỗi hạ tầng CSDL hoặc lỗi hệ thống không lường trước (log MỘT lần tại middleware)
+  const isDbError = err instanceof LoiTruyCapDuLieu || err.name === 'LoiTruyCapDuLieu' || err.code === 'ECONNREFUSED';
+  const status = isDbError ? 503 : (err.statusCode || 500);
+
+  logger.error('Lỗi hệ thống', {
     requestId: req.requestId,
     loai: err.name,
     thong_diep: err.message,
+    err,
   });
-  res.status(err.statusCode || 500).json({
+
+  // Tuyệt đối KHÔNG trả err.stack, câu SQL hay tên bảng cho client (che giấu chi tiết kỹ thuật)
+  res.status(status).json({
     success: false,
-    error: 'LOI_HE_THONG',
-    message: 'Đã xảy ra lỗi không mong đợi. Vui lòng thử lại sau.',
+    error: isDbError ? 'LOI_CSDL' : 'LOI_HE_THONG',
+    message: `Hệ thống đang gặp sự cố. Vui lòng thử lại. Mã tra cứu: ${req.requestId}`,
     requestId: req.requestId,
   });
 });

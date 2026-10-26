@@ -3,7 +3,7 @@ const { randomUUID } = require('node:crypto');
 const MUC = { debug: 10, info: 20, warn: 30, error: 40 };
 const MUC_TOI_THIEU = MUC[process.env.LOG_LEVEL || 'info'] ?? MUC.info;
 
-// Các trường nhạy cảm TUYỆT ĐỐI KHÔNG được ghi vào nhật ký (tiêu chuẩn bảo mật học phần)
+// Các trường nhạy cảm TUYỆT ĐỐI KHÔNG được ghi vào nhật ký (tiêu chuẩn bảo mật học phần CDTN1 - QT-15)
 const TRUONG_CHE = [
   'password',
   'mat_khau',
@@ -13,10 +13,18 @@ const TRUONG_CHE = [
   'secret',
   'cvv',
   'so_the',
+  'so_dien_thoai',
+  'sodienthoai',
+  'phone',
+  'so_dt',
+  'sdt',
 ];
 
 function che(gia_tri) {
   if (gia_tri === null || typeof gia_tri !== 'object') return gia_tri;
+  if (gia_tri instanceof Error) {
+    return { loai: gia_tri.name, thong_diep: gia_tri.message, stack: gia_tri.stack };
+  }
   const ra = Array.isArray(gia_tri) ? [] : {};
   for (const [k, v] of Object.entries(gia_tri)) {
     ra[k] = TRUONG_CHE.some((t) => k.toLowerCase().includes(t)) ? '***' : che(v);

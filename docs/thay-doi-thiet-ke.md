@@ -76,3 +76,18 @@ Hệ thống: Mekong Mobile CRM — Luồng L2: Tiếp nhận và phân loại y
 - Form tạo phiếu gửi `center_id` và `store_id` theo tài khoản hiện tại thay vì cố định chi nhánh 01; địa chỉ khách hàng được lưu và hiển thị trong chi tiết phiếu.
 - Căn cột bảng tài khoản theo layout cố định và dùng cùng bảng màu nền sáng cho danh sách, form, chi tiết và modal.
 - Nhãn nút có vùng văn bản riêng để ngăn icon và nội dung bị chồng/lặp khi đổi ngôn ngữ.
+
+---
+
+### TD-08 Tích hợp hệ thống, xử lý lỗi xuyên lớp và đóng gói container theo Buổi 11 (26/10/2026)
+- **Phản hồi của GV / Nguồn yêu cầu:** Bài giảng Buổi 11 và Tài liệu tự học CDTN1 (Tích hợp hệ thống, xử lý lỗi xuyên lớp và đóng gói theo stack SE).
+- **Quyết định:** SỬA
+  1. Đóng gói `Dockerfile` theo chuẩn Multi-stage build (tách lớp `deps` và `runtime`), chạy bằng user không đặc quyền `app`, thêm lệnh kiểm tra sức khỏe `HEALTHCHECK` định kỳ.
+  2. Bổ sung `.dockerignore` bắt buộc để ngăn chặn rò rỉ secret `.env`, `node_modules` local và dữ liệu thô vào Docker Image.
+  3. Cập nhật `docker-compose.yml` sử dụng biến môi trường từ `.env` (không ghi cứng mật khẩu), khởi động CSDL PostgreSQL có healthcheck `pg_isready` và ràng buộc `condition: service_healthy` cho API backend để loại bỏ hoàn toàn lỗi khởi động chạy đua `ECONNREFUSED`.
+  4. Nâng cấp Logger JSON ra stdout có mã tương quan `requestId` và tự động che giấu trường nhạy cảm PII (`so_dien_thoai`, `sodienthoai`, `phone`, `password`, `token`, `secret`) theo quy tắc QT-15.
+  5. Chuẩn hóa middleware xử lý lỗi tập trung duy nhất tại ranh giới: phân biệt rõ lỗi nghiệp vụ (`AppError` / `LoiNghiepVu` trả 4xx + ghi log INFO) và lỗi hạ tầng hệ thống (trả 503/500 kèm mã tra cứu `requestId`, chỉ ghi log ERROR một lần và tuyệt đối không gửi `err.stack` cho client).
+  6. Xử lý triệt để lỗi BUG-004: fallback an toàn `(khach.full_name ?? '').trim() || '(không rõ)'` khi khách hàng thiếu họ tên từ dữ liệu nguồn cũ, bổ sung regression test `TC-04` và `CT-05`.
+- **Lý do:** Hiện thực hóa trọn vẹn nguyên tắc TÁI LẬP ĐƯỢC (Reproducibility), bảo vệ dữ liệu khách hàng theo QT-15, loại trừ hiện tượng "trên máy em chạy được", và đáp ứng đầy đủ tiêu chí đánh giá C4, C6 của Bài tập 2.
+- **Ảnh hưởng:** Cập nhật `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `.env.example`, `src/backend/utils/logger.js`, `src/backend/index.js`, `src/backend/contracts/ticket.contract.js`, `src/backend/services/ticketService.js`, `docs/bug-log.md`, `tests/ticket.service.test.js`, `tests/ticket.contract.test.js`.
+

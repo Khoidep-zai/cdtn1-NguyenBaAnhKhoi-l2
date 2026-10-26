@@ -1,0 +1,23 @@
+# ==============================================================================
+# .dockerignore — BẮT BUỘC theo chuẩn Buổi 11 (Slide 30 & Mục 4.3)
+# Ngăn chặn đưa node_modules local, file bí mật .env và file thừa vào Docker Image
+# ==============================================================================
+node_modules
+.venv
+__pycache__
+.git
+.gitignore
+.env
+.env.local
+.idea
+.vscode
+tests
+docs
+scratch
+data/raw
+.agent
+.agents
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

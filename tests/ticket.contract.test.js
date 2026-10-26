@@ -94,4 +94,18 @@ describe('Hợp đồng dữ liệu ranh giới Ticket (Buổi 9 SE - D1 & D3)',
       }
     );
   });
+
+  it('CT-05 [Hồi quy - BUG-004]: toTicketView trả về tenKhach="(không rõ)" khi khách hàng thiếu tên', () => {
+    const { toTicketView } = require('../src/backend/contracts/ticket.contract');
+    const ticketWithNullCustomer = {
+      ...sampleTicket,
+      customer_name: null,
+      customer: { id: 1024, full_name: null },
+    };
+    const contracted = toTicketView(ticketWithNullCustomer);
+
+    assert.equal(contracted.customer_name, '(không rõ)');
+    assert.equal(contracted.tenKhach, '(không rõ)');
+    assert.equal(contracted.ticketCode, 'BH-100234/2026');
+  });
 });

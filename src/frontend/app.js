@@ -175,7 +175,7 @@ function initializePreferences() {
 function toggleTheme() {
   currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.body.dataset.theme = currentTheme;
-  try { localStorage.setItem('mekong_crm_theme', currentTheme); } catch (e) {}
+  try { localStorage.setItem('mekong_crm_theme', currentTheme); } catch (e) { console.debug('Không lưu được theme vào localStorage:', e); }
   const button = document.getElementById('themeToggle');
   if (button) button.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
 }
@@ -183,7 +183,7 @@ function toggleTheme() {
 function toggleLanguage() {
   currentLanguage = currentLanguage === 'vi' ? 'en' : 'vi';
   document.documentElement.lang = currentLanguage;
-  try { localStorage.setItem('mekong_crm_language', currentLanguage); } catch (e) {}
+  try { localStorage.setItem('mekong_crm_language', currentLanguage); } catch (e) { console.debug('Không lưu được language vào localStorage:', e); }
   const button = document.getElementById('languageToggle');
   if (button) button.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
   const pairs = {
@@ -363,7 +363,7 @@ async function handleManualLogin(event) {
 }
 
 async function logoutDemo() {
-  try { await window.authApi.logout(); } catch (e) {}
+  try { await window.authApi.logout(); } catch (e) { console.debug('Lỗi đăng xuất API:', e); }
   currentUser = null;
   setAppVisibility(false);
   openLoginModal();
@@ -824,7 +824,7 @@ function resetTicketFiltersForLogin() {
       ? 'ALL'
       : String(currentUser?.branchId || 'ALL');
   }
-  try { localStorage.removeItem('mekong_crm_manual_center'); } catch (e) {}
+  try { localStorage.removeItem('mekong_crm_manual_center'); } catch (e) { console.debug('Không xóa được manual center:', e); }
   currentPage = 1;
 }
 

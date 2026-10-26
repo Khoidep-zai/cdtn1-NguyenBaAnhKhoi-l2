@@ -1,41 +1,51 @@
-version: '3.8'
+# ==============================================================================
+# docker-compose.yml — Đóng gói ứng dụng web nhiều tầng theo Buổi 11 Track SE
+# Tái lập hệ thống bằng 2 lệnh: cp .env.example .env && docker compose up -d --build
+# ==============================================================================
 
 services:
-  api:
-    build: .
-    container_name: cdtn1-warranty-api
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=cdtn1_warranty_db
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres_dev_password
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   postgres:
     image: postgres:16-alpine
     container_name: cdtn1-warranty-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: cdtn1_warranty_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres_dev_password
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: ${DB_NAME:-cdtn1_warranty_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
+      # Schema tự động chạy khi volume CSDL còn trống
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    ports:
+      - "${DB_PORT:-5432}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-cdtn1_warranty_db}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    container_name: cdtn1-warranty-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Gọi cơ sở dữ liệu bằng TÊN DỊCH VỤ trong mạng Compose, không dùng localhost
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-cdtn1_warranty_db}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:-cdtn1_super_secure_jwt_secret_key_2026}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    depends_on:
+      postgres:
+        # BẮT BUỘC dùng service_healthy: Chờ CSDL thực sự sẵn sàng nhận kết nối,
+        # tránh lỗi ECONNREFUSED khi khởi động đồng thời (Buổi 11 SE - A2)
+        condition: service_healthy
 
 volumes:
   pgdata:

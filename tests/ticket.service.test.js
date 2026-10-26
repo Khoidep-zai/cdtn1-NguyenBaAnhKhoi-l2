@@ -169,4 +169,25 @@ test('Unit Test: TicketService - Lớp nghiệp vụ cốt lõi (Buổi 7)', asy
       }
     );
   });
+
+  // =========================================================================
+  // TEST HỒI QUY (Regression Test - Chuẩn Buổi 11 SE)
+  // Xác nhận lỗi BUG-004: Khách hàng thiếu họ tên vẫn tạo được phiếu với tenKhach = '(không rõ)'
+  // =========================================================================
+  await t.test('TC-04 [Hồi quy - BUG-004]: Tạo phiếu thành công khi khách hàng thiếu họ tên (dùng mặc định "(không rõ)")', () => {
+    const ticket = TicketService.createTicket({
+      customer_id: 1024,
+      customer_name: null,
+      customer: { id: 1024, full_name: null },
+      product_name: 'iPhone 13 Pro',
+      serial_no: 'SN-TEST-NULLNAME-99',
+      center_id: 1,
+      category_id: 1,
+      issue_description: 'Máy sạc không vào điện',
+    });
+
+    assert.ok(ticket);
+    assert.strictEqual(ticket.customer_name, '(không rõ)', 'customer_name phải là "(không rõ)" để giữ hợp đồng ranh giới');
+    assert.ok(ticket.ticket_code.startsWith('BH-'), 'Mã phiếu phải có định dạng BH-xxxxxx/yyyy');
+  });
 });

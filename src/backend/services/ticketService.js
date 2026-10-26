@@ -103,7 +103,7 @@ class TicketService {
       ticket_id: counter,
       ticket_code: ticketCode,
       customer_id: data.customer_id || 1024,
-      customer_name: data.customer_name || 'Khách hàng',
+      customer_name: (data.customer_name !== undefined ? String(data.customer_name || '').trim() : (data.customer?.full_name ? String(data.customer.full_name).trim() : '')) || '(không rõ)',
       customer_phone: data.customer_phone || '0901234567',
       customer_address: data.customer_address || data.customerAddress || '',
       product_id: data.product_id || 1,
