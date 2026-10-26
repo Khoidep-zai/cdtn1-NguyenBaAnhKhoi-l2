@@ -4,6 +4,8 @@ const config = require('./config');
 const ticketRoutes = require('./routes/ticketRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const catalogRoutes = require('./routes/catalogRoutes');
+const authRoutes = require('./routes/authRoutes');
+const { authenticate } = require('./middlewares/authenticate');
 
 const { logger, ganRequestId } = require('./utils/logger');
 
@@ -33,13 +35,14 @@ app.get('/health/db', async (req, res) => {
 });
 
 // Phân hệ quản lý tiếp nhận bảo hành (L2)
-app.use('/api/tickets', ticketRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/tickets', authenticate, ticketRoutes);
 
 // Phân hệ tra cứu và đăng ký khách hàng (FR1 / US1 / QT-01)
-app.use('/api/customers', customerRoutes);
+app.use('/api/customers', authenticate, customerRoutes);
 
 // Phân hệ danh mục dữ liệu master data (Categories, Centers, Products)
-app.use('/api', catalogRoutes);
+app.use('/api', authenticate, catalogRoutes);
 
 // Fallback trang chủ trả về Frontend index.html
 app.get('/', (req, res) => {

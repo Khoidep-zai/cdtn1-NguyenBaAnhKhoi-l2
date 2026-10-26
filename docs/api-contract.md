@@ -6,7 +6,7 @@
 
 ### 1. Sơ đồ thực thể quan hệ (ERD — Crow's Foot Notation)
 
-Mô hình dữ liệu luồng L2 được thiết kế chuẩn hóa bậc 3 (3NF) gồm **5 bảng thực thể cốt lõi** và 1 bảng danh mục hỗ trợ, thể hiện đầy đủ khóa chính (PK), khóa ngoại (FK), các ràng buộc toàn vẹn và tỷ số lực lượng theo ký hiệu Crow's Foot (xem chi tiết file `docs/erd.drawio`).
+Mô hình gồm các bảng nghiệp vụ L2 cùng bảng tài khoản `app_user` dùng để xác thực và phân quyền (xem `docs/erd.drawio`). Lược đồ PostgreSQL đã có bảng tài khoản; runtime ticket hiện vẫn dùng repository in-memory, nên các bảng ticket trong lược đồ chưa đồng nghĩa với ticket được lưu bền vững từ giao diện.
 
 #### Cấu trúc các bảng thực thể cốt lõi:
 
@@ -18,6 +18,7 @@ Mô hình dữ liệu luồng L2 được thiết kế chuẩn hóa bậc 3 (3NF
 | `ticket` | Phiếu bảo hành — thực thể trung tâm | `ticket_id BIGSERIAL` | `ticket_code` UNIQUE; FK 4 bảng; CHECK priority, status, issue_desc |
 | `ticket_status_log` | Nhật ký chuyển trạng thái kiểm toán | `log_id BIGSERIAL` | FK `ticket_id` ON DELETE CASCADE (QT-06 Audit Trail) |
 | `service_center` | Trung tâm tiếp nhận bảo hành chi nhánh | `center_id SERIAL` | `center_code` UNIQUE; FK liên kết với `ticket` |
+| `app_user` | Tài khoản đăng nhập và phân quyền | `user_id BIGSERIAL` | `username` UNIQUE; hash mật khẩu scrypt; role CHECK; `center_id` FK tùy role; `is_active` |
 
 #### Tỷ số lực lượng giữa các bảng (Crow's Foot Notation):
 - `customer` **1 — 0..***: `device` (Một khách hàng sở hữu 0 hoặc nhiều thiết bị trong hệ thống)
@@ -26,6 +27,21 @@ Mô hình dữ liệu luồng L2 được thiết kế chuẩn hóa bậc 3 (3NF
 - `issue_category` **0..1 — 0..***: `ticket` (`category_id` cho phép NULL đối với các phiếu mới tiếp nhận chưa phân loại)
 - `ticket` **1 — 1..***: `ticket_status_log` (Một phiếu bảo hành bắt buộc phải có ít nhất 1 bản ghi nhật ký khởi tạo)
 - `service_center` **1 — 0..***: `ticket` (Một trung tâm bảo hành tiếp nhận nhiều phiếu bảo hành)
+- `service_center` **1 — 0..***: `app_user` (Nhân viên và quản lý chi nhánh phải thuộc một chi nhánh; quản lý hệ thống có `center_id = NULL`)
+
+#### Xác thực phiên và phân quyền
+
+Đăng nhập qua `POST /api/auth/login` bằng username/mật khẩu được lưu trong `app_user`; backend kiểm tra hash scrypt và phát JWT HS256 trong cookie `mekong_session` có cờ HttpOnly, SameSite=Strict và thời hạn 8 giờ. API nghiệp vụ và endpoint hồ sơ/tài khoản kiểm tra phiên ở backend. Khi tài khoản bị vô hiệu hóa, phiên tiếp theo bị từ chối. Không có mật khẩu hardcode: `npm run auth:seed-roles` tạo ba tài khoản development với mật khẩu ngẫu nhiên và chỉ in một lần; production dùng `npm run auth:bootstrap` để người vận hành tự đặt tài khoản đầu tiên. Cả hai cần `JWT_SECRET` tối thiểu 32 byte.
+
+Chính sách mật khẩu: từ 6 đến 128 ký tự trong development/test để hỗ trợ tài khoản demo nội bộ; production bắt buộc từ 12 đến 128 ký tự. Backend là nơi áp dụng chính sách này cho cả tạo và cập nhật tài khoản.
+
+| Vai trò | Phạm vi nghiệp vụ | Quản lý tài khoản |
+| :--- | :--- | :--- |
+| `NHAN_VIEN` | Chi nhánh được gán | Không |
+| `QUAN_LY_CHI_NHANH` | Chi nhánh được gán | Tạo/sửa nhân viên cùng chi nhánh |
+| `QUAN_LY_HE_THONG` | Mọi chi nhánh | Xem/sửa mọi tài khoản và gán role/chi nhánh |
+
+Mọi role được cập nhật hồ sơ cá nhân của chính mình. Backend từ chối request chưa đăng nhập bằng 401, role không phù hợp hoặc chi nhánh ngoài phạm vi bằng 403.
 
 #### Kiểm tra 5 lỗi ERD phổ biến (theo Tài liệu Buổi 5):
 
@@ -191,6 +207,13 @@ Kiểm tra tính nhất quán giữa 3 màn hình giao diện (docs/wireframes.h
 
 | Phương thức | Đường dẫn URL Endpoint | Mục đích nghiệp vụ | User Story tương ứng |
 | :---: | :--- | :--- | :---: |
+| `POST` | `/api/auth/login` | Đăng nhập bằng tài khoản backend và tạo cookie phiên | **NFR4** |
+| `POST` | `/api/auth/logout` | Xóa cookie phiên | **NFR4** |
+| `GET` | `/api/auth/me` | Đọc tài khoản và role của phiên hiện tại | **NFR4** |
+| `PATCH` | `/api/auth/profile` | Cập nhật họ tên và số điện thoại hồ sơ của chính mình | **NFR4** |
+| `GET` | `/api/auth/users` | Liệt kê tài khoản theo quyền toàn hệ thống hoặc chi nhánh | **NFR4** |
+| `POST` | `/api/auth/users` | Tạo tài khoản; quản lý chi nhánh chỉ tạo nhân viên chi nhánh mình | **NFR4** |
+| `PATCH` | `/api/auth/users/{id}` | Sửa tài khoản trong phạm vi quyền; bảo vệ quản lý hệ thống cuối cùng | **NFR4** |
 | `GET` | `/api/customers?phone={phone}` | Tra cứu hồ sơ khách hàng theo số điện thoại (QT-01) | **US1** (MUST) |
 | `POST` | `/api/customers` | Đăng ký mới hồ sơ khách hàng khi chưa tồn tại | **US1, US2** |
 | `GET` | `/api/devices/{serial}/warranty` | Đối soát dữ liệu bảo hành thiết bị từ hệ thống ERP (QT-05) | **US8** (COULD) |
@@ -200,7 +223,9 @@ Kiểm tra tính nhất quán giữa 3 màn hình giao diện (docs/wireframes.h
 | `GET` | `/api/tickets/{id}` | Xem chi tiết phiếu kèm dòng thời gian lịch sử trạng thái | **US5** (SHOULD) |
 | `PATCH` | `/api/tickets/{id}/status` | Cập nhật trạng thái phiếu và ghi nhật ký kiểm toán (QT-06) | **US3, US5** (MUST) |
 | `GET` | `/api/categories` | Lấy danh mục 6 nhóm lỗi từ issue_category | **US2** (MUST) |
-| `GET` | `/api/centers` | Lấy danh mục 6 trung tâm bảo hành từ service_center | **US6** (SHOULD) |
+| `GET` | `/api/centers` | Lấy danh mục trung tâm bảo hành đang hoạt động từ bảng `service_center` trong PostgreSQL | **US6** (SHOULD) |
+
+Tất cả `/api/*` ngoài login/logout yêu cầu cookie `mekong_session` hợp lệ; `/health` và `/health/db` dành cho kiểm tra tình trạng dịch vụ. Cookie phiên không được lưu trong `localStorage`.
 
 #### 4.2 Đặc tả chi tiết Endpoint: `POST /api/tickets`
 
@@ -208,6 +233,7 @@ Kiểm tra tính nhất quán giữa 3 màn hình giao diện (docs/wireframes.h
 ```json
 {
   "customer_id": 1024,
+  "customer_address": "Quận 1, TP. Hồ Chí Minh",
   "device_id": 3311,
   "center_id": 1,
   "category_id": 2,
@@ -226,6 +252,7 @@ Kiểm tra tính nhất quán giữa 3 màn hình giao diện (docs/wireframes.h
     "ticket_code": "BH-000231/2026",
     "status": "MOI",
     "priority": "CAO",
+    "customer_address": "Quận 1, TP. Hồ Chí Minh",
     "received_at": "2026-09-08T14:30:00+07:00",
     "due_date": "2026-09-09T14:30:00+07:00",
     "is_warranty": true

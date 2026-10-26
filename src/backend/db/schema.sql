@@ -14,6 +14,25 @@ CREATE TABLE IF NOT EXISTS service_center (
     thanh_pho   VARCHAR(60) NOT NULL
 );
 
+-- Tài khoản nhân viên và quyền truy cập (RBAC)
+CREATE TABLE IF NOT EXISTS app_user (
+    user_id       BIGSERIAL PRIMARY KEY,
+    username      VARCHAR(80) NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    full_name     VARCHAR(120) NOT NULL,
+    phone         VARCHAR(20),
+    role          VARCHAR(32) NOT NULL CHECK (role IN ('NHAN_VIEN', 'QUAN_LY_CHI_NHANH', 'QUAN_LY_HE_THONG')),
+    center_id     INT REFERENCES service_center(center_id) ON DELETE RESTRICT,
+    is_active     BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT chk_app_user_center_role CHECK (
+      (role = 'QUAN_LY_HE_THONG' AND center_id IS NULL) OR
+      (role <> 'QUAN_LY_HE_THONG' AND center_id IS NOT NULL)
+    )
+);
+CREATE INDEX IF NOT EXISTS idx_app_user_center_role ON app_user(center_id, role);
+
 -- 2. Bảng Danh mục Nhóm sự cố (Issue Category - 6 nhóm lỗi chuẩn hóa)
 CREATE TABLE IF NOT EXISTS issue_category (
     category_id      SERIAL PRIMARY KEY,

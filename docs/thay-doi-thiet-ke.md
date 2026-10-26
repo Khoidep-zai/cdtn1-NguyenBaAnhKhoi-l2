@@ -10,6 +10,21 @@ Hệ thống: Mekong Mobile CRM — Luồng L2: Tiếp nhận và phân loại y
 
 ## Sau phản hồi Bài tập 1 (Buổi 8, ngày 15/10/2026)
 
+## Rà soát yêu cầu giao diện, tài khoản và bảo mật (26/10/2026)
+
+### TD-06 Bổ sung xác thực backend và ba cấp quyền
+- **Nguồn yêu cầu:** Yêu cầu người dùng trong phiên làm việc ngày 26/10/2026; không phải phản hồi được gán cho giảng viên.
+- **Quyết định:** SỬA — dùng tài khoản backend, role `NHAN_VIEN` / `QUAN_LY_CHI_NHANH` / `QUAN_LY_HE_THONG`, scope theo chi nhánh; profile cho phép tự sửa.
+- **Lý do:** Role chọn ở giao diện không tạo ranh giới an toàn; mọi quyền cần được xác minh ở backend trên từng request.
+- **Ảnh hưởng:** Thêm bảng `app_user`, API `/api/auth/*`, session cookie, bootstrap manager đầu tiên, quản trị account, test 401/403; cập nhật SRS, API contract, ERD và Use Case.
+- **Cập nhật 26/10/2026:** Chính sách mật khẩu được đồng nhất giữa form và API: development/test cho phép 6–128 ký tự để dùng tài khoản demo; production giữ mức 12–128 ký tự. Quản lý chi nhánh có thể tạo nhân viên cùng chi nhánh bằng mật khẩu 6 ký tự trong dev.
+
+### TD-07 Sửa khả dụng của bảng danh sách và form tra cứu
+- **Nguồn yêu cầu:** Yêu cầu người dùng và ảnh chụp hai màn hình trong phiên ngày 26/10/2026.
+- **Quyết định:** SỬA — bảng giữ chiều rộng nội dung trong vùng cuộn ngang, ghim cột thao tác; form SĐT dùng bố cục cùng hàng và phản hồi rõ khi chưa có hồ sơ.
+- **Lý do:** Mức zoom hoặc viewport hẹp không được làm mất khả năng mở chi tiết phiếu; kết quả tra cứu cần giải thích số mới chưa có trong hệ thống.
+- **Ảnh hưởng:** Chỉnh responsive CSS, thông báo inline, nút theme/ngôn ngữ; bỏ nhãn mã FR/QT khỏi tiêu đề form và cập nhật wireframe/diagram.
+
 ### TD-01 Bổ sung bảng lịch sử trạng thái `ticket_status_logs`
 - **Phản hồi của GV:** Sơ đồ ERD chỉ có thuộc tính `status` trên bảng `tickets` bị ghi đè khi cập nhật, không trả lời được câu hỏi "phiếu này nằm ở trạng thái Đang xử lý bao lâu" và thiếu cơ chế audit trail cho nghiệp vụ bảo hành.
 - **Quyết định:** SỬA
@@ -55,3 +70,9 @@ Hệ thống: Mekong Mobile CRM — Luồng L2: Tiếp nhận và phân loại y
 - **Quyết định:** SỬA
 - **Lý do:** Đáp ứng yêu cầu phi chức năng NFR1 (thời gian phản hồi API dưới 1 giây với tập dữ liệu lớn).
 - **Ảnh hưởng:** Thêm chỉ mục `idx_tickets_center_status` trên `(center_id, status)` và `idx_tickets_serial` trên `serial_imei` trong `src/backend/db/schema.sql`, ghi nhận số liệu trước/sau trong `docs/toi-uu.md`.
+
+### Cập nhật giao diện và phạm vi phiếu (2026-10-26)
+- Sau đăng nhập, xóa từ khóa và trạng thái lọc cũ; quản lý hệ thống xem toàn hệ thống, các vai trò chi nhánh vẫn giới hạn trong chi nhánh được gán.
+- Form tạo phiếu gửi `center_id` và `store_id` theo tài khoản hiện tại thay vì cố định chi nhánh 01; địa chỉ khách hàng được lưu và hiển thị trong chi tiết phiếu.
+- Căn cột bảng tài khoản theo layout cố định và dùng cùng bảng màu nền sáng cho danh sách, form, chi tiết và modal.
+- Nhãn nút có vùng văn bản riêng để ngăn icon và nội dung bị chồng/lặp khi đổi ngôn ngữ.

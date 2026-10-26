@@ -36,9 +36,12 @@ class TicketService {
    * @returns {boolean}
    */
   static isUnderWarranty(soldAt, warrantyMonths = 12, now = new Date()) {
-    if (!soldAt) return true;
+    if (!soldAt) return false;
+    if (!Number.isFinite(Number(warrantyMonths)) || Number(warrantyMonths) <= 0) return false;
     const expiry = new Date(soldAt);
+    if (Number.isNaN(expiry.getTime())) return false;
     expiry.setMonth(expiry.getMonth() + Number(warrantyMonths));
+    expiry.setUTCHours(23, 59, 59, 999);
     return new Date(now) <= expiry;
   }
 
@@ -86,11 +89,13 @@ class TicketService {
     const dueDateIso = dueDateObj.toISOString();
 
     // QT-05: Kiểm tra điều kiện bảo hành nếu có thông tin ngày mua
-    let isWarranty = data.is_warranty !== undefined ? Boolean(data.is_warranty) : true;
+    let isWarranty = data.is_warranty === true;
+    let warrantyVerified = typeof data.is_warranty === 'boolean' && data.warranty_verified !== false;
     if (data.sold_at || data.purchase_date) {
       const soldDate = data.sold_at || data.purchase_date;
       const wMonths = Number(data.warranty_months) || 12;
       isWarranty = TicketService.isUnderWarranty(soldDate, wMonths, now);
+      warrantyVerified = true;
     }
 
     const newTicket = {
@@ -100,6 +105,7 @@ class TicketService {
       customer_id: data.customer_id || 1024,
       customer_name: data.customer_name || 'Khách hàng',
       customer_phone: data.customer_phone || '0901234567',
+      customer_address: data.customer_address || data.customerAddress || '',
       product_id: data.product_id || 1,
       product_name: data.product_name || 'Thiết bị điện thoại',
       serial_no: data.serial_no || data.serial_imei || 'IMEI0000000',
@@ -114,6 +120,7 @@ class TicketService {
       // QT-06: Khởi tạo trạng thái ban đầu là MOI
       status: config.ticketStatuses.MOI,
       is_warranty: isWarranty,
+      warranty_verified: warrantyVerified,
       received_at: nowIso,
       due_date: dueDateIso,
       closed_at: null,

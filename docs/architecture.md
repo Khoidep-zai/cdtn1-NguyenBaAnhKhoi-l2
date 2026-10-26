@@ -48,7 +48,7 @@ Hệ thống kết hợp hài hòa **3 mẫu kiến trúc kinh điển** ở quy
 
 1. **Mẫu Layered (Phân lớp tổng thể):** Đóng vai trò khung xương định hình 4 mức trừu tượng độc lập (Trình diễn → Điều phối → Nghiệp vụ → Dữ liệu).
 2. **Mẫu MVC (Model - View - Controller):** Tổ chức bên trong tầng giao diện và điều phối: `View` (Wireframe UI), `Controller` (Express Router/Controller tiếp nhận request), `Model` (Data Transfer Objects & Entities).
-3. **Mẫu Repository (Trừu tượng hóa dữ liệu):** Đặt giữa lớp Nghiệp vụ và CSDL PostgreSQL. Lớp `TicketService` chỉ làm việc với interface `ITicketRepository`, cho phép hoán đổi giữa `PgTicketRepository` (chạy thật) và `MockTicketRepository` (chạy Unit Test nhanh trong bộ nhớ mà không cần kết nối DB thật).
+3. **Mẫu Repository (Trừu tượng hóa dữ liệu):** `TicketService` dùng `TicketRepository` in-memory trong runtime hiện tại; PostgreSQL có schema và dùng lưu tài khoản `app_user`, nhưng chưa được nối làm repository ticket chạy thật. Unit test nghiệp vụ dùng store/reset theo suite.
 
 #### Cấu trúc thư mục mã nguồn làm bằng chứng kiến trúc:
 ```text
@@ -68,10 +68,10 @@ cdtn1-NguyenBaAnhKhoi-l2/
 │   │   │   ├── TicketService.js        (Thi hành QT-06 vòng đời)
 │   │   │   ├── SLACalculator.js        (Thi hành QT-04 tính hạn)
 │   │   │   └── PhoneHelper.js          (Thi hành QT-01 chuẩn hóa SĐT)
-│   │   ├── repositories/               ← REPOSITORY: Truy xuất dữ liệu
-│   │   │   ├── ITicketRepository.js    (Giao diện trừu tượng)
-│   │   │   ├── ticketRepository.js     (Cài đặt in-memory cho prototype)
-│   │   │   └── customerRepository.js   (Cài đặt in-memory cho prototype)
+│   │   ├── repositories/               ← REPOSITORY: TicketRepository hiện dùng in-memory
+│   │   ├── middlewares/authenticate.js ← Xác thực phiên ở backend cho /api/*
+│   │   ├── services/authService.js     ← Scrypt password hash và JWT HS256
+│   │   ├── controllers/authController.js ← Profile và quản lý tài khoản
 │   │   └── db/
 │   │       └── schema.sql              ← LAYERED: Lớp lưu trữ (PostgreSQL DDL)
 ├── tests/
@@ -85,6 +85,30 @@ cdtn1-NguyenBaAnhKhoi-l2/
     ├── erd.drawio                      ← Sơ đồ ERD (file gốc draw.io)
     ├── usecase.drawio                  ← Sơ đồ Use Case (file gốc draw.io)
     └── wireframes.html                 ← Wireframe 3 màn hình tương tác
+```
+
+### Trạng thái triển khai xác thực và lưu dữ liệu
+
+- Ba role được lưu ở `app_user`: `NHAN_VIEN`, `QUAN_LY_CHI_NHANH`, `QUAN_LY_HE_THONG`; backend tra lại user đang hoạt động trên mỗi request được bảo vệ. Phiên nằm trong cookie HttpOnly/SameSite=Strict, hết hạn sau 8 giờ.
+- Nhân viên bị giới hạn thao tác ticket theo chi nhánh được gán. Quản lý chi nhánh chỉ xem/tạo/sửa tài khoản nhân viên trong chi nhánh mình; quản lý hệ thống quản lý tất cả tài khoản. Mọi role tự sửa profile của mình.
+- `npm run auth:seed-roles` tạo ba tài khoản development với mật khẩu ngẫu nhiên, chỉ hiển thị một lần; `npm run auth:bootstrap` dành cho khởi tạo quản lý hệ thống theo lựa chọn mật khẩu của người vận hành (production). Cần đặt `JWT_SECRET` tối thiểu 32 byte; mật khẩu không hardcode trong source.
+- **Giới hạn đang có:** ticket/customer/catalog nghiệp vụ vẫn chủ yếu được phục vụ từ data loader/repository in-memory; schema PostgreSQL và seed hiện tồn tại riêng. Vì vậy không mô tả ticket runtime là đã được lưu bền vững trong PostgreSQL.
+
+#### Luồng xác thực
+
+```mermaid
+sequenceDiagram
+  participant FE as Web UI
+  participant Auth as Auth API
+  participant DB as PostgreSQL app_user
+  participant API as Ticket / Customer API
+  FE->>Auth: POST /api/auth/login (username, password)
+  Auth->>DB: tìm user đang hoạt động
+  DB-->>Auth: password_hash + role + chi nhánh
+  Auth-->>FE: Set-Cookie HttpOnly mekong_session
+  FE->>API: request kèm cookie same-origin
+  API->>DB: xác thực phiên và tải role hiện hành
+  API-->>FE: 401 / 403 hoặc kết quả theo phạm vi role
 ```
 
 ---

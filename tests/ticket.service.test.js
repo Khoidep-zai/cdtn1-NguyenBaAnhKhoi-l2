@@ -65,6 +65,16 @@ test('Unit Test: TicketService - Lớp nghiệp vụ cốt lõi (Buổi 7)', asy
       true,
       'Ngày cuối cùng của hạn bảo hành (01/03/2027) phải được tính là còn bảo hành'
     );
+    assert.strictEqual(
+      TicketService.isUnderWarranty(soldAt, warrantyMonths, new Date('2027-03-01T23:59:59.999Z')),
+      true,
+      'Thiết bị vẫn còn hạn đến hết ngày cuối cùng'
+    );
+    assert.strictEqual(
+      TicketService.isUnderWarranty(soldAt, warrantyMonths, new Date('2027-03-02T00:00:00Z')),
+      false,
+      'Thiết bị hết hạn từ ngày tiếp theo'
+    );
 
     // Ngày kế tiếp: 02/03/2027 -> isUnderWarranty = false
     assert.strictEqual(
@@ -93,7 +103,7 @@ test('Unit Test: TicketService - Lớp nghiệp vụ cốt lõi (Buổi 7)', asy
     const serial = 'SN-CONFLICT-9999';
 
     // 1. Tạo phiếu thứ nhất thành công (trạng thái MOI)
-    TicketService.createTicket({
+    const firstTicket = TicketService.createTicket({
       customer_id: 1,
       serial_no: serial,
       product_name: 'iPhone 14 Pro',
@@ -102,6 +112,8 @@ test('Unit Test: TicketService - Lớp nghiệp vụ cốt lõi (Buổi 7)', asy
       priority: 'CAO',
       issue_description: 'Pin bị phồng kênh màn hình',
     });
+    assert.strictEqual(firstTicket.is_warranty, false);
+    assert.strictEqual(firstTicket.warranty_verified, false);
 
     // 2. Cố tình tạo phiếu thứ hai cho cùng số serial khi phiếu cũ chưa đóng -> Phải ném lỗi PHIEU_DANG_MO
     assert.throws(

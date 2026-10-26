@@ -29,7 +29,7 @@ const dataState = {
    * @param {HTMLElement} container
    * @param {Object} options - { isFiltered: boolean, onClearFilter: Function, onCreateNew: Function }
    */
-  renderEmpty(container, { isFiltered = false, onClearFilter = null, onCreateNew = null } = {}) {
+  renderEmpty(container, { isFiltered = false, isScoped = false, onClearFilter = null, onCreateNew = null } = {}) {
     if (!container) return;
 
     if (isFiltered) {
@@ -39,10 +39,10 @@ const dataState = {
           <td colspan="9" style="text-align: center; padding: 44px 20px;">
             <div style="max-width: 420px; margin: 0 auto;">
               <div style="font-size: 32px; margin-bottom: 10px;">🔍</div>
-              <div style="font-size: 15px; font-weight: 700; color: #F1F5F9; margin-bottom: 6px;">
+              <div class="data-state-title" style="font-size: 15px; font-weight: 700; color: #F1F5F9; margin-bottom: 6px;">
                 Không có phiếu nào khớp bộ lọc hiện tại
               </div>
-              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+              <div class="data-state-description" style="font-size: 13px; margin-bottom: 16px;">
                 Vui lòng kiểm tra lại từ khóa tra cứu hoặc nới rộng điều kiện lọc theo chi nhánh/trạng thái.
               </div>
               <button type="button" class="btn btn-secondary" id="btnResetFiltersInline" style="padding: 6px 14px; font-size: 12.5px;">
@@ -56,6 +56,27 @@ const dataState = {
       if (btn && onClearFilter) {
         btn.onclick = onClearFilter;
       }
+    } else if (isScoped) {
+      container.innerHTML = `
+        <tr>
+          <td colspan="9" style="text-align: center; padding: 48px 20px;">
+            <div style="max-width: 440px; margin: 0 auto;">
+              <div style="font-size: 36px; margin-bottom: 10px;">📋</div>
+              <div class="data-state-title" style="font-size: 15.5px; font-weight: 700; color: #F1F5F9; margin-bottom: 6px;">
+                Chưa có phiếu bảo hành tại chi nhánh của bạn
+              </div>
+              <div class="data-state-description" style="font-size: 13px; margin-bottom: 18px;">
+                Tạo phiếu tiếp nhận đầu tiên tại chi nhánh để bắt đầu theo dõi xử lý.
+              </div>
+              <button type="button" class="btn btn-primary" id="btnCreateFirstTicketInline" style="padding: 8px 18px; font-size: 13px;">
+                + Tiếp nhận thiết bị mới
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+      const btn = document.getElementById('btnCreateFirstTicketInline');
+      if (btn && onCreateNew) btn.onclick = onCreateNew;
     } else {
       // Trường hợp 2: Rỗng vì hệ thống chưa có dữ liệu nào
       container.innerHTML = `
@@ -63,10 +84,10 @@ const dataState = {
           <td colspan="9" style="text-align: center; padding: 48px 20px;">
             <div style="max-width: 440px; margin: 0 auto;">
               <div style="font-size: 36px; margin-bottom: 10px;">📋</div>
-              <div style="font-size: 15.5px; font-weight: 700; color: #F1F5F9; margin-bottom: 6px;">
+              <div class="data-state-title" style="font-size: 15.5px; font-weight: 700; color: #F1F5F9; margin-bottom: 6px;">
                 Chưa có phiếu bảo hành nào trong hệ thống
               </div>
-              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">
+              <div class="data-state-description" style="font-size: 13px; margin-bottom: 18px;">
                 Bắt đầu tiếp nhận thiết bị từ khách hàng tại quầy để tạo phiếu bảo hành điện tử đầu tiên.
               </div>
               <button type="button" class="btn btn-primary" id="btnCreateFirstTicketInline" style="padding: 8px 18px; font-size: 13px;">

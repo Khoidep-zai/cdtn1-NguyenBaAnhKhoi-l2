@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" version="21.0.0" type="device">
   <diagram id="erd_diagram_l2" name="ERD - Luồng L2 Bảo Hành">
-    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="860" background="#FFFFFF" math="0" shadow="0">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="1060" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -493,8 +493,17 @@
         <mxCell id="rule_box" value="" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#666666;strokeWidth=1;" vertex="1" parent="1">
           <mxGeometry x="470" y="600" width="730" height="200" as="geometry" />
         </mxCell>
-        <mxCell id="rule_text" value="&lt;b&gt;RÀNG BUỘC NGHIỆP VỤ CỐT LÕI (SRS L2)&lt;/b&gt;&lt;br&gt;• QT-01: SĐT khách hàng là UNIQUE. Trùng SĐT sẽ tái sử dụng hồ sơ.&lt;br&gt;• QT-04: Hạn SLA sinh tự động theo Priority (CAO: 24h, TRUNG_BÌNH: 72h).&lt;br&gt;• QT-06: Chuyển trạng thái 1 chiều, mọi thay đổi đều ghi vào ticket_status_log.&lt;br&gt;&lt;br&gt;&lt;b&gt;GHI CHÚ&lt;/b&gt;&lt;br&gt;(1) center_id tham chiếu thực thể Trung tâm bảo hành, nằm ngoài phạm vi sơ đồ này.&lt;br&gt;(2) changed_by tham chiếu thực thể Người dùng/Nhân viên, nằm ngoài phạm vi sơ đồ này.&lt;br&gt;category_id cho phép NULL (phiếu chưa phân loại)." style="text;html=1;whiteSpace=wrap;verticalAlign=middle;fontColor=#000000;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+        <mxCell id="rule_text" value="&lt;b&gt;RÀNG BUỘC NGHIỆP VỤ CỐT LÕI (SRS L2)&lt;/b&gt;&lt;br&gt;• QT-01: SĐT khách hàng là UNIQUE. Trùng SĐT sẽ tái sử dụng hồ sơ.&lt;br&gt;• QT-04: Hạn SLA sinh tự động theo Priority (CAO: 24h, TRUNG_BÌNH: 72h).&lt;br&gt;• QT-06: Chuyển trạng thái 1 chiều, mọi thay đổi đều ghi vào ticket_status_log.&lt;br&gt;&lt;br&gt;&lt;b&gt;GHI CHÚ&lt;/b&gt;&lt;br&gt;center_id tham chiếu service_center; app_user.center_id áp dụng theo role.&lt;br&gt;changed_by lưu mã người thực hiện thao tác.&lt;br&gt;category_id cho phép NULL (phiếu chưa phân loại)." style="text;html=1;whiteSpace=wrap;verticalAlign=middle;fontColor=#000000;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
           <mxGeometry x="470" y="600" width="730" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="ServiceCenter" value="SERVICE_CENTER (Chi nhánh)&lt;br&gt;PK center_id SERIAL&lt;br&gt;UQ center_code VARCHAR(20)&lt;br&gt;center_name VARCHAR(120)&lt;br&gt;thanh_pho VARCHAR(60)" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#E6E6E6;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=11;align=left;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="830" width="390" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="AppUser" value="APP_USER (Tài khoản)&lt;br&gt;PK user_id BIGSERIAL&lt;br&gt;UQ username VARCHAR(80)&lt;br&gt;password_hash TEXT (scrypt)&lt;br&gt;full_name, phone, role, is_active&lt;br&gt;FK center_id → service_center (nullable for system manager)" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#D5E8D4;strokeColor=#82B366;strokeWidth=1.5;fontColor=#000000;fontSize=11;align=left;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="470" y="830" width="450" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="e_center_user" value="thuộc chi nhánh (0..*)" style="endArrow=ERzeroToMany;startArrow=ERzeroToOne;endFill=0;startFill=0;endSize=12;startSize=12;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.25;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="ServiceCenter" target="AppUser">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

@@ -28,7 +28,7 @@ class TicketController {
   // US1: Tạo phiếu mới
   static create(req, res) {
     try {
-      const ticket = TicketService.createTicket(req.body);
+      const ticket = TicketService.createTicket({ ...req.body, created_by: req.user.username });
       return res.status(201).json({
         success: true,
         message: 'Tạo phiếu bảo hành thành công.',
@@ -42,7 +42,10 @@ class TicketController {
   // US5: Xem danh sách và lọc
   static list(req, res) {
     try {
-      const result = TicketService.getTickets(req.query);
+      const filters = req.user && req.user.role !== 'QUAN_LY_HE_THONG'
+        ? { ...req.query, center_id: req.user.branchId }
+        : req.query;
+      const result = TicketService.getTickets(filters);
       return res.status(200).json({
         success: true,
         ...result,
@@ -74,7 +77,7 @@ class TicketController {
   // US3: Phân loại phiếu
   static classify(req, res) {
     try {
-      const ticket = TicketService.classifyTicket(req.params.id, req.body);
+      const ticket = TicketService.classifyTicket(req.params.id, { ...req.body, updated_by: req.user.username });
       if (!ticket) {
         return res.status(404).json({
           success: false,
@@ -94,7 +97,7 @@ class TicketController {
   // US4: Cập nhật trạng thái
   static updateStatus(req, res) {
     try {
-      const ticket = TicketService.updateStatus(req.params.id, req.body);
+      const ticket = TicketService.updateStatus(req.params.id, { ...req.body, updated_by: req.user.username });
       if (!ticket) {
         return res.status(404).json({
           success: false,

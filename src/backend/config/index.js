@@ -14,7 +14,8 @@ const config = {
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD !== undefined ? process.env.DB_PASSWORD : '12345',
   },
-  jwtSecret: process.env.JWT_SECRET || 'secret-key-default-for-dev',
+  // Must be provided outside source control. Auth fails closed without it.
+  jwtSecret: process.env.JWT_SECRET || '',
   
   // Trạng thái phiếu chuẩn hóa theo dataset và SRS luồng L2
   ticketStatuses: {

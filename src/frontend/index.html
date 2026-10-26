@@ -27,7 +27,7 @@
   </a>
 
   <div class="user-badge" id="userBadge">
-    <div class="avatar" id="userAvatar">NV</div>
+    <button class="avatar avatar-button" id="userAvatar" type="button" onclick="openProfileModal()" aria-label="Xem hồ sơ cá nhân" title="Hồ sơ cá nhân">NV</button>
     <div class="user-info">
       <div class="user-name" id="userName">Nguyễn Bá Anh Khôi</div>
       <div class="user-role" id="userRole">
@@ -35,10 +35,15 @@
         <span class="branch-tag" id="userBranchTag">Chi nhánh 01</span>
       </div>
     </div>
-    <button class="btn-role-switch" onclick="openLoginModal()" title="Đổi vai trò hoặc đăng xuất">
+    <button class="btn-role-switch" onclick="openLoginModal()" title="Đổi tài khoản demo">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-      <span>Đổi vai trò</span>
+      <span>Đổi tài khoản</span>
     </button>
+    <button class="btn-account-admin" id="accountAdminButton" type="button" onclick="openUserManagement()" hidden>Quản lý tài khoản</button>
+    <div class="nav-preferences" aria-label="Tùy chọn giao diện">
+      <button class="btn-nav-preference" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="Chuyển giao diện sáng tối" title="Chuyển giao diện sáng tối">☀️</button>
+      <button class="btn-nav-preference" id="languageToggle" type="button" onclick="toggleLanguage()" aria-label="Chuyển ngôn ngữ Việt Anh" title="Chuyển ngôn ngữ Việt Anh">EN</button>
+    </div>
   </div>
 </nav>
 
@@ -48,8 +53,8 @@
   <div class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-info">
-        <h4>Phiếu tiếp nhận hôm nay</h4>
-        <div class="kpi-num">28</div>
+        <h4>Tra cứu khách hàng</h4>
+        <div class="kpi-num">01</div>
       </div>
       <div class="kpi-icon icon-indigo">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
@@ -57,8 +62,8 @@
     </div>
     <div class="kpi-card">
       <div class="kpi-info">
-        <h4>Chờ phân công kỹ thuật</h4>
-        <div class="kpi-num" style="color: #FBBF24;">08</div>
+        <h4>Tiếp nhận thiết bị</h4>
+        <div class="kpi-num" style="color: #FBBF24;">02</div>
       </div>
       <div class="kpi-icon icon-amber">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
@@ -66,7 +71,7 @@
     </div>
     <div class="kpi-card">
       <div class="kpi-info">
-        <h4>Cảnh báo hạn SLA (24h)</h4>
+        <h4>Tính hạn cam kết SLA</h4>
         <div class="kpi-num" style="color: #F87171;">03</div>
       </div>
       <div class="kpi-icon icon-rose">
@@ -75,8 +80,8 @@
     </div>
     <div class="kpi-card">
       <div class="kpi-info">
-        <h4>Đã giải quyết tuần này</h4>
-        <div class="kpi-num" style="color: #34D399;">142</div>
+        <h4>Theo dõi lịch sử xử lý</h4>
+        <div class="kpi-num" style="color: #34D399;">04</div>
       </div>
       <div class="kpi-icon icon-emerald">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -92,9 +97,9 @@
         <h2>Danh sách phiếu bảo hành tiếp nhận</h2>
         <span class="screen-tag">FR5 / US6 · ACID 3NF</span>
       </div>
-      <button class="btn btn-primary" onclick="goToCreate()">
+      <button class="btn btn-primary" type="button" aria-label="Tạo phiếu mới" onclick="goToCreate()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        Tạo phiếu mới
+        <span data-vi-text="Tạo phiếu mới">Tạo phiếu mới</span>
       </button>
     </div>
 
@@ -104,12 +109,12 @@
         <div class="search-box">
           <div class="input-wrapper">
             <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="searchInput" placeholder="Tra cứu theo mã phiếu (BH-...), SĐT, tên khách, số Serial/IMEI, sự cố..." oninput="onSearchInput()">
+    <input type="search" id="searchInput" aria-label="Tìm phiếu theo mã, khách hàng, số điện thoại hoặc serial" placeholder="Tra cứu theo mã phiếu (BH-...), SĐT, tên khách, số Serial/IMEI, sự cố..." oninput="onSearchInput()">
           </div>
         </div>
 
         <div class="filter-box" style="flex: 1.5;">
-          <select id="statusFilter" onchange="onFilterChange()">
+    <select id="statusFilter" aria-label="Lọc theo trạng thái phiếu" onchange="onFilterChange()">
             <option value="ALL">Tất cả trạng thái</option>
             <option value="MOI">MỚI (Tiếp nhận tại quầy)</option>
             <option value="DA_PHAN_CONG">ĐÃ PHÂN CÔNG (Bàn giao KTV)</option>
@@ -121,28 +126,28 @@
         </div>
 
         <div class="filter-box" style="flex: 1.5;">
-          <select id="centerFilter" onchange="onFilterChange()">
+    <select id="centerFilter" aria-label="Lọc theo trung tâm bảo hành" onchange="onFilterChange()">
             <option value="ALL">Tất cả chi nhánh (6 trung tâm)</option>
-            <option value="1">Chi nhánh 01 - Cần Thơ</option>
-            <option value="2">Chi nhánh 02 - TP. Hồ Chí Minh</option>
-            <option value="3">Chi nhánh 03 - Đà Nẵng</option>
-            <option value="4">Chi nhánh 04 - Hà Nội</option>
-            <option value="5">Chi nhánh 05 - Hải Phòng</option>
-            <option value="6">Chi nhánh 06 - Bình Dương</option>
+            <option value="1">TTBH Quận 10</option>
+            <option value="2">TTBH Quận Tân Bình</option>
+            <option value="3">TTBH TP. Thủ Đức</option>
+            <option value="4">TTBH Ninh Kiều</option>
+            <option value="5">TTBH Cái Răng</option>
+            <option value="6">TTBH Cầu Giấy</option>
           </select>
         </div>
 
         <div class="filter-box" style="flex: 1; min-width: 130px;">
-          <select id="pageSizeFilter" onchange="onPageSizeChange()">
+    <select id="pageSizeFilter" aria-label="Số phiếu hiển thị mỗi trang" onchange="onPageSizeChange()">
             <option value="25" selected>25 dòng/trang</option>
             <option value="50">50 dòng/trang</option>
             <option value="100">100 dòng/trang</option>
           </select>
         </div>
 
-        <button class="btn btn-secondary" onclick="resetFilter()">
+        <button class="btn btn-secondary" type="button" aria-label="Đặt lại bộ lọc" onclick="resetFilter()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
-          Đặt lại
+          <span data-vi-text="Đặt lại">Đặt lại</span>
         </button>
       </div>
 
@@ -159,7 +164,7 @@
               <th class="col-nowrap">Mức ưu tiên</th>
               <th class="col-nowrap">Trạng thái</th>
               <th class="col-nowrap">Hạn cam kết (SLA)</th>
-              <th class="col-nowrap" style="text-align: right;">Hành động</th>
+              <th class="col-nowrap action-column" style="text-align: right;">Hành động</th>
             </tr>
           </thead>
           <tbody id="ticketsTableBody">
@@ -198,7 +203,6 @@
       <div class="screen-title">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--secondary);"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
         <h2>Khởi tạo phiếu tiếp nhận bảo hành mới</h2>
-        <span class="screen-tag">FR1 + FR2 + FR3 · QT-01 · QT-03 · QT-04</span>
       </div>
       <button class="btn btn-secondary" onclick="switchTab('screen-list')">
         ← Quay lại danh sách
@@ -226,47 +230,48 @@
           <!-- (1) Số điện thoại khách -->
           <div class="form-group">
             <div class="field-label-group">
-              <div class="field-title"><span class="field-num">1</span> Số điện thoại khách hàng <span class="req">*</span></div>
+              <label class="field-title" for="custPhoneInput"><span class="field-num">1</span> Số điện thoại khách hàng <span class="req" aria-hidden="true">*</span></label>
             </div>
-            <div style="display: flex; gap: 10px;">
-              <div class="input-wrapper" style="flex: 1;">
+            <div class="phone-lookup-row">
+              <div class="input-wrapper phone-input-wrapper">
                 <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                <input type="text" id="custPhoneInput" value="" placeholder="Nhập số điện thoại khách hàng (VD: 0909123456)..." onkeyup="if(event.key==='Enter') simulateLookup()">
+            <input type="tel" id="custPhoneInput" aria-required="true" autocomplete="tel" value="" placeholder="Nhập số điện thoại khách hàng (VD: 0909123456)..." onkeyup="if(event.key==='Enter') simulateLookup()">
               </div>
-              <button class="btn btn-secondary" type="button" onclick="simulateLookup()" style="padding: 10px 20px;">
+              <button class="btn btn-secondary phone-lookup-button" type="button" aria-label="Tra cứu khách hàng" onclick="simulateLookup()">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                Tra cứu
+                <span data-vi-text="Tra cứu">Tra cứu</span>
               </button>
             </div>
+            <p class="lookup-feedback" id="customerLookupFeedback" role="status" aria-live="polite" hidden></p>
           </div>
 
           <!-- (2) Họ tên khách -->
-          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+          <div class="form-row">
             <div class="form-group">
               <div class="field-label-group">
-                <div class="field-title"><span class="field-num">2</span> Họ tên khách hàng <span class="req">*</span></div>
+                <label class="field-title" for="custNameInput"><span class="field-num">2</span> Họ tên khách hàng <span class="req" aria-hidden="true">*</span></label>
               </div>
-              <input type="text" id="custNameInput" value="" placeholder="Nhập họ và tên khách hàng...">
+            <input type="text" id="custNameInput" aria-required="true" autocomplete="name" value="" placeholder="Nhập họ và tên khách hàng...">
             </div>
 
             <div class="form-group">
               <div class="field-label-group">
-                <div class="field-title" style="margin-left: 4px;">Địa chỉ liên hệ</div>
+                <label class="field-title" for="custAddressInput" style="margin-left: 4px;">Địa chỉ liên hệ</label>
               </div>
-              <input type="text" id="custAddressInput" value="" placeholder="Nhập địa chỉ liên hệ của khách hàng...">
+            <input type="text" id="custAddressInput" autocomplete="street-address" value="" placeholder="Nhập địa chỉ liên hệ của khách hàng...">
             </div>
           </div>
 
           <!-- (3) Ô chọn thiết bị & model (Combobox gợi ý tìm kiếm toàn bộ các dòng máy trong hệ thống) -->
           <div class="form-group">
             <div class="field-label-group">
-              <div class="field-title"><span class="field-num">3</span> Chọn thiết bị & Model <span class="req">*</span></div>
+              <label class="field-title" for="deviceNameInput"><span class="field-num">3</span> Chọn thiết bị & Model <span class="req" aria-hidden="true">*</span></label>
             </div>
             
             <div class="combobox-wrapper" id="deviceCombobox">
               <div class="input-wrapper">
                 <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                <input type="text" id="deviceNameInput" value="" placeholder="Nhấp để xem danh sách hoặc gõ tên dòng máy (VD: iPhone 15, Galaxy S23, Redmi...)" autocomplete="off" onfocus="openDeviceDropdown()" oninput="onDeviceInput(this.value)" onkeydown="onDeviceKeydown(event)">
+            <input type="text" id="deviceNameInput" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="deviceList" aria-describedby="deviceHelpText" aria-required="true" value="" placeholder="Nhấp để xem danh sách hoặc gõ tên dòng máy (VD: iPhone 15, Galaxy S23, Redmi...)" autocomplete="off" onfocus="openDeviceDropdown()" oninput="onDeviceInput(this.value)" onkeydown="onDeviceKeydown(event)">
                 <span class="combobox-arrow">▼</span>
               </div>
 
@@ -275,7 +280,7 @@
                 <div class="combobox-header">
                   <div class="combobox-count">
                     <span id="deviceCountLabel">237 dòng điện thoại trong hệ thống</span>
-                    <small>Click để chọn hoặc gõ tên & Enter</small>
+                    <small id="deviceHelpText">Nhấp để chọn hoặc gõ tên và nhấn Enter</small>
                   </div>
                   <div class="combobox-brand-filters">
                     <button type="button" class="brand-chip active" onclick="filterDeviceBrand('ALL', event)">Tất cả</button>
@@ -289,7 +294,7 @@
                     <button type="button" class="brand-chip" onclick="filterDeviceBrand('TECNO', event)">TECNO</button>
                   </div>
                 </div>
-                <div class="combobox-list" id="deviceList">
+                <div class="combobox-list" id="deviceList" role="listbox" aria-label="Dòng điện thoại">
                   <!-- Danh sách các dòng điện thoại render động -->
                 </div>
               </div>
@@ -299,29 +304,29 @@
           <!-- (3b) Số serial thiết bị -->
           <div class="form-group">
             <div class="field-label-group">
-              <div class="field-title" style="margin-left: 30px;">Số serial / IMEI thiết bị <span class="req">*</span></div>
+              <label class="field-title" for="deviceImeiInput" style="margin-left: 30px;">Số serial / IMEI thiết bị <span class="req" aria-hidden="true">*</span></label>
             </div>
             <div class="input-wrapper">
               <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M4 17v3h16v-3M9 9h6v6H9z"></path></svg>
-              <input type="text" id="deviceImeiInput" value="" placeholder="Nhập số Serial/IMEI thiết bị..." oninput="checkWarrantyStatus()">
+            <input type="text" id="deviceImeiInput" aria-required="true" autocomplete="off" value="" placeholder="Nhập số Serial/IMEI thiết bị..." oninput="checkWarrantyStatus()">
             </div>
           </div>
 
           <!-- (4) Mô tả sự cố (≥ 10 ký tự theo QT-03) -->
           <div class="form-group">
             <div class="field-label-group">
-              <div class="field-title"><span class="field-num">4</span> Mô tả sự cố <span class="req">*</span></div>
+              <label class="field-title" for="issueDescText"><span class="field-num">4</span> Mô tả sự cố <span class="req" aria-hidden="true">*</span></label>
               <span class="char-counter" id="descCharCounter">0 ký tự (tối thiểu 10)</span>
             </div>
-            <textarea id="issueDescText" rows="3" placeholder="Mô tả chi tiết tình trạng sự cố (tối thiểu 10 ký tự theo quy tắc QT-03)..." oninput="onIssueDescInput(this.value)"></textarea>
+            <textarea id="issueDescText" aria-required="true" aria-describedby="descCharCounter" rows="3" placeholder="Mô tả chi tiết tình trạng sự cố (tối thiểu 10 ký tự theo quy tắc QT-03)..." oninput="onIssueDescInput(this.value)"></textarea>
           </div>
 
           <!-- Nhóm sự cố hỗ trợ phân loại kỹ thuật -->
           <div class="form-group">
             <div class="field-label-group">
-              <div class="field-title" style="margin-left: 30px;">Nhóm sự cố kỹ thuật <span class="req">*</span></div>
+              <label class="field-title" for="issueCatSelect" style="margin-left: 30px;">Nhóm sự cố kỹ thuật <span class="req" aria-hidden="true">*</span></label>
             </div>
-            <select id="issueCatSelect" onchange="updateSlaPrediction()">
+          <select id="issueCatSelect" aria-required="true" onchange="updateSlaPrediction()">
               <option value="1">1 - MAN_HINH (Màn hình cảm ứng, sọc mực)</option>
               <option value="2">2 - PIN (Pin phù, hao pin nhanh, sập nguồn)</option>
               <option value="3" selected>3 - SAC (Chân sạc, nguồn, không vào điện)</option>
@@ -334,9 +339,9 @@
           <!-- (5) Mức ưu tiên -->
           <div class="form-group">
             <div class="field-label-group">
-              <div class="field-title"><span class="field-num">5</span> Mức ưu tiên tiếp nhận <span class="req">*</span></div>
+              <div class="field-title" id="priorityGroupLabel"><span class="field-num">5</span> Mức ưu tiên tiếp nhận <span class="req" aria-hidden="true">*</span></div>
             </div>
-            <div class="priority-radio-group">
+            <div class="priority-radio-group" role="group" aria-labelledby="priorityGroupLabel">
               <label class="priority-radio-label">
                 <input type="radio" name="priorityRadio" value="CAO" onchange="onPriorityRadioChange('CAO')">
                 Cao (24h làm việc)
@@ -413,7 +418,7 @@
           <div class="info-box-content">
             <p><span class="label">Họ tên:</span> <span class="value" id="detailCustName">Trần Văn A</span></p>
             <p><span class="label">SĐT:</span> <span class="value" id="detailCustPhone" style="font-family: monospace;">0901234567</span></p>
-            <p><span class="label">Địa chỉ:</span> <span class="value" style="font-size: 12px;">Q. Ninh Kiều, Cần Thơ</span></p>
+            <p><span class="label">Địa chỉ:</span> <span class="value" id="detailCustAddress" style="font-size: 12px;">—</span></p>
           </div>
         </div>
 
@@ -465,7 +470,7 @@
           
           <div class="form-group">
             <label>Chuyển sang trạng thái tiếp theo:</label>
-            <select id="nextStatusSelect">
+            <select id="nextStatusSelect" aria-label="Trạng thái tiếp theo của phiếu">
               <option value="DA_PHAN_CONG" selected>ĐÃ PHÂN CÔNG (Bàn giao kỹ thuật viên)</option>
               <option value="DA_HUY">ĐÃ HỦY (Khách không đồng ý để lại máy)</option>
             </select>
@@ -473,7 +478,7 @@
 
           <div class="form-group">
             <label>Ghi chú nội bộ / Lý do chuyển trạng thái:</label>
-            <textarea id="transitionNoteText" rows="3" placeholder="Nhập ghi chú chuyển giao công việc cho Kỹ thuật viên...">Bàn giao thiết bị kèm sạc zin cho KTV Nguyễn Văn C (Bàn 3 - Trung tâm Cần Thơ).</textarea>
+            <textarea id="transitionNoteText" aria-label="Ghi chú chuyển trạng thái" rows="3" placeholder="Nhập ghi chú chuyển giao công việc cho Kỹ thuật viên..."></textarea>
           </div>
 
           <button class="btn btn-primary" style="width: 100%;" onclick="updateTicketStatus()">
@@ -499,80 +504,83 @@
           </div>
         </div>
       </div>
+
+      <div class="print-receipt-footer">
+        <strong>Biên nhận tiếp nhận thiết bị bảo hành</strong>
+        <p>Khách hàng vui lòng giữ biên nhận và cung cấp mã phiếu khi nhận lại thiết bị. Hạn xử lý trên phiếu là hạn cam kết dự kiến theo mức ưu tiên; thời gian thực tế có thể thay đổi nếu cần bổ sung thông tin hoặc linh kiện.</p>
+        <div class="receipt-signatures"><span>Khách hàng xác nhận</span><span>Nhân viên tiếp nhận</span></div>
+      </div>
     </div>
   </section>
 
 </div>
 
-<!-- MODAL ĐĂNG NHẬP PHÂN QUYỀN (NHÂN VIÊN VS QUẢN LÝ) -->
-<div class="login-modal-overlay" id="loginModal" style="display: none;">
+<div class="profile-modal-overlay" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileTitle" style="display:none">
+  <form class="profile-card" onsubmit="saveProfile(event)">
+    <div class="profile-card-header"><div><h2 id="profileTitle">Hồ sơ cá nhân</h2><p>Thông tin của tài khoản đang đăng nhập</p></div><button class="icon-button" type="button" onclick="closeProfileModal()" aria-label="Đóng hồ sơ">×</button></div>
+    <label for="profileNameInput">Họ và tên</label><input id="profileNameInput" required maxlength="100" autocomplete="name">
+    <label for="profilePhoneInput">Số điện thoại</label><input id="profilePhoneInput" type="tel" maxlength="20" autocomplete="tel">
+    <div class="profile-readonly"><span>Tài khoản</span><strong id="profileUsername"></strong></div>
+    <div class="profile-readonly"><span>Vai trò</span><strong id="profileRole"></strong></div>
+    <div class="profile-actions"><button class="btn btn-secondary" type="button" onclick="closeProfileModal()">Hủy</button><button class="btn btn-primary" type="submit">Lưu hồ sơ</button></div>
+  </form>
+</div>
+
+<div class="profile-modal-overlay" id="userManagementModal" role="dialog" aria-modal="true" aria-labelledby="userManagementTitle" style="display:none">
+  <section class="user-management-card">
+    <div class="profile-card-header"><div><h2 id="userManagementTitle">Quản lý tài khoản</h2><p id="userManagementScope">Tài khoản thuộc phạm vi quyền quản lý của bạn</p></div><button class="icon-button" type="button" onclick="closeUserManagement()" aria-label="Đóng">×</button></div>
+    <form id="createUserForm" class="create-user-form" onsubmit="createManagedUser(event)">
+      <h3>Tạo tài khoản</h3>
+      <div class="user-form-grid">
+        <label>Tên đăng nhập<input id="newUserUsername" required minlength="3" maxlength="80" autocomplete="off"></label>
+        <label>Họ và tên<input id="newUserName" required minlength="2" maxlength="120"></label>
+        <label>Mật khẩu tạm<input id="newUserPassword" required maxlength="128" autocomplete="new-password" aria-describedby="newUserPasswordHint"><small id="newUserPasswordHint">Tối thiểu 6 ký tự ở môi trường dev; 12 ký tự ở production.</small></label>
+        <label>Số điện thoại<input id="newUserPhone" type="tel" maxlength="20"></label>
+        <label id="newUserRoleField">Vai trò<select id="newUserRole"><option value="NHAN_VIEN">Nhân viên tiếp nhận</option><option value="QUAN_LY_CHI_NHANH">Quản lý chi nhánh</option><option value="QUAN_LY_HE_THONG">Quản lý hệ thống</option></select></label>
+        <label id="newUserCenterField">Chi nhánh<select id="newUserCenter"><option value="1">TTBH Quận 10</option><option value="2">TTBH Quận Tân Bình</option><option value="3">TTBH TP. Thủ Đức</option><option value="4">TTBH Ninh Kiều</option><option value="5">TTBH Cái Răng</option><option value="6">TTBH Cầu Giấy</option></select></label>
+      </div>
+      <div class="user-form-actions"><span id="userManagementMessage" role="status"></span><button class="btn btn-primary" type="submit">Tạo tài khoản</button></div>
+    </form>
+    <div class="managed-users-table"><table><thead><tr><th>Tài khoản</th><th>Họ tên</th><th>Vai trò</th><th>Chi nhánh</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="managedUsersBody"></tbody></table></div>
+  </section>
+</div>
+
+<!-- MODAL ĐĂNG NHẬP DEMO VỚI BA VAI TRÒ -->
+<div class="login-modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" style="display: none;">
   <div class="login-card">
     <div class="login-header">
       <div class="login-brand-logo">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
       </div>
-      <h2>ĐĂNG NHẬP HỆ THỐNG CRM</h2>
+      <h2 id="loginTitle">ĐĂNG NHẬP HỆ THỐNG CRM</h2>
       <p>Phân hệ Quản lý & Tiếp nhận Bảo hành Mekong Mobile</p>
     </div>
 
-    <!-- Quick Role Switch Selection (1-Click Demo) -->
-    <div class="login-quick-roles">
-      <div class="quick-role-title">Chọn vai trò truy cập nhanh (Trực quan):</div>
-      <div class="quick-role-grid">
-        <button type="button" class="quick-role-card" onclick="quickLogin('NHAN_VIEN')">
-          <div class="quick-role-icon staff">👤</div>
-          <div class="quick-role-meta">
-            <div class="role-meta-name">Nhân viên tiếp nhận</div>
-            <div class="role-meta-desc">Chi nhánh 01 (Cần Thơ) · Tiếp nhận quầy, tra cứu & tạo phiếu mới</div>
-          </div>
-          <span class="quick-role-arrow">→</span>
-        </button>
+    <p class="demo-login-note">Đăng nhập được xác thực bởi máy chủ. Tài khoản quản lý hệ thống đầu tiên được tạo bằng lệnh bootstrap trong terminal.</p>
 
-        <button type="button" class="quick-role-card" onclick="quickLogin('QUAN_LY')">
-          <div class="quick-role-icon manager">🛡️</div>
-          <div class="quick-role-meta">
-            <div class="role-meta-name">Quản lý chi nhánh / Hệ thống</div>
-            <div class="role-meta-desc">Toàn hệ thống · Điều phối kỹ thuật, duyệt ngoại lệ SLA, xem toàn bộ chi nhánh</div>
-          </div>
-          <span class="quick-role-arrow">→</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="login-divider">
-      <span>hoặc đăng nhập thủ công</span>
-    </div>
-
-    <!-- Form đăng nhập thủ công -->
     <form id="loginForm" onsubmit="handleManualLogin(event)">
       <div class="form-group" style="margin-bottom: 14px;">
-        <label style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Tên đăng nhập</label>
+        <label for="loginUsernameInput" style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Tên đăng nhập</label>
         <div class="input-wrapper">
           <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          <input type="text" id="loginUsernameInput" placeholder="Nhập tên tài khoản (vd: nhanvien01, quanly01)" required>
+          <input type="text" id="loginUsernameInput" autocomplete="username" placeholder="Tên đăng nhập" required>
         </div>
       </div>
 
       <div class="form-group" style="margin-bottom: 14px;">
-        <label style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Mật khẩu</label>
+        <label for="loginPasswordInput" style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Mật khẩu</label>
         <div class="input-wrapper">
           <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          <input type="password" id="loginPasswordInput" placeholder="Nhập mật khẩu..." value="123456" required>
+          <input type="password" id="loginPasswordInput" autocomplete="current-password" placeholder="Nhập mật khẩu" required>
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom: 20px;">
-        <label style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Vai trò và Quyền hạn</label>
-        <select id="loginRoleSelect" style="width: 100%; padding: 10px 14px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-subtle); border-radius: 8px; color: white;">
-          <option value="NHAN_VIEN">Nhân viên tiếp nhận (Chi nhánh 01 - Cần Thơ)</option>
-          <option value="QUAN_LY">Quản lý chi nhánh (Giám sát toàn hệ thống CN 01 - 06)</option>
-        </select>
-      </div>
 
-      <div id="loginErrorMsg" style="display: none; padding: 10px 14px; margin-bottom: 16px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 12.5px;"></div>
+      <div id="loginErrorMsg" role="alert" aria-live="polite" style="display: none; padding: 10px 14px; margin-bottom: 16px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 12.5px;"></div>
 
       <div style="display: flex; gap: 10px; justify-content: flex-end;">
-        <button type="button" class="btn btn-secondary" onclick="closeLoginModal()">Đóng</button>
+        <button type="button" id="loginLogoutButton" class="btn btn-secondary" onclick="logoutDemo()" hidden>Đăng xuất</button>
+        <button type="button" id="loginCloseButton" class="btn btn-secondary" onclick="closeLoginModal()">Đóng</button>
         <button type="submit" class="btn btn-primary" style="padding: 10px 24px;">Đăng nhập</button>
       </div>
     </form>
@@ -586,6 +594,7 @@
 </div>
 
 <script src="api/client.js"></script>
+<script src="api/auth.api.js"></script>
 <script src="api/tickets.api.js"></script>
 <script src="components/dataState.js"></script>
 <script src="phones-dataset.js"></script>

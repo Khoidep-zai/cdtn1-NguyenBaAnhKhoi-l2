@@ -1,8 +1,11 @@
 const test = require('node:test');
 const assert = require('node:assert');
+process.env.JWT_SECRET ||= 'integration-test-secret-32-bytes-minimum';
 const app = require('../src/index');
 const TicketService = require('../src/backend/services/ticketService');
 const { calculateDueDate } = require('../src/backend/utils/slaHelper');
+const { query } = require('../src/backend/config/db');
+const { hashPassword } = require('../src/backend/services/authService');
 
 test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L2)', async (t) => {
   const server = app.listen(0);
@@ -10,13 +13,32 @@ test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L
   const baseUrl = `http://localhost:${port}/api/tickets`;
   const customerUrl = `http://localhost:${port}/api/customers`;
   const catalogUrl = `http://localhost:${port}/api`;
+  const username = `integration_${Date.now()}`;
+  const password = 'Integration-Test-Password-2026!';
+  let userId = null;
+  t.after(async () => {
+    server.close();
+    if (userId) await query('DELETE FROM app_user WHERE user_id=$1', [userId]);
+  });
+  const passwordHash = await hashPassword(password);
+  const userResult = await query(
+    `INSERT INTO app_user(username,password_hash,full_name,role,center_id)
+     VALUES($1,$2,'Integration Test','QUAN_LY_HE_THONG',NULL) RETURNING user_id`,
+    [username, passwordHash]);
+  userId = userResult.rows[0].user_id;
+  const loginResponse = await fetch(`http://localhost:${port}/api/auth/login`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  });
+  assert.strictEqual(loginResponse.status, 200, 'Integration fixture must authenticate through the API');
+  const sessionCookie = loginResponse.headers.get('set-cookie').split(';')[0];
+  const authenticatedFetch = (url, options = {}) => fetch(url, {
+    ...options,
+    headers: { ...(options.body ? { 'Content-Type': 'application/json' } : {}), Cookie: sessionCookie, ...options.headers },
+  });
 
   t.beforeEach(() => {
     TicketService.resetStore();
-  });
-
-  t.after(() => {
-    server.close();
   });
 
   await t.test('US6: Kiểm tra validation dữ liệu bắt buộc (NOT NULL / Phone format)', async () => {
@@ -30,7 +52,7 @@ test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L
       issue_description: '',
     };
 
-    const res = await fetch(baseUrl, {
+    const res = await authenticatedFetch(baseUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(invalidPayload),
@@ -55,7 +77,7 @@ test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L
       priority: 'CAO',
     };
 
-    const res = await fetch(baseUrl, {
+    const res = await authenticatedFetch(baseUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(validPayload),
@@ -83,7 +105,7 @@ test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L
     });
 
     // 2. Chuyển trạng thái sang DA_PHAN_CONG
-    const updateRes = await fetch(`${baseUrl}/${ticket.id}/status`, {
+    const updateRes = await authenticatedFetch(`${baseUrl}/${ticket.id}/status`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -96,7 +118,7 @@ test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L
     assert.strictEqual(updateRes.status, 200);
 
     // 3. Xem chi tiết phiếu kèm lịch sử
-    const detailRes = await fetch(`${baseUrl}/${ticket.id}`);
+    const detailRes = await authenticatedFetch(`${baseUrl}/${ticket.id}`);
     assert.strictEqual(detailRes.status, 200);
     const detailBody = await detailRes.json();
     assert.ok(detailBody.data.status === 'DA_PHAN_CONG' || detailBody.data.status === 'PENDING_ASSIGNMENT');
@@ -115,7 +137,7 @@ test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L
       issue_description: 'Lỗi loa',
     });
 
-    const res = await fetch(`${baseUrl}?center_id=1&status=MOI`);
+    const res = await authenticatedFetch(`${baseUrl}?center_id=1&status=MOI`);
     assert.strictEqual(res.status, 200);
     const body = await res.json();
     assert.ok(body.total >= 1);
@@ -123,7 +145,7 @@ test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L
 
   await t.test('FR1 / US1: Tra cứu hồ sơ khách hàng theo SĐT (QT-01)', async () => {
     // Tra cứu số điện thoại có sẵn kèm tiền tố +84 (kiểm tra normalizePhone)
-    const res = await fetch(`${customerUrl}?phone=+84901234567`);
+    const res = await authenticatedFetch(`${customerUrl}?phone=+84901234567`);
     assert.strictEqual(res.status, 200);
     const body = await res.json();
     assert.strictEqual(body.success, true);
@@ -141,15 +163,15 @@ test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L
     assert.strictEqual(dueDate.getUTCHours(), 10);
   });
 
-  await t.test('Master Data: Trả về đầy đủ 6 trung tâm và 6 nhóm sự cố từ Dataset', async () => {
-    const catRes = await fetch(`${catalogUrl}/categories`);
+  await t.test('Master Data: Trả về đầy đủ trung tâm từ PostgreSQL và 6 nhóm sự cố từ Dataset', async () => {
+    const catRes = await authenticatedFetch(`${catalogUrl}/categories`);
     assert.strictEqual(catRes.status, 200);
     const catBody = await catRes.json();
     assert.strictEqual(catBody.total, 6);
 
-    const centerRes = await fetch(`${catalogUrl}/centers`);
+    const centerRes = await authenticatedFetch(`${catalogUrl}/centers`);
     assert.strictEqual(centerRes.status, 200);
     const centerBody = await centerRes.json();
-    assert.strictEqual(centerBody.total, 6);
+    assert.ok(centerBody.total >= 6);
   });
 });

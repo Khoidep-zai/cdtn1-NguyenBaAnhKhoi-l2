@@ -6,6 +6,7 @@
  * 1. HÌNH DẠNG (SHAPE):
  *    - ticket_code   : string (VD: 'BH-000001/2026'), bắt buộc, duy nhất
  *    - customer_name : string, bắt buộc
+ *    - customer_address: string, địa chỉ liên hệ khách hàng (có thể rỗng)
  *    - customer_phone: string, bắt buộc, đã che một phần theo quy chuẩn QT-15 bảo mật PII
  *    - product_name  : string, bắt buộc
  *    - serial_imei   : string, bắt buộc (serial_no)
@@ -59,6 +60,7 @@ function formatTicketContract(ticket) {
   return {
     ticket_code: ticket.ticket_code || ticket.ticketCode || ticket.id || '',
     customer_name: ticket.customer_name || ticket.customerName || '',
+    customer_address: ticket.customer_address || ticket.customerAddress || ticket.address || '',
     customer_phone_masked: maskPhoneNumber(ticket.customer_phone || ticket.customerPhone || ''),
     customer_phone_raw: ticket.customer_phone || ticket.customerPhone || '',
     product_name: ticket.product_name || ticket.productName || '',

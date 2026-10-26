@@ -9,6 +9,9 @@ let pageSize = 25;
 let totalPages = 1;
 let totalTickets = 0;
 let currentTicketsList = [];
+let selectedWarrantyStatus = null;
+let currentTheme = 'dark';
+let currentLanguage = 'vi';
 let allPhoneModels = [];
 let filteredPhoneModels = [];
 let activeBrand = 'ALL';
@@ -34,12 +37,12 @@ const CATEGORY_MAP = {
 
 // Center mapping helper
 const CENTER_MAP = {
-  1: 'Chi nhánh 01 - Cần Thơ',
-  2: 'Chi nhánh 02 - TP. HCM',
-  3: 'Chi nhánh 03 - Đà Nẵng',
-  4: 'Chi nhánh 04 - Hà Nội',
-  5: 'Chi nhánh 05 - Hải Phòng',
-  6: 'Chi nhánh 06 - Bình Dương',
+  1: 'TTBH Quận 10',
+  2: 'TTBH Quận Tân Bình',
+  3: 'TTBH TP. Thủ Đức',
+  4: 'TTBH Ninh Kiều',
+  5: 'TTBH Cái Răng',
+  6: 'TTBH Cầu Giấy',
 };
 
 // -------------------------------------------------------------
@@ -58,13 +61,31 @@ const USER_ROLES = {
     branchName: 'Chi nhánh 01 (Cần Thơ)',
     canViewAllCenters: false,
     canOverrideSla: false,
-    canReassignTechnician: false
+    canReassignTechnician: false,
+    canManageStaff: false,
+    canManageAllAccounts: false
   },
-  QUAN_LY: {
-    role: 'QUAN_LY',
+  QUAN_LY_CHI_NHANH: {
+    role: 'QUAN_LY_CHI_NHANH',
     name: 'Võ Thành Long',
     username: 'quanly01',
-    roleLabel: 'Quản lý chi nhánh / Hệ thống',
+    roleLabel: 'Quản lý chi nhánh',
+    avatar: 'TL',
+    badgeClass: 'role-manager',
+    badgeIcon: '🛡️',
+    branchId: 1,
+    branchName: 'Chi nhánh 01 (Cần Thơ)',
+    canViewAllCenters: false,
+    canOverrideSla: true,
+    canReassignTechnician: true,
+    canManageStaff: true,
+    canManageAllAccounts: false
+  },
+  QUAN_LY_HE_THONG: {
+    role: 'QUAN_LY_HE_THONG',
+    name: 'Võ Thành Long',
+    username: 'hethong01',
+    roleLabel: 'Quản lý hệ thống',
     avatar: 'TL',
     badgeClass: 'role-manager',
     badgeIcon: '🛡️',
@@ -72,30 +93,48 @@ const USER_ROLES = {
     branchName: 'Toàn hệ thống (CN 01 - 06)',
     canViewAllCenters: true,
     canOverrideSla: true,
-    canReassignTechnician: true
+    canReassignTechnician: true,
+    canManageStaff: true,
+    canManageAllAccounts: true
   }
 };
 
-let currentUser = USER_ROLES.NHAN_VIEN;
+let currentUser = null;
 
-function initAuth() {
+function setAppVisibility(visible) {
+  document.querySelectorAll('.navbar, .container').forEach((element) => {
+    element.hidden = !visible;
+  });
+}
+
+function mapAuthenticatedUser(user) {
+  const roleMetadata = USER_ROLES[user?.role];
+  return roleMetadata && user ? { ...roleMetadata, ...user } : null;
+}
+
+async function initAuth() {
+  initializePreferences();
   try {
-    const savedRole = localStorage.getItem('mekong_crm_role');
-    if (savedRole && USER_ROLES[savedRole]) {
-      currentUser = USER_ROLES[savedRole];
-    }
-  } catch (e) {
-    currentUser = USER_ROLES.NHAN_VIEN;
+    currentUser = mapAuthenticatedUser(await window.authApi.me());
+  } catch (e) { currentUser = null; }
+  setAppVisibility(Boolean(currentUser));
+  if (currentUser) {
+    try { await loadCenters(); } catch (error) { console.warn('Không thể tải danh sách chi nhánh:', error.message); }
+    applyUserRoleToUI();
+    resetTicketFiltersForLogin();
+    await Promise.all([loadTickets(1), initPhoneModels()]);
   }
-  applyUserRoleToUI();
+  else openLoginModal();
 }
 
 function applyUserRoleToUI() {
+  if (!currentUser) return;
   const avatarEl = document.getElementById('userAvatar');
   const nameEl = document.getElementById('userName');
   const roleTagEl = document.getElementById('userRoleTag');
   const branchTagEl = document.getElementById('userBranchTag');
   const centerFilter = document.getElementById('centerFilter');
+  const accountButton = document.getElementById('accountAdminButton');
 
   if (avatarEl) avatarEl.textContent = currentUser.avatar;
   if (nameEl) nameEl.textContent = currentUser.name;
@@ -104,12 +143,15 @@ function applyUserRoleToUI() {
     roleTagEl.textContent = `${currentUser.badgeIcon} ${currentUser.roleLabel}`;
   }
   if (branchTagEl) branchTagEl.textContent = currentUser.branchName;
+  if (accountButton) accountButton.hidden = !currentUser.canManageStaff;
 
   // Thiết lập quyền lọc chi nhánh theo Role
   if (centerFilter) {
-    if (currentUser.role === 'NHAN_VIEN') {
+    if (!currentUser.canViewAllCenters) {
       centerFilter.value = String(currentUser.branchId || 1);
+      centerFilter.disabled = true;
     } else {
+      centerFilter.disabled = false;
       if (centerFilter.value === '1' && !localStorage.getItem('mekong_crm_manual_center')) {
         centerFilter.value = 'ALL';
       }
@@ -117,61 +159,334 @@ function applyUserRoleToUI() {
   }
 }
 
+function initializePreferences() {
+  try {
+    currentTheme = localStorage.getItem('mekong_crm_theme') === 'light' ? 'light' : 'dark';
+    currentLanguage = localStorage.getItem('mekong_crm_language') === 'en' ? 'en' : 'vi';
+  } catch (e) { currentTheme = 'dark'; currentLanguage = 'vi'; }
+  document.body.dataset.theme = currentTheme;
+  document.documentElement.lang = currentLanguage;
+  const themeButton = document.getElementById('themeToggle');
+  const languageButton = document.getElementById('languageToggle');
+  if (themeButton) themeButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+  if (languageButton) languageButton.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
+}
+
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.body.dataset.theme = currentTheme;
+  try { localStorage.setItem('mekong_crm_theme', currentTheme); } catch (e) {}
+  const button = document.getElementById('themeToggle');
+  if (button) button.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+}
+
+function toggleLanguage() {
+  currentLanguage = currentLanguage === 'vi' ? 'en' : 'vi';
+  document.documentElement.lang = currentLanguage;
+  try { localStorage.setItem('mekong_crm_language', currentLanguage); } catch (e) {}
+  const button = document.getElementById('languageToggle');
+  if (button) button.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
+  const pairs = {
+    'Danh sách phiếu bảo hành tiếp nhận': 'Warranty ticket list', 'Tạo phiếu mới': 'Create ticket',
+    'Khởi tạo phiếu tiếp nhận bảo hành mới': 'Create a warranty intake ticket', '← Quay lại danh sách': '← Back to list',
+    'Tra cứu': 'Search', 'Số điện thoại khách hàng': 'Customer phone number', 'Họ tên khách hàng': 'Customer name',
+    'Địa chỉ liên hệ': 'Contact address', 'Chọn thiết bị & Model': 'Select device & model',
+    'Số serial/IMEI thiết bị': 'Device serial/IMEI', 'Mô tả sự cố': 'Issue description',
+    'Nhóm sự cố kỹ thuật': 'Technical issue category', 'Mức ưu tiên tiếp nhận': 'Intake priority',
+    'Hồ sơ cá nhân': 'My profile', 'Lưu hồ sơ': 'Save profile', 'Đổi tài khoản': 'Sign out',
+    'Khách hàng': 'Customer', 'Mã phiếu': 'Ticket ID', 'Số điện thoại': 'Phone number',
+    'Thiết bị & Serial': 'Device & serial', 'Nhóm lỗi': 'Issue category', 'Mức ưu tiên': 'Priority',
+    'Trạng thái': 'Status', 'Hạn cam kết (SLA)': 'SLA deadline', 'Hành động': 'Actions',
+    'Tất cả trạng thái': 'All statuses', 'Tất cả chi nhánh (6 trung tâm)': 'All branches (6 centers)',
+    '25 dòng/trang': '25 rows/page', '50 dòng/trang': '50 rows/page', '100 dòng/trang': '100 rows/page',
+    'Đặt lại': 'Reset', 'Chi tiết →': 'Details →', '← Quay lại': '← Back', 'Hủy': 'Cancel',
+    'Họ và tên': 'Full name', 'Vai trò': 'Role', 'Lưu hồ sơ': 'Save profile',
+    'Tên đăng nhập': 'Username', 'Mật khẩu tạm': 'Temporary password',
+    'Tạo tài khoản': 'Create account', 'Tối thiểu 6 ký tự ở môi trường dev; 12 ký tự ở production.': 'At least 6 characters in development and 12 in production.',
+    'Thông tin của tài khoản đang đăng nhập': 'Information for the signed-in account',
+    'Quản lý tài khoản': 'Manage accounts', 'Tài khoản': 'Account', 'Chi nhánh': 'Branch',
+    'Thao tác': 'Actions', 'Đang hoạt động': 'Active', 'Ngưng hoạt động': 'Inactive',
+    'Nhân viên tiếp nhận': 'Reception staff', 'Quản lý chi nhánh': 'Branch manager', 'Quản lý hệ thống': 'System manager',
+    'Tạo phiếu bảo hành thành công.': 'Warranty ticket created successfully.',
+    'Thiết bị & model': 'Device & model', 'Số Serial/IMEI': 'Serial/IMEI',
+    'Thông báo tình trạng bảo hành': 'Warranty status', 'Thiết bị còn bảo hành': 'Device is under warranty',
+    'Chưa có dữ liệu': 'No data available', 'Không tìm thấy phiếu bảo hành': 'Warranty ticket not found'
+  };
+  const textWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let node = textWalker.nextNode(); node; node = textWalker.nextNode()) {
+    const parent = node.parentElement;
+    if (!parent || parent.closest('script,style')) continue;
+    const original = parent.dataset.viText || node.nodeValue.trim();
+    if (!parent.dataset.viText && pairs[original]) parent.dataset.viText = original;
+    if (parent.dataset.viText) node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), currentLanguage === 'en' ? (pairs[parent.dataset.viText] || parent.dataset.viText) : parent.dataset.viText);
+  }
+  [['searchInput','Tra cứu theo mã phiếu (BH-...), SĐT, tên khách, số Serial/IMEI, sự cố...','Search by ticket, phone, customer, serial/IMEI or issue...'],
+   ['custPhoneInput','Nhập số điện thoại khách hàng (VD: 0909123456)...','Enter customer phone number (e.g. 0909123456)...'],
+   ['custNameInput','Nhập họ và tên khách hàng...','Enter customer full name...'],
+   ['custAddressInput','Nhập địa chỉ liên hệ của khách hàng...','Enter customer contact address...']].forEach(([id, vi, en]) => {
+    const input = document.getElementById(id); if (input) input.placeholder = currentLanguage === 'en' ? en : vi;
+  });
+}
+
+const dialogPreviousFocus = new WeakMap();
+
+function showDialog(modal, focusTarget) {
+  if (!modal) return;
+  if (modal.style.display !== 'flex') dialogPreviousFocus.set(modal, document.activeElement);
+  modal.style.display = 'flex';
+  focusTarget?.focus();
+}
+
+function hideDialog(modal) {
+  if (!modal) return;
+  modal.style.display = 'none';
+  const previousFocus = dialogPreviousFocus.get(modal);
+  dialogPreviousFocus.delete(modal);
+  if (previousFocus instanceof HTMLElement && previousFocus.isConnected && previousFocus.getClientRects().length) {
+    previousFocus.focus();
+  } else if (currentUser) {
+    document.getElementById('searchInput')?.focus();
+  }
+}
+
+function getOpenDialog() {
+  return ['loginModal', 'userManagementModal', 'profileModal']
+    .map(id => document.getElementById(id))
+    .find(modal => modal?.style.display === 'flex');
+}
+
+document.addEventListener('keydown', event => {
+  const modal = getOpenDialog();
+  if (!modal) return;
+
+  if (event.key === 'Escape') {
+    if (modal.id === 'loginModal' && !currentUser) return;
+    event.preventDefault();
+    if (modal.id === 'profileModal') closeProfileModal();
+    else if (modal.id === 'userManagementModal') closeUserManagement();
+    else closeLoginModal();
+    return;
+  }
+
+  if (event.key !== 'Tab') return;
+  const focusable = Array.from(modal.querySelectorAll(
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )).filter(element => !element.hidden && element.getClientRects().length);
+  if (!focusable.length) {
+    event.preventDefault();
+    modal.focus();
+    return;
+  }
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (!modal.contains(document.activeElement)) {
+    event.preventDefault();
+    (event.shiftKey ? last : first).focus();
+  } else if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+});
+
+function openProfileModal() {
+  if (!currentUser) return;
+  document.getElementById('profileNameInput').value = currentUser.name || '';
+  document.getElementById('profilePhoneInput').value = currentUser.phone || '';
+  document.getElementById('profileUsername').textContent = currentUser.username;
+  document.getElementById('profileRole').textContent = currentUser.roleLabel;
+  showDialog(document.getElementById('profileModal'), document.getElementById('profileNameInput'));
+}
+
+function closeProfileModal() {
+  hideDialog(document.getElementById('profileModal'));
+}
+
+async function saveProfile(event) {
+  event.preventDefault();
+  if (!currentUser) return;
+  try {
+    const updated = await window.authApi.updateProfile({
+      full_name: document.getElementById('profileNameInput').value.trim(),
+      phone: document.getElementById('profilePhoneInput').value.trim(),
+    });
+    currentUser = mapAuthenticatedUser(updated);
+    applyUserRoleToUI(); closeProfileModal(); showToast('Đã lưu hồ sơ cá nhân.');
+  } catch (error) { showToast(error.message || 'Không thể lưu hồ sơ.'); }
+}
+
 function openLoginModal() {
   const modal = document.getElementById('loginModal');
   const errorMsg = document.getElementById('loginErrorMsg');
   if (errorMsg) errorMsg.style.display = 'none';
-  if (modal) modal.style.display = 'flex';
+  showDialog(modal, document.getElementById('loginUsernameInput'));
+  const closeButton = document.getElementById('loginCloseButton');
+  if (closeButton) closeButton.hidden = !currentUser;
+  const logoutButton = document.getElementById('loginLogoutButton');
+  if (logoutButton) logoutButton.hidden = !currentUser;
+  const title = document.getElementById('loginTitle');
+  if (title) title.textContent = currentUser ? 'TÀI KHOẢN' : 'ĐĂNG NHẬP HỆ THỐNG CRM';
 }
 
 function closeLoginModal() {
-  const modal = document.getElementById('loginModal');
-  if (modal) modal.style.display = 'none';
+  if (!currentUser) return;
+  hideDialog(document.getElementById('loginModal'));
 }
 
-function quickLogin(roleKey) {
-  if (USER_ROLES[roleKey]) {
-    currentUser = USER_ROLES[roleKey];
-    try {
-      localStorage.setItem('mekong_crm_role', roleKey);
-    } catch (e) {}
-    applyUserRoleToUI();
-    closeLoginModal();
-    showToast(`Đã chuyển sang vai trò: ${currentUser.roleLabel}`);
-    loadTickets(1);
-  }
-}
-
-function handleManualLogin(event) {
+async function handleManualLogin(event) {
   event.preventDefault();
-  const username = (document.getElementById('loginUsernameInput').value || '').trim();
-  const password = (document.getElementById('loginPasswordInput').value || '').trim();
-  const roleSelect = document.getElementById('loginRoleSelect').value;
+  const username = (document.getElementById('loginUsernameInput').value || '').trim().toLowerCase();
+  const password = document.getElementById('loginPasswordInput').value || '';
   const errorMsg = document.getElementById('loginErrorMsg');
-
-  if (!username) {
+  try {
+    currentUser = mapAuthenticatedUser(await window.authApi.login(username, password));
+    if (!currentUser) throw new Error('Tài khoản không có vai trò hợp lệ.');
+  } catch (error) {
     if (errorMsg) {
-      errorMsg.textContent = 'Vui lòng nhập tên đăng nhập!';
+      errorMsg.textContent = error.message || 'Tên đăng nhập hoặc mật khẩu không đúng.';
       errorMsg.style.display = 'block';
     }
     return;
   }
 
-  const baseRole = USER_ROLES[roleSelect] || USER_ROLES.NHAN_VIEN;
-  currentUser = {
-    ...baseRole,
-    username: username,
-    name: username.toLowerCase().includes('quan') ? 'Võ Thành Long' : (baseRole.name || username)
-  };
-
-  try {
-    localStorage.setItem('mekong_crm_role', roleSelect);
-  } catch (e) {}
-
+  try { await loadCenters(); } catch (error) { console.warn('Không thể tải danh sách chi nhánh:', error.message); }
+  setAppVisibility(true);
   applyUserRoleToUI();
+  resetTicketFiltersForLogin();
   closeLoginModal();
-  showToast(`Đăng nhập thành công với vai trò: ${currentUser.roleLabel}`);
-  loadTickets(1);
+  document.getElementById('loginPasswordInput').value = '';
+  showToast(`Đã đăng nhập: ${currentUser.roleLabel}`);
+  await Promise.all([loadTickets(1), initPhoneModels()]);
+}
+
+async function logoutDemo() {
+  try { await window.authApi.logout(); } catch (e) {}
+  currentUser = null;
+  setAppVisibility(false);
+  openLoginModal();
+}
+
+const ROLE_LABELS = { NHAN_VIEN: 'Nhân viên tiếp nhận', QUAN_LY_CHI_NHANH: 'Quản lý chi nhánh', QUAN_LY_HE_THONG: 'Quản lý hệ thống' };
+let CENTER_OPTIONS = [
+  { center_id: 1, center_name: 'TTBH Quận 10' },
+  { center_id: 2, center_name: 'TTBH Quận Tân Bình' },
+  { center_id: 3, center_name: 'TTBH TP. Thủ Đức' },
+  { center_id: 4, center_name: 'TTBH Ninh Kiều' },
+  { center_id: 5, center_name: 'TTBH Cái Răng' },
+  { center_id: 6, center_name: 'TTBH Cầu Giấy' },
+];
+
+async function loadCenters() {
+  const response = await fetch('/api/centers');
+  const payload = await response.json();
+  if (!response.ok || !Array.isArray(payload.data)) throw new Error('Danh sách chi nhánh không hợp lệ.');
+
+  CENTER_OPTIONS = payload.data.map((center) => ({ center_id: Number(center.center_id), center_name: center.center_name }));
+  Object.keys(CENTER_MAP).forEach((id) => delete CENTER_MAP[id]);
+  CENTER_OPTIONS.forEach((center) => { CENTER_MAP[center.center_id] = center.center_name; });
+
+  const centerFilter = document.getElementById('centerFilter');
+  if (centerFilter) {
+    const selected = centerFilter.value;
+    centerFilter.replaceChildren(new Option(`Tất cả chi nhánh (${CENTER_OPTIONS.length} trung tâm)`, 'ALL'));
+    CENTER_OPTIONS.forEach((center) => centerFilter.add(new Option(center.center_name, String(center.center_id))));
+    centerFilter.value = [...centerFilter.options].some((option) => option.value === selected) ? selected : 'ALL';
+  }
+
+  const createCenter = document.getElementById('newUserCenter');
+  if (createCenter) {
+    const selected = createCenter.value;
+    createCenter.replaceChildren(...CENTER_OPTIONS.map((center) => new Option(center.center_name, String(center.center_id))));
+    if ([...createCenter.options].some((option) => option.value === selected)) createCenter.value = selected;
+  }
+}
+
+async function openUserManagement() {
+  if (!currentUser?.canManageStaff) return;
+  const systemManager = currentUser.role === 'QUAN_LY_HE_THONG';
+  document.getElementById('userManagementScope').textContent = systemManager
+    ? 'Quản lý tài khoản trên toàn hệ thống.'
+    : `Chỉ quản lý nhân viên tại ${currentUser.branchName}.`;
+  document.getElementById('newUserRoleField').hidden = !systemManager;
+  document.getElementById('newUserCenterField').hidden = !systemManager;
+  if (!systemManager) document.getElementById('newUserCenter').value = String(currentUser.branchId);
+  document.getElementById('userManagementMessage').textContent = '';
+  showDialog(document.getElementById('userManagementModal'), document.getElementById('newUserUsername'));
+  await loadManagedUsers();
+}
+
+function closeUserManagement() {
+  hideDialog(document.getElementById('userManagementModal'));
+}
+
+async function loadManagedUsers() {
+  const body = document.getElementById('managedUsersBody');
+  body.innerHTML = '<tr><td colspan="6">Đang tải tài khoản…</td></tr>';
+  try {
+    const users = await window.authApi.listUsers();
+    body.innerHTML = users.map((user) => {
+      const roleOptions = Object.entries(ROLE_LABELS).map(([key, label]) => `<option value="${key}" ${user.role === key ? 'selected' : ''}>${label}</option>`).join('');
+      const centerOptions = CENTER_OPTIONS.map((center) => `<option value="${center.center_id}" ${Number(user.branchId) === center.center_id ? 'selected' : ''}>${String(center.center_id).padStart(2, '0')} · ${escapeHtml(center.center_name)}</option>`).join('');
+      return `<tr data-user-id="${Number(user.id)}">
+        <td>${escapeHtml(user.username)}</td>
+        <td><input data-field="full_name" value="${escapeHtml(user.name)}" maxlength="120" aria-label="Họ tên ${escapeHtml(user.username)}"></td>
+        <td><select data-field="role" ${currentUser.role !== 'QUAN_LY_HE_THONG' ? 'disabled' : ''}>${roleOptions}</select></td>
+        <td><select data-field="center_id" ${currentUser.role !== 'QUAN_LY_HE_THONG' || user.role === 'QUAN_LY_HE_THONG' ? 'disabled' : ''}>${centerOptions}</select></td>
+        <td>${user.isActive ? 'Đang hoạt động' : 'Đã khóa'}</td>
+        <td class="managed-user-actions"><button type="button" class="btn btn-secondary" data-action="save">Lưu</button><button type="button" class="btn btn-secondary" data-action="toggle">${user.isActive ? 'Khóa' : 'Mở khóa'}</button></td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="6">Chưa có tài khoản phù hợp.</td></tr>';
+  } catch (error) {
+    body.innerHTML = `<tr><td colspan="6">${escapeHtml(error.message || 'Không thể tải danh sách tài khoản.')}</td></tr>`;
+  }
+}
+
+async function createManagedUser(event) {
+  event.preventDefault();
+  const form = document.getElementById('createUserForm');
+  const message = document.getElementById('userManagementMessage');
+  const systemManager = currentUser?.role === 'QUAN_LY_HE_THONG';
+  try {
+    await window.authApi.createUser({
+      username: document.getElementById('newUserUsername').value.trim(),
+      full_name: document.getElementById('newUserName').value.trim(),
+      password: document.getElementById('newUserPassword').value,
+      phone: document.getElementById('newUserPhone').value.trim(),
+      role: systemManager ? document.getElementById('newUserRole').value : 'NHAN_VIEN',
+      center_id: systemManager ? Number(document.getElementById('newUserCenter').value) : currentUser.branchId,
+    });
+    form.reset();
+    if (!systemManager) document.getElementById('newUserCenter').value = String(currentUser.branchId);
+    message.textContent = 'Đã tạo tài khoản.';
+    await loadManagedUsers();
+  } catch (error) { message.textContent = error.message || 'Không thể tạo tài khoản.'; }
+}
+
+async function handleManagedUserAction(event) {
+  const button = event.target.closest('[data-action]');
+  if (!button) return;
+  const row = button.closest('tr[data-user-id]');
+  if (!row) return;
+  const userId = Number(row.dataset.userId);
+  try {
+    if (button.dataset.action === 'save') {
+      await window.authApi.updateUser(userId, {
+        full_name: row.querySelector('[data-field="full_name"]').value.trim(),
+        role: row.querySelector('[data-field="role"]').value,
+        center_id: Number(row.querySelector('[data-field="center_id"]').value),
+      });
+    } else {
+      const users = await window.authApi.listUsers();
+      const target = users.find((user) => Number(user.id) === userId);
+      if (!target) return;
+      await window.authApi.updateUser(userId, { is_active: !target.isActive });
+    }
+    document.getElementById('userManagementMessage').textContent = 'Đã cập nhật tài khoản.';
+    await loadManagedUsers();
+  } catch (error) { document.getElementById('userManagementMessage').textContent = error.message || 'Không thể cập nhật tài khoản.'; }
 }
 
 function switchTab(screenId) {
@@ -179,7 +494,8 @@ function switchTab(screenId) {
   screens.forEach(s => {
     if (s.id === screenId) {
       s.style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
     } else {
       s.style.display = 'none';
     }
@@ -211,6 +527,7 @@ function clearCreateForm() {
   const alertBox = document.getElementById('warrantyAlertBox');
   const alertText = document.getElementById('warrantyAlertText');
   const slaText = document.getElementById('slaPreviewText');
+  const lookupFeedback = document.getElementById('customerLookupFeedback');
 
   if (phone) phone.value = '';
   if (name) name.value = '';
@@ -225,8 +542,10 @@ function clearCreateForm() {
   if (alertBox) alertBox.style.display = 'none';
   if (alertText) alertText.textContent = '';
   if (slaText) slaText.textContent = 'Chưa tính (chọn mức ưu tiên)';
+  if (lookupFeedback) { lookupFeedback.hidden = true; lookupFeedback.textContent = ''; lookupFeedback.className = 'lookup-feedback'; }
 
   selectedPriority = 'TRUNG_BINH';
+  selectedWarrantyStatus = null;
   const radio = document.querySelector('input[name="priorityRadio"][value="TRUNG_BINH"]');
   if (radio) radio.checked = true;
 }
@@ -327,7 +646,7 @@ async function loadTickets(page = 1) {
   if (badge) badge.innerText = total.toLocaleString();
 
   const statsPill = document.getElementById('datasetStatsPill');
-  if (statsPill) statsPill.innerText = `Dataset ${total.toLocaleString()} phiếu · 6 Chi nhánh · 6 Nhóm lỗi`;
+  if (statsPill) statsPill.innerText = `Dataset ${total.toLocaleString()} phiếu · ${CENTER_OPTIONS.length} Chi nhánh · 6 Nhóm lỗi`;
 
   renderTicketsTable(tickets, total);
   updatePaginationControls(total);
@@ -339,13 +658,15 @@ function renderTicketsTable(tickets, total) {
     const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value.trim() : '';
     const statusVal = document.getElementById('statusFilter') ? document.getElementById('statusFilter').value : 'ALL';
     const centerVal = document.getElementById('centerFilter') ? document.getElementById('centerFilter').value : 'ALL';
-    const isFiltered = Boolean(searchVal || (statusVal && statusVal !== 'ALL') || (centerVal && centerVal !== 'ALL'));
+    const isFiltered = Boolean(searchVal || (statusVal && statusVal !== 'ALL')
+      || (currentUser?.role === 'QUAN_LY_HE_THONG' && centerVal && centerVal !== 'ALL'));
 
     // Trạng thái 2: Rỗng - phân biệt do bộ lọc hay CSDL chưa có dữ liệu (Buổi 9 A3)
     if (window.dataState) {
       window.dataState.renderEmpty(tbody, {
         isFiltered,
-        onClearFilter: resetFilters,
+        isScoped: currentUser?.role !== 'QUAN_LY_HE_THONG',
+        onClearFilter: resetFilter,
         onCreateNew: goToCreate,
       });
     } else {
@@ -405,7 +726,7 @@ function renderTicketsTable(tickets, total) {
             ${escapeHtml(dueDateFormatted)}
           </div>
         </td>
-        <td class="col-nowrap" style="text-align: right;">
+        <td class="col-nowrap action-column" style="text-align: right;">
           <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="goToDetail('${escapeHtml(code)}')">
             Chi tiết →
           </button>
@@ -454,7 +775,10 @@ function changePage(page) {
   if (page < 1 || page > totalPages || page === currentPage) return;
   loadTickets(page);
   const tableEl = document.getElementById('ticketsTable');
-  if (tableEl) tableEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (tableEl) {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    tableEl.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest' });
+  }
 }
 
 function onSearchInput() {
@@ -487,6 +811,21 @@ function resetFilter() {
   currentPage = 1;
   loadTickets(1);
   showToast('Đã đặt lại bộ lọc danh sách về mặc định');
+}
+
+function resetTicketFiltersForLogin() {
+  const searchInput = document.getElementById('searchInput');
+  const statusFilter = document.getElementById('statusFilter');
+  const centerFilter = document.getElementById('centerFilter');
+  if (searchInput) searchInput.value = '';
+  if (statusFilter) statusFilter.value = 'ALL';
+  if (centerFilter) {
+    centerFilter.value = currentUser?.canViewAllCenters
+      ? 'ALL'
+      : String(currentUser?.branchId || 'ALL');
+  }
+  try { localStorage.removeItem('mekong_crm_manual_center'); } catch (e) {}
+  currentPage = 1;
 }
 
 // -------------------------------------------------------------
@@ -524,20 +863,25 @@ function updateDeviceCountLabel() {
 function openDeviceDropdown() {
   const dropdown = document.getElementById('deviceDropdown');
   const wrapper = document.getElementById('deviceCombobox');
+  const input = document.getElementById('deviceNameInput');
   if (!dropdown) return;
 
-  const currentInput = document.getElementById('deviceNameInput').value.trim();
+  const currentInput = input?.value.trim() || '';
   filterDevices(currentInput);
 
   dropdown.style.display = 'flex';
   if (wrapper) wrapper.classList.add('open');
+  input?.setAttribute('aria-expanded', 'true');
 }
 
 function closeDeviceDropdown() {
   const dropdown = document.getElementById('deviceDropdown');
   const wrapper = document.getElementById('deviceCombobox');
+  const input = document.getElementById('deviceNameInput');
   if (dropdown) dropdown.style.display = 'none';
   if (wrapper) wrapper.classList.remove('open');
+  input?.setAttribute('aria-expanded', 'false');
+  input?.removeAttribute('aria-activedescendant');
   highlightedDeviceIndex = -1;
 }
 
@@ -552,12 +896,14 @@ function filterDeviceBrand(brand, event) {
 
   const chips = document.querySelectorAll('.combobox-brand-filters .brand-chip');
   chips.forEach(c => c.classList.remove('active'));
-  if (event && event.target) {
-    event.target.classList.add('active');
+  if (event?.currentTarget) {
+    event.currentTarget.classList.add('active');
   }
 
-  const query = document.getElementById('deviceNameInput').value.trim();
+  const input = document.getElementById('deviceNameInput');
+  const query = input?.value.trim() || '';
   filterDevices(query);
+  input?.focus({ preventScroll: true });
 }
 
 function filterDevices(query) {
@@ -584,6 +930,7 @@ function renderDeviceList(query) {
         <p style="font-size: 12px; color: var(--text-muted);">Bạn vẫn có thể tiếp tục gõ để chỉ định tên thiết bị tự do.</p>
       </div>
     `;
+    document.getElementById('deviceNameInput')?.removeAttribute('aria-activedescendant');
     return;
   }
 
@@ -597,7 +944,10 @@ function renderDeviceList(query) {
     const warranty = item.warranty_months ? `${item.warranty_months}T BH` : '12T BH';
 
     html += `
-      <div class="combobox-item ${isHighlighted}" 
+      <div class="combobox-item ${isHighlighted}"
+           id="device-option-${index}"
+           role="option"
+           aria-selected="${index === highlightedDeviceIndex}"
            data-index="${index}" 
            onclick="selectDeviceByIndex(${index})"
            onmouseenter="setHighlightedIndex(${index})">
@@ -614,15 +964,30 @@ function renderDeviceList(query) {
   });
 
   listEl.innerHTML = html;
+  syncDeviceHighlight();
+}
+
+function syncDeviceHighlight(scrollIntoView = false) {
+  const input = document.getElementById('deviceNameInput');
+  const items = document.querySelectorAll('#deviceList [role="option"]');
+  let activeOption = null;
+  items.forEach((item, index) => {
+    const active = index === highlightedDeviceIndex;
+    item.classList.toggle('active', active);
+    item.setAttribute('aria-selected', String(active));
+    if (active) activeOption = item;
+  });
+  if (activeOption) {
+    input?.setAttribute('aria-activedescendant', activeOption.id);
+    if (scrollIntoView) activeOption.scrollIntoView({ block: 'nearest' });
+  } else {
+    input?.removeAttribute('aria-activedescendant');
+  }
 }
 
 function setHighlightedIndex(idx) {
   highlightedDeviceIndex = idx;
-  const items = document.querySelectorAll('.combobox-item');
-  items.forEach((item, i) => {
-    if (i === idx) item.classList.add('active');
-    else item.classList.remove('active');
-  });
+  syncDeviceHighlight();
 }
 
 function selectDeviceByIndex(index) {
@@ -682,15 +1047,7 @@ function onDeviceKeydown(e) {
 }
 
 function updateHighlightScroll() {
-  const items = document.querySelectorAll('.combobox-item');
-  items.forEach((item, i) => {
-    if (i === highlightedDeviceIndex) {
-      item.classList.add('active');
-      item.scrollIntoView({ block: 'nearest' });
-    } else {
-      item.classList.remove('active');
-    }
-  });
+  syncDeviceHighlight(true);
 }
 
 function highlightSubstring(text, query) {
@@ -703,26 +1060,32 @@ function highlightSubstring(text, query) {
 // 4. KIỂM TRA BẢO HÀNH & HIỂN THỊ THÔNG BÁO LỖI (ẢNH 3 - TRƯỜNG 6)
 // -------------------------------------------------------------
 function checkWarrantyStatus(product) {
-  const serialInput = document.getElementById('deviceImeiInput');
-  const serial = serialInput ? serialInput.value.trim() : '';
   const alertBox = document.getElementById('warrantyAlertBox');
   const alertText = document.getElementById('warrantyAlertText');
   if (!alertBox || !alertText) return;
 
+  const serialInput = document.getElementById('deviceImeiInput');
+  const serial = serialInput ? serialInput.value.trim() : '';
   if (!serial) {
+    selectedWarrantyStatus = null;
     alertBox.style.display = 'none';
     alertText.textContent = '';
     return;
   }
 
   alertBox.style.display = 'flex';
-  if (serial.includes('778901') || serial.includes('SN-A52')) {
-    alertBox.className = 'warranty-alert-box';
-    alertText.innerHTML = `⚠ Thiết bị ${escapeHtml(serial)} đã hết hạn bảo hành (QT-01).`;
+  selectedWarrantyStatus = product && typeof product.is_warranty === 'boolean' ? product.is_warranty : null;
+  if (product && typeof product.is_warranty === 'boolean') {
+    if (product.is_warranty) {
+      alertBox.className = 'warranty-alert-box valid';
+      alertText.textContent = `Thiết bị ${serial} còn hạn theo hồ sơ bảo hành đã tra cứu.`;
+    } else {
+      alertBox.className = 'warranty-alert-box';
+      alertText.textContent = `Thiết bị ${serial} đã hết hạn theo hồ sơ bảo hành đã tra cứu.`;
+    }
   } else {
-    // Thiết bị hợp lệ còn hạn bảo hành
-    alertBox.className = 'warranty-alert-box valid';
-    alertText.innerHTML = `✔ Thiết bị ${escapeHtml(serial)} đối soát ERP hợp lệ: Còn hạn bảo hành chính hãng (QT-05).`;
+    alertBox.className = 'warranty-alert-box';
+    alertText.textContent = `Chưa xác minh bảo hành cho thiết bị ${serial}. Cần đối soát dữ liệu bán hàng trước khi cam kết.`;
   }
 }
 
@@ -740,6 +1103,14 @@ async function simulateLookup() {
 
   // Chuẩn hóa số điện thoại tra cứu (loại bỏ khoảng trắng, dấu chấm, dấu gạch)
   const cleanPhone = phone.replace(/[\s.-]/g, '');
+  const feedback = document.getElementById('customerLookupFeedback');
+  const showLookupFeedback = (message, type) => {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.className = `lookup-feedback ${type || ''}`;
+    feedback.hidden = false;
+  };
+  if (feedback) { feedback.hidden = true; feedback.textContent = ''; }
 
   // 1. Gọi API Backend tra cứu qua ticketsApi (Buổi 9 SE)
   if (window.ticketsApi) {
@@ -747,6 +1118,7 @@ async function simulateLookup() {
       const body = await window.ticketsApi.traCuuKhachHang(cleanPhone);
       if (body && body.found && body.data) {
         const cust = body.data;
+        showLookupFeedback(`Đã tìm thấy khách hàng: ${cust.full_name}.`, 'success');
 
         // Điền họ tên khách hàng
         const nameInput = document.getElementById('custNameInput');
@@ -759,6 +1131,7 @@ async function simulateLookup() {
         // Điền thông tin thiết bị và lịch sử gắn liền với khách hàng
         if (cust.devices && cust.devices.length > 0) {
           const dev = cust.devices[0];
+          selectedWarrantyStatus = typeof dev.is_warranty === 'boolean' ? dev.is_warranty : null;
 
           if (dev.product_name) {
             const devNameInput = document.getElementById('deviceNameInput');
@@ -802,12 +1175,15 @@ async function simulateLookup() {
               alertText.innerHTML = `⚠ Thiết bị ${escapeHtml(s)} (${escapeHtml(p)}) đã hết hạn bảo hành (QT-01).`;
             } else {
               alertBox.className = 'warranty-alert-box valid';
-              alertText.innerHTML = `✔ Thiết bị ${escapeHtml(s)} (${escapeHtml(p)}) đối soát ERP hợp lệ: Còn hạn bảo hành chính hãng (QT-05).`;
+              alertText.textContent = selectedWarrantyStatus === true
+                ? `Thiết bị ${s} (${p}) còn hạn theo hồ sơ bảo hành đã tra cứu (QT-05).`
+                : `Chưa xác minh bảo hành cho thiết bị ${s} (${p}) (QT-05).`;
             }
           }
 
           showToast(`Đã tìm thấy hồ sơ: ${cust.full_name} (${dev.product_name})`);
         } else {
+          selectedWarrantyStatus = null;
           // Khách hàng đã có trong CRM nhưng chưa tiếp nhận thiết bị này trước đó
           const alertBox = document.getElementById('warrantyAlertBox');
           const alertText = document.getElementById('warrantyAlertText');
@@ -821,6 +1197,11 @@ async function simulateLookup() {
       }
     } catch (e) {
       console.warn('Lỗi khi gọi /api/customers:', e);
+      if (e?.status !== 404 && !window.__FORCE_OFFLINE__) {
+        showLookupFeedback('Không thể kết nối hệ thống để tra cứu. Vui lòng thử lại.', 'error');
+        showToast('Không thể kết nối hệ thống để tra cứu.');
+        return;
+      }
     }
   }
 
@@ -843,20 +1224,26 @@ async function simulateLookup() {
     const alertBox = document.getElementById('warrantyAlertBox');
     const alertText = document.getElementById('warrantyAlertText');
     if (alertBox && alertText) {
+      selectedWarrantyStatus = typeof foundSample.is_warranty === 'boolean' ? foundSample.is_warranty : null;
       if (foundSample.is_warranty === false) {
         alertBox.className = 'warranty-alert-box';
         alertText.innerHTML = `⚠ Thiết bị ${escapeHtml(foundSample.serial_no)} (${escapeHtml(foundSample.product_name)}) đã hết hạn bảo hành (QT-01).`;
       } else {
         alertBox.className = 'warranty-alert-box valid';
-        alertText.innerHTML = `✔ Thiết bị ${escapeHtml(foundSample.serial_no)} (${escapeHtml(foundSample.product_name)}) đối soát ERP hợp lệ: Còn hạn bảo hành chính hãng (QT-05).`;
+        alertText.textContent = selectedWarrantyStatus === true
+          ? `Thiết bị ${foundSample.serial_no} (${foundSample.product_name}) còn hạn theo hồ sơ bảo hành đã tra cứu (QT-05).`
+          : `Chưa xác minh bảo hành cho thiết bị ${foundSample.serial_no} (${foundSample.product_name}) (QT-05).`;
       }
     }
     showToast(`Đã tìm thấy thông tin khách hàng: ${foundSample.customer_name}`);
+    showLookupFeedback(`Đã tìm thấy khách hàng: ${foundSample.customer_name}.`, 'success');
     return;
   }
 
   // 3. Khách hàng mới chưa có trong hệ thống
-  showToast('Khách hàng mới! Họ tên sẽ được lưu hồ sơ tự động khi tạo phiếu.');
+  selectedWarrantyStatus = null;
+  showLookupFeedback('Số điện thoại chưa có trên hệ thống. Nhập họ tên và thông tin khách hàng để tiếp tục tạo phiếu.', 'not-found');
+  showToast('Số điện thoại chưa có trên hệ thống.');
   document.getElementById('custNameInput').focus();
 }
 
@@ -969,6 +1356,7 @@ async function submitTicket() {
   const payload = {
     customer_name: name,
     customer_phone: phone,
+    customer_address: document.getElementById('custAddressInput').value.trim(),
     product_name: deviceName,
     serial_no: serial,
     serial_imei: serial,
@@ -976,29 +1364,28 @@ async function submitTicket() {
     category_id: catId,
     issue_description: issueDesc,
     priority: selectedPriority,
-    store_id: 'STORE_01',
-    center_id: 1,
+    is_warranty: selectedWarrantyStatus === true,
+    warranty_verified: selectedWarrantyStatus !== null,
+    store_id: `STORE_${String(currentUser?.branchId || 1).padStart(2, '0')}`,
+    center_id: Number(currentUser?.branchId || 1),
   };
 
   let newTicketCode = null;
 
   // Gửi API Backend qua ticketsApi (Buổi 9 & 10 SE)
-  if (window.ticketsApi) {
-    try {
-      const data = await window.ticketsApi.tiepNhan(payload);
-      if (data && (data.ticket_code || data.id)) {
-        newTicketCode = data.ticket_code || data.id;
-      }
-    } catch (err) {
-      console.warn('Lỗi khi gửi API tạo phiếu bảo hành:', err);
-      const msg = err.message || 'Lỗi khi gửi yêu cầu tiếp nhận bảo hành tới máy chủ';
-      alert(`Không thể tạo phiếu bảo hành: ${msg}`);
-      return;
-    }
+  if (!window.ticketsApi) {
+    alert('Không thể tạo phiếu vì chưa kết nối API máy chủ. Vui lòng tải lại ứng dụng sau khi backend hoạt động.');
+    return;
   }
-
-  if (!newTicketCode) {
-    newTicketCode = `BH-${String(Math.floor(100000 + Math.random() * 900000))}/2026`;
+  try {
+    const data = await window.ticketsApi.tiepNhan(payload);
+    newTicketCode = data && (data.ticket_code || data.id);
+    if (!newTicketCode) throw new Error('Máy chủ chưa trả về mã phiếu.');
+  } catch (err) {
+    console.warn('Lỗi khi gửi API tạo phiếu bảo hành:', err);
+    const msg = err.message || 'Lỗi khi gửi yêu cầu tiếp nhận bảo hành tới máy chủ';
+    alert(`Không thể tạo phiếu bảo hành: ${msg}`);
+    return;
   }
 
   showToast(`Tạo phiếu thành công: ${newTicketCode} (Ghi log kiểm toán QT-06)!`);
@@ -1044,6 +1431,9 @@ async function loadTicketDetail(ticketIdentifier) {
     const custPhone = document.getElementById('detailCustPhone');
     if (custPhone) custPhone.innerText = ticket.customer_phone || '0901234567';
 
+    const custAddress = document.getElementById('detailCustAddress');
+    if (custAddress) custAddress.innerText = ticket.customer_address || '—';
+
     const statusBadge = document.getElementById('detailStatusBadge');
     if (statusBadge) {
       statusBadge.className = `badge ${getStatusBadgeClass(ticket.status)}`;
@@ -1058,9 +1448,10 @@ async function loadTicketDetail(ticketIdentifier) {
 
     const warrantyStatus = document.getElementById('detailWarrantyStatus');
     if (warrantyStatus) {
-      const isW = ticket.is_warranty !== false;
-      warrantyStatus.innerText = isW ? 'Còn bảo hành chính hãng' : 'Hết hạn bảo hành';
-      warrantyStatus.style.color = isW ? '#34D399' : '#F87171';
+      const isVerified = typeof ticket.is_warranty === 'boolean' && ticket.warranty_verified !== false;
+      const isW = ticket.is_warranty === true;
+      warrantyStatus.innerText = !isVerified ? 'Chưa xác minh bảo hành' : (isW ? 'Còn bảo hành chính hãng' : 'Hết hạn bảo hành');
+      warrantyStatus.style.color = !isVerified ? '#FBBF24' : (isW ? '#34D399' : '#F87171');
     }
 
     const catName = document.getElementById('detailCategoryName');
@@ -1140,6 +1531,18 @@ async function loadTicketDetail(ticketIdentifier) {
         </div>
       `).join('');
     }
+  } else {
+    const emptyFields = [
+      'detailCustName', 'detailCustPhone', 'detailCustAddress', 'detailDeviceModel', 'detailDeviceSerial',
+      'detailWarrantyStatus', 'detailCategoryName', 'detailPriorityBadge', 'detailDueDate', 'detailIssueDesc',
+    ];
+    emptyFields.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = '—';
+    });
+    const timeline = document.getElementById('activityTimeline');
+    if (timeline) timeline.textContent = 'Không có lịch sử cho phiếu này.';
+    showToast(`Không tìm thấy phiếu bảo hành ${ticketIdentifier}.`);
   }
 }
 
@@ -1161,7 +1564,7 @@ async function updateTicketStatus() {
   // Gọi API Backend qua ticketsApi (Buổi 9 & 10 SE)
   if (window.ticketsApi) {
     try {
-      await window.ticketsApi.chuyenTrangThai(ticketCode, nextStatus, note);
+      await window.ticketsApi.chuyenTrangThai(ticketCode, nextStatus, note, currentUser?.username || 'nhanvien01');
       showToast('Đã cập nhật trạng thái phiếu và ghi nhận nhật ký kiểm toán!');
       await loadTicketDetail(ticketCode);
       if (typeof loadTickets === 'function') loadTickets(currentPage);
@@ -1173,32 +1576,18 @@ async function updateTicketStatus() {
     }
   }
 
-  // Fallback offline nếu không kết nối được ticketsApi
-  const statusBadge = document.getElementById('detailStatusBadge');
-  if (statusBadge) {
-    statusBadge.className = `badge ${getStatusBadgeClass(nextStatus)}`;
-    statusBadge.innerText = `Trạng thái: ${formatStatusLabel(nextStatus)}`;
-  }
-
-  const timeline = document.getElementById('activityTimeline');
-  if (timeline) {
-    const timeStr = formatDateTime(new Date());
-    const item = document.createElement('div');
-    item.className = 'timeline-item';
-    item.innerHTML = `
-      <div class="timeline-time">${escapeHtml(timeStr)}</div>
-      <div class="timeline-text">Chuyển trạng thái → <span class="badge ${getStatusBadgeClass(nextStatus)}" style="font-size: 11px; padding: 2px 8px;">${formatStatusLabel(nextStatus)}</span></div>
-      <div class="timeline-author">Thực hiện bởi: <strong>Nguyễn Bá Anh Khôi</strong> (Receptionist)</div>
-      <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Ghi chú: ${escapeHtml(note || 'Chuyển giao theo quy trình')}</div>
-    `;
-    timeline.prepend(item);
-  }
-
-  showToast('Đã cập nhật trạng thái phiếu và ghi nhận nhật ký kiểm toán!');
+  showToast('Không thể cập nhật phiếu vì chưa kết nối API máy chủ.');
 }
 
 function printReceipt() {
-  showToast('Đang kết nối máy in biên nhận tiếp nhận bảo hành...');
+  const detail = document.getElementById('screen-detail');
+  if (!detail || !document.getElementById('detailTicketCode')?.textContent.trim()) {
+    showToast('Chưa có phiếu để in biên nhận.');
+    return;
+  }
+  detail.classList.add('printing-receipt');
+  window.print();
+  detail.classList.remove('printing-receipt');
 }
 
 // -------------------------------------------------------------
@@ -1293,8 +1682,9 @@ document.addEventListener('click', e => {
 // 10. KHỞI TẠO ỨNG DỤNG KHI TẢI TRANG
 // -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
-  initAuth();
+  await initAuth();
   switchTab('screen-list');
-  await initPhoneModels();
-  await loadTickets(1);
+  const serialInput = document.getElementById('deviceImeiInput');
+  if (serialInput) serialInput.addEventListener('input', () => checkWarrantyStatus(null));
+  document.getElementById('managedUsersBody')?.addEventListener('click', handleManagedUserAction);
 });

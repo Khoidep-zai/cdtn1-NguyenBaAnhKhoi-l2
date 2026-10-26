@@ -1,4 +1,5 @@
 const dataLoader = require('../data/dataLoader');
+const { query } = require('../config/db');
 
 class CatalogController {
   // Lấy danh sách 6 nhóm sự cố (issue_categories.csv)
@@ -16,9 +17,10 @@ class CatalogController {
   }
 
   // Lấy danh sách 6 trung tâm bảo hành (service_centers.csv)
-  static getCenters(req, res) {
+  static async getCenters(req, res) {
     try {
-      const centers = dataLoader.getServiceCenters();
+      const result = await query('SELECT center_id, center_code, center_name, thanh_pho FROM service_center ORDER BY center_id');
+      const centers = result.rows;
       return res.status(200).json({
         success: true,
         total: centers.length,

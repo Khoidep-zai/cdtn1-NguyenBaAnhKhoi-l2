@@ -59,6 +59,7 @@ const apiClient = {
     try {
       res = await fetch(`${baseUrl}${path}`, {
         ...options,
+        credentials: 'same-origin',
         headers,
       });
     } catch (networkErr) {
@@ -80,8 +81,7 @@ const apiClient = {
 
     // Xử lý mã lỗi 401: Unauthorized (Buổi 9 mục A4)
     if (res.status === 401) {
-      this.setToken(null);
-      console.warn('[ApiClient] 401 Unauthorized - Đã xóa token.');
+      console.warn('[ApiClient] 401 Unauthorized.');
       if (typeof window !== 'undefined' && window.showToast) {
         window.showToast('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.', 'error');
       }

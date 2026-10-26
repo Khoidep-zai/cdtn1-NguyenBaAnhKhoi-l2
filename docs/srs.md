@@ -47,19 +47,24 @@ Báo cáo này tập trung phân tích và thiết kế chuyên sâu cho **Luồ
 
 ### 2. Các bên liên quan và vai trò (Stakeholders & Actors)
 
-Hệ thống xác định **2 tác nhân người dùng nội bộ** trực tiếp tham gia tương tác và **1 tác nhân hệ thống ngoại vi**:
+Hệ thống xác định **3 vai trò người dùng nội bộ** trực tiếp tham gia tương tác và **1 tác nhân hệ thống ngoại vi**:
 
 1. **Nhân viên tiếp nhận (Receptionist — Quầy lễ tân):**
    - *Phạm vi quyền hạn:* Tìm kiếm hồ sơ khách hàng, tạo phiếu bảo hành mới, cập nhật trạng thái phiếu (các bước đầu), phân loại nhóm sự cố.
    - *Trách nhiệm:* Tiếp nhận khách hàng, kiểm tra tính hợp lệ của thiết bị và đảm bảo ghi nhận đúng mô tả lỗi từ khách hàng để tạo phiếu bảo hành.
    - *Use Case liên quan:* UC1, UC2, UC3, UC4.
 
-2. **Quản lý trung tâm (Center Manager):**
-   - *Phạm vi quyền hạn:* Xem toàn bộ phiếu bảo hành thuộc trung tâm quản lý, phê duyệt các phiếu chưa xác minh bảo hành, giám sát cảnh báo quá hạn.
-   - *Trách nhiệm:* Theo dõi tiến độ các phiếu bảo hành, đảm bảo các phiếu không bị quá hạn cam kết.
-   - *Use Case liên quan:* UC4, UC5.
+2. **Quản lý chi nhánh (Branch Manager):**
+   - *Phạm vi quyền hạn:* Xem phiếu thuộc chi nhánh được gán; tạo và sửa tài khoản nhân viên tiếp nhận cùng chi nhánh; cập nhật hồ sơ cá nhân.
+   - *Trách nhiệm:* Theo dõi hoạt động tiếp nhận và tài khoản nhân viên tại chi nhánh.
+   - *Use Case liên quan:* UC4, UC5, UC6.
 
-3. **Hệ thống ERP / Kho bán lẻ `<<System>>`:**
+3. **Quản lý hệ thống (System Manager):**
+   - *Phạm vi quyền hạn:* Quản lý tài khoản toàn hệ thống, gán vai trò và chi nhánh; xem dữ liệu mọi chi nhánh; cập nhật hồ sơ cá nhân.
+   - *Trách nhiệm:* Quản trị tài khoản và phạm vi truy cập toàn hệ thống.
+   - *Use Case liên quan:* UC4, UC5, UC6.
+
+4. **Hệ thống ERP / Kho bán lẻ `<<System>>`:**
    - Hệ thống ngoại vi cung cấp dữ liệu xác minh thông tin IMEI và Hóa đơn mua hàng.
    - *Use Case liên quan:* UC2 (include Xác minh hạn bảo hành thiết bị).
 
@@ -166,8 +171,17 @@ Căn cứ theo sơ đồ Use Case (`docs/usecase.drawio`), **UC2: Khởi tạo p
 | :--- | :--- | :--- | :--- |
 | **NFR1** | Hiệu năng (Performance) | Thời gian phản hồi của API tra cứu khách hàng theo SĐT (`GET /api/customers?phone=...`) phải đạt **dưới 500ms** đối với tập dữ liệu thực tế gồm **67.037 bản ghi** (đo lường ở ngưỡng phân vị P95). | Sử dụng kịch bản kiểm thử tải bằng k6 / Apache JMeter với 50 người dùng đồng thời (concurrent users) thực hiện tra cứu liên tục trong 5 phút. |
 | **NFR2** | Tính khả dụng (Availability) | Phân hệ tiếp nhận bảo hành phải duy trì độ sẵn sàng tối thiểu **99.9% uptime** trong khung giờ vận hành phục vụ khách hàng (tổng thời gian gián đoạn không vượt quá 43.8 phút/tháng). | Giám sát trạng thái thông qua endpoint `GET /health` định kỳ 60 giây một lần bởi hệ thống uptime monitoring bên ngoài. |
-| **NFR3** | Toàn vẹn dữ liệu (Data Integrity) | Mọi thao tác tạo phiếu hoặc đổi trạng thái phải được bao bọc trong một **Database Transaction duy nhất** tuân thủ chuẩn ACID; tỷ lệ phát sinh bản ghi mồ côi (orphan records) là **tuyệt đối 0.00%**. | Kiểm thử tích hợp tự động (Integration Test) mô phỏng ngắt kết nối giữa bước ghi bảng `ticket` và bảng `ticket_status_log` để kiểm tra rollback. |
-| **NFR4** | Bảo mật & Phân quyền (Security) | Hệ thống bắt buộc phân quyền truy cập theo vai trò (Role-Based Access Control - RBAC). Chỉ nhân viên có quyền `RECEPTIONIST` mới được tạo phiếu; chỉ `CENTER_MANAGER` mới có quyền phê duyệt ngoại lệ bảo hành. | Kiểm thử bảo mật API bằng cách gửi request không kèm token hoặc giả mạo role để xác thực phản hồi mã HTTP 401 Unauthorized / HTTP 403 Forbidden. |
+| **NFR3** | Toàn vẹn dữ liệu (Data Integrity) | Các thao tác ghi dữ liệu nghiệp vụ phải được bao bọc trong transaction ACID khi chuyển sang repository PostgreSQL. Hiện luồng ticket đang dùng repository in-memory; transaction cho ticket chưa được triển khai. | Đây là tiêu chí triển khai còn mở; không tuyên bố đạt ACID cho ticket cho tới khi repository PostgreSQL được gắn vào runtime và có kiểm thử rollback. |
+| **NFR4** | Bảo mật & Phân quyền (Security) | RBAC có ba role: `NHAN_VIEN`, `QUAN_LY_CHI_NHANH`, `QUAN_LY_HE_THONG`. API yêu cầu phiên đăng nhập; quản lý chi nhánh chỉ quản lý nhân viên thuộc chi nhánh mình; quản lý hệ thống quản lý mọi tài khoản. Mỗi tài khoản chỉ được sửa hồ sơ của chính mình. | Kiểm thử không có phiên trả HTTP 401, role không đủ quyền hoặc truy cập sai chi nhánh trả HTTP 403; phiên dùng cookie HttpOnly có thời hạn. |
+
+#### Ma trận phạm vi quyền tài khoản
+
+| Quyền | Nhân viên tiếp nhận | Quản lý chi nhánh | Quản lý hệ thống |
+| :--- | :---: | :---: | :---: |
+| Xem / cập nhật hồ sơ của chính mình | Có | Có | Có |
+| Tiếp nhận và tra cứu nghiệp vụ L2 | Chi nhánh được gán | Chi nhánh được gán | Toàn hệ thống |
+| Tạo / sửa tài khoản nhân viên | Không | Nhân viên thuộc chi nhánh mình | Mọi tài khoản, được gán role và chi nhánh |
+| Quản lý tài khoản quản lý | Không | Không | Có |
 
 ---
 

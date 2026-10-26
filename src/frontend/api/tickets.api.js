@@ -38,10 +38,11 @@ const ticketsApi = {
   /**
    * Cập nhật trạng thái phiếu bảo hành (Vòng đời một chiều QT-06)
    */
-  chuyenTrangThai(ticketId, status, notes = '') {
+  chuyenTrangThai(ticketId, status, note = '', updatedBy = '') {
     return (window.apiClient || apiClient).patch(`/api/tickets/${encodeURIComponent(ticketId)}/status`, {
       status,
-      notes,
+      note,
+      updated_by: updatedBy,
     });
   },
 
@@ -68,7 +69,7 @@ const ticketsApi = {
    * Lấy danh mục sản phẩm điện thoại (Master Data)
    */
   layDanhSachDienThoai() {
-    return (window.apiClient || apiClient).get('/api/catalog/products?phonesOnly=true&limit=all');
+    return (window.apiClient || apiClient).get('/api/products?phonesOnly=true&limit=all');
   },
 
   /**

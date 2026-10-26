@@ -40,14 +40,23 @@
         <mxCell id="UC3_Inc" parent="SystemBoundary" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;strokeWidth=1.25;" value="Ghi nhật ký lịch sử&lt;br&gt;chuyển trạng thái&lt;br&gt;(Bảng ticket_status_log - QT-06)" vertex="1">
           <mxGeometry height="84" width="260" x="455" y="450" as="geometry" />
         </mxCell>
+        <mxCell id="UC6" parent="SystemBoundary" style="ellipse;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#000000;fontSize=11;strokeWidth=1.25;" value="UC6: Xem &amp;amp; cập nhật&lt;br&gt;hồ sơ cá nhân&lt;br&gt;(Profile của chính mình)" vertex="1">
+          <mxGeometry height="84" width="260" x="455" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="UC7" parent="SystemBoundary" style="ellipse;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontColor=#000000;fontSize=11;strokeWidth=1.25;" value="UC7: Quản lý tài khoản&lt;br&gt;theo role &amp;amp; chi nhánh&lt;br&gt;(RBAC)" vertex="1">
+          <mxGeometry height="84" width="260" x="455" y="670" as="geometry" />
+        </mxCell>
         <mxCell id="EdgeInc_UC3" edge="1" parent="SystemBoundary" source="UC3" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=10;strokeColor=#000000;strokeWidth=1.25;fontSize=10;fontColor=#000000;labelBackgroundColor=#FFFFFF;" target="UC3_Inc" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Actor_Receptionist" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontColor=#000000;fontSize=11;" value="Nhân viên tiếp nhận&lt;br&gt;(Receptionist - Quầy lễ tân)" vertex="1">
           <mxGeometry height="80" width="40" x="100" y="410" as="geometry" />
         </mxCell>
-        <mxCell id="Actor_Manager" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontColor=#000000;fontSize=11;" value="Quản lý trung tâm&lt;br&gt;(Center Manager)" vertex="1">
+        <mxCell id="Actor_Manager" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontColor=#000000;fontSize=11;" value="Quản lý chi nhánh&lt;br&gt;(Branch Manager)" vertex="1">
           <mxGeometry height="80" width="40" x="100" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="Actor_SystemManager" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontColor=#000000;fontSize=11;" value="Quản lý hệ thống&lt;br&gt;(System Manager)" vertex="1">
+          <mxGeometry height="80" width="40" x="100" y="830" as="geometry" />
         </mxCell>
         <mxCell id="Actor_ERP" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;strokeColor=#000000;strokeWidth=1.5;fillColor=#FFFFFF;fontColor=#000000;fontSize=11;" value="&amp;lt;&amp;lt;System&amp;gt;&amp;gt;&lt;br&gt;Hệ thống ERP / Kho bán lẻ&lt;br&gt;(Tra cứu IMEI &amp;amp; Hóa đơn)" vertex="1">
           <mxGeometry height="80" width="40" x="1080" y="250" as="geometry" />
@@ -70,6 +79,10 @@
         <mxCell id="EdgeMgr_UC5" edge="1" parent="1" source="Actor_Manager" style="edgeStyle=none;html=1;rounded=0;endArrow=none;strokeColor=#000000;strokeWidth=1.25;" target="UC5" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="EdgeMgr_UC6" edge="1" parent="1" source="Actor_Manager" style="edgeStyle=none;html=1;rounded=0;endArrow=none;strokeColor=#000000;strokeWidth=1.25;" target="UC6" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="EdgeMgr_UC7" edge="1" parent="1" source="Actor_Manager" style="edgeStyle=none;html=1;rounded=0;endArrow=none;strokeColor=#000000;strokeWidth=1.25;" target="UC7" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="EdgeSys_UC6" edge="1" parent="1" source="Actor_SystemManager" style="edgeStyle=none;html=1;rounded=0;endArrow=none;strokeColor=#000000;strokeWidth=1.25;" target="UC6" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="EdgeSys_UC7" edge="1" parent="1" source="Actor_SystemManager" style="edgeStyle=none;html=1;rounded=0;endArrow=none;strokeColor=#000000;strokeWidth=1.25;" target="UC7" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="EdgeERP_UC2Inc1" edge="1" parent="1" source="Actor_ERP" style="edgeStyle=none;html=1;rounded=0;endArrow=none;strokeColor=#000000;strokeWidth=1.25;" target="UC2_Inc1" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>

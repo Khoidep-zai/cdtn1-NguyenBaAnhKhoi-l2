@@ -20,6 +20,7 @@ describe('Hợp đồng dữ liệu ranh giới Ticket (Buổi 9 SE - D1 & D3)',
   const sampleTicket = {
     ticket_code: 'BH-100234/2026',
     customer_name: 'Nguyễn Văn An',
+    customer_address: 'Quận 1, TP. Hồ Chí Minh',
     customer_phone: '0901234567',
     product_name: 'iPhone 15 Pro Max',
     serial_imei: 'F2LLK900PM',
@@ -45,6 +46,7 @@ describe('Hợp đồng dữ liệu ranh giới Ticket (Buổi 9 SE - D1 & D3)',
 
     assert.equal(contracted.ticket_code, 'BH-100234/2026');
     assert.equal(contracted.customer_name, 'Nguyễn Văn An');
+    assert.equal(contracted.customer_address, 'Quận 1, TP. Hồ Chí Minh');
     assert.equal(contracted.product_name, 'iPhone 15 Pro Max');
     assert.equal(contracted.serial_imei, 'F2LLK900PM');
     assert.equal(contracted.status, 'MOI');
