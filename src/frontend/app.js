@@ -140,7 +140,7 @@ function applyUserRoleToUI() {
   if (nameEl) nameEl.textContent = currentUser.name;
   if (roleTagEl) {
     roleTagEl.className = `role-tag ${currentUser.badgeClass}`;
-    roleTagEl.textContent = `${currentUser.badgeIcon} ${currentUser.roleLabel}`;
+    roleTagEl.innerHTML = `<span class="role-dot"></span><span>${escapeHtml(currentUser.roleLabel)}</span>`;
   }
   if (branchTagEl) branchTagEl.textContent = currentUser.branchName;
   if (accountButton) accountButton.hidden = !currentUser.canManageStaff;
@@ -159,6 +159,21 @@ function applyUserRoleToUI() {
   }
 }
 
+function updateThemeToggleUI() {
+  const sun = document.getElementById('themeIconSun');
+  const moon = document.getElementById('themeIconMoon');
+  const btn = document.getElementById('themeToggle');
+  if (sun && moon) {
+    sun.style.display = currentTheme === 'dark' ? 'block' : 'none';
+    moon.style.display = currentTheme === 'dark' ? 'none' : 'block';
+  } else if (btn) {
+    btn.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+  }
+  if (btn) {
+    btn.title = currentTheme === 'dark' ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối';
+  }
+}
+
 function initializePreferences() {
   try {
     currentTheme = localStorage.getItem('mekong_crm_theme') === 'light' ? 'light' : 'dark';
@@ -166,26 +181,27 @@ function initializePreferences() {
   } catch (e) { currentTheme = 'dark'; currentLanguage = 'vi'; }
   document.body.dataset.theme = currentTheme;
   document.documentElement.lang = currentLanguage;
-  const themeButton = document.getElementById('themeToggle');
+  updateThemeToggleUI();
   const languageButton = document.getElementById('languageToggle');
-  if (themeButton) themeButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-  if (languageButton) languageButton.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
+  const languageLabel = document.getElementById('languageLabel');
+  if (languageLabel) languageLabel.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
+  else if (languageButton) languageButton.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
 }
 
 function toggleTheme() {
   currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.body.dataset.theme = currentTheme;
   try { localStorage.setItem('mekong_crm_theme', currentTheme); } catch (e) { console.debug('Không lưu được theme vào localStorage:', e); }
-  const button = document.getElementById('themeToggle');
-  if (button) button.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+  updateThemeToggleUI();
 }
 
 function toggleLanguage() {
   currentLanguage = currentLanguage === 'vi' ? 'en' : 'vi';
   document.documentElement.lang = currentLanguage;
-  try { localStorage.setItem('mekong_crm_language', currentLanguage); } catch (e) { console.debug('Không lưu được language vào localStorage:', e); }
   const button = document.getElementById('languageToggle');
-  if (button) button.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
+  const label = document.getElementById('languageLabel');
+  if (label) label.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
+  else if (button) button.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
   const pairs = {
     'Danh sách phiếu bảo hành tiếp nhận': 'Warranty ticket list', 'Tạo phiếu mới': 'Create ticket',
     'Khởi tạo phiếu tiếp nhận bảo hành mới': 'Create a warranty intake ticket', '← Quay lại danh sách': '← Back to list',
@@ -256,8 +272,39 @@ function getOpenDialog() {
 }
 
 document.addEventListener('keydown', event => {
+  // Phím tắt bàn phím nghiệp vụ quầy bảo hành (Alt+N: Tạo phiếu nhanh; /: Tra cứu nhanh)
+  if (event.altKey && (event.key === 'n' || event.key === 'N')) {
+    event.preventDefault();
+    goToCreate();
+    return;
+  }
+
+  if (event.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      event.preventDefault();
+      if (document.getElementById('screen-list')?.style.display === 'none') {
+        goToList();
+      }
+      searchInput.focus();
+      searchInput.select();
+    }
+    return;
+  }
+
   const modal = getOpenDialog();
-  if (!modal) return;
+  if (!modal) {
+    if (event.key === 'Escape') {
+      const createScreen = document.getElementById('screen-create');
+      const detailScreen = document.getElementById('screen-detail');
+      if (createScreen && createScreen.style.display !== 'none') {
+        goToList();
+      } else if (detailScreen && detailScreen.style.display !== 'none') {
+        goToList();
+      }
+    }
+    return;
+  }
 
   if (event.key === 'Escape') {
     if (modal.id === 'loginModal' && !currentUser) return;
@@ -431,12 +478,12 @@ async function loadManagedUsers() {
       const roleOptions = Object.entries(ROLE_LABELS).map(([key, label]) => `<option value="${key}" ${user.role === key ? 'selected' : ''}>${label}</option>`).join('');
       const centerOptions = CENTER_OPTIONS.map((center) => `<option value="${center.center_id}" ${Number(user.branchId) === center.center_id ? 'selected' : ''}>${String(center.center_id).padStart(2, '0')} · ${escapeHtml(center.center_name)}</option>`).join('');
       return `<tr data-user-id="${Number(user.id)}">
-        <td>${escapeHtml(user.username)}</td>
+        <td class="col-username">${escapeHtml(user.username)}</td>
         <td><input data-field="full_name" value="${escapeHtml(user.name)}" maxlength="120" aria-label="Họ tên ${escapeHtml(user.username)}"></td>
         <td><select data-field="role" ${currentUser.role !== 'QUAN_LY_HE_THONG' ? 'disabled' : ''}>${roleOptions}</select></td>
         <td><select data-field="center_id" ${currentUser.role !== 'QUAN_LY_HE_THONG' || user.role === 'QUAN_LY_HE_THONG' ? 'disabled' : ''}>${centerOptions}</select></td>
-        <td>${user.isActive ? 'Đang hoạt động' : 'Đã khóa'}</td>
-        <td class="managed-user-actions"><button type="button" class="btn btn-secondary" data-action="save">Lưu</button><button type="button" class="btn btn-secondary" data-action="toggle">${user.isActive ? 'Khóa' : 'Mở khóa'}</button></td>
+        <td><span class="status-indicator ${user.isActive ? 'status-active' : 'status-locked'}">${user.isActive ? 'Đang hoạt động' : 'Đã khóa'}</span></td>
+        <td class="col-actions"><div class="managed-user-actions"><button type="button" class="btn btn-secondary btn-user-save" data-action="save">Lưu</button><button type="button" class="btn btn-secondary btn-user-toggle ${user.isActive ? 'is-locked' : 'is-active'}" data-action="toggle">${user.isActive ? 'Khóa' : 'Mở khóa'}</button></div></td>
       </tr>`;
     }).join('') || '<tr><td colspan="6">Chưa có tài khoản phù hợp.</td></tr>';
   } catch (error) {
@@ -648,8 +695,39 @@ async function loadTickets(page = 1) {
   const statsPill = document.getElementById('datasetStatsPill');
   if (statsPill) statsPill.innerText = `Dataset ${total.toLocaleString()} phiếu · ${CENTER_OPTIONS.length} Chi nhánh · 6 Nhóm lỗi`;
 
+  updateKpiDashboard(tickets, total);
   renderTicketsTable(tickets, total);
   updatePaginationControls(total);
+}
+
+function updateKpiDashboard(tickets, total) {
+  const kpiTotalEl = document.getElementById('kpiTotalTickets');
+  const kpiNewEl = document.getElementById('kpiNewTickets');
+  const kpiProcessingEl = document.getElementById('kpiProcessingTickets');
+  const kpiUrgentEl = document.getElementById('kpiUrgentTickets');
+
+  if (!kpiTotalEl) return;
+
+  const sampleList = window.OFFLINE_TICKETS_SAMPLE || [];
+  const source = (sampleList.length > (tickets || []).length) ? sampleList : (tickets || []);
+
+  kpiTotalEl.textContent = (total || source.length || 0).toLocaleString();
+
+  let newCount = 0;
+  let processingCount = 0;
+  let urgentCount = 0;
+
+  source.forEach(t => {
+    const st = t.status || 'MOI';
+    const prio = t.priority || 'TRUNG_BINH';
+    if (st === 'MOI') newCount++;
+    if (st === 'DA_PHAN_CONG' || st === 'DANG_XU_LY' || st === 'CHO_LINH_KIEN') processingCount++;
+    if (prio === 'CAO') urgentCount++;
+  });
+
+  if (kpiNewEl) kpiNewEl.textContent = newCount.toLocaleString();
+  if (kpiProcessingEl) kpiProcessingEl.textContent = processingCount.toLocaleString();
+  if (kpiUrgentEl) kpiUrgentEl.textContent = urgentCount.toLocaleString();
 }
 
 function renderTicketsTable(tickets, total) {

@@ -39,52 +39,64 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
       <span>Đổi tài khoản</span>
     </button>
-    <button class="btn-account-admin" id="accountAdminButton" type="button" onclick="openUserManagement()" hidden>Quản lý tài khoản</button>
+    <button class="btn-account-admin" id="accountAdminButton" type="button" onclick="openUserManagement()" hidden title="Quản lý tài khoản">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Quản lý tài khoản</span>
+    </button>
     <div class="nav-preferences" aria-label="Tùy chọn giao diện">
-      <button class="btn-nav-preference" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="Chuyển giao diện sáng tối" title="Chuyển giao diện sáng tối">☀️</button>
-      <button class="btn-nav-preference" id="languageToggle" type="button" onclick="toggleLanguage()" aria-label="Chuyển ngôn ngữ Việt Anh" title="Chuyển ngôn ngữ Việt Anh">EN</button>
+      <button class="btn-nav-preference" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="Chuyển giao diện sáng tối" title="Chuyển giao diện sáng tối">
+        <svg id="themeIconSun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg id="themeIconMoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+      <button class="btn-nav-preference" id="languageToggle" type="button" onclick="toggleLanguage()" aria-label="Chuyển ngôn ngữ Việt Anh" title="Chuyển ngôn ngữ Việt Anh">
+        <span id="languageLabel">EN</span>
+      </button>
     </div>
   </div>
 </nav>
 
 <div class="container">
 
-  <!-- KPI SUMMARY ROW -->
+  <!-- KPI OPERATIONAL RECEPTION DESK METRICS -->
   <div class="kpi-grid">
-    <div class="kpi-card">
+    <div class="kpi-card" title="Tổng số phiếu bảo hành trong hệ thống / chi nhánh">
       <div class="kpi-info">
-        <h4>Tra cứu khách hàng</h4>
-        <div class="kpi-num">01</div>
+        <h4>Tổng phiếu tiếp nhận</h4>
+        <div class="kpi-num" id="kpiTotalTickets">--</div>
+        <span class="kpi-sub">Hệ thống L2 CRM</span>
       </div>
       <div class="kpi-icon icon-indigo">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
       </div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card" title="Phiếu mới ghi nhận tại quầy chờ phân công">
       <div class="kpi-info">
-        <h4>Tiếp nhận thiết bị</h4>
-        <div class="kpi-num" style="color: #FBBF24;">02</div>
+        <h4>Mới tiếp nhận</h4>
+        <div class="kpi-num" id="kpiNewTickets" style="color: #38BDF8;">--</div>
+        <span class="kpi-sub">Trạng thái: MỚI</span>
+      </div>
+      <div class="kpi-icon icon-cyan" style="background: rgba(6, 182, 212, 0.15); color: #22D3EE; border: 1px solid rgba(6, 182, 212, 0.3);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+      </div>
+    </div>
+    <div class="kpi-card" title="Phiếu đang được Kỹ thuật viên xử lý hoặc chờ linh kiện">
+      <div class="kpi-info">
+        <h4>Đang xử lý kỹ thuật</h4>
+        <div class="kpi-num" id="kpiProcessingTickets" style="color: #FBBF24;">--</div>
+        <span class="kpi-sub">KTV đang bảo hành</span>
       </div>
       <div class="kpi-icon icon-amber">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
       </div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card" title="Phiếu có mức ưu tiên CAO hoặc hạn SLA cần xử lý gấp">
       <div class="kpi-info">
-        <h4>Tính hạn cam kết SLA</h4>
-        <div class="kpi-num" style="color: #F87171;">03</div>
+        <h4>Cảnh báo hạn SLA</h4>
+        <div class="kpi-num" id="kpiUrgentTickets" style="color: #F87171;">--</div>
+        <span class="kpi-sub">Ưu tiên cao / Cần xử lý</span>
       </div>
       <div class="kpi-icon icon-rose">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-      </div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-info">
-        <h4>Theo dõi lịch sử xử lý</h4>
-        <div class="kpi-num" style="color: #34D399;">04</div>
-      </div>
-      <div class="kpi-icon icon-emerald">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
       </div>
     </div>
   </div>
@@ -95,11 +107,12 @@
       <div class="screen-title">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>
         <h2>Danh sách phiếu bảo hành tiếp nhận</h2>
-        <span class="screen-tag">FR5 / US6 · ACID 3NF</span>
+        <span class="screen-tag">Phân hệ Quầy L2 · Tiếp nhận & Tra cứu</span>
       </div>
-      <button class="btn btn-primary" type="button" aria-label="Tạo phiếu mới" onclick="goToCreate()">
+      <button class="btn btn-primary" type="button" aria-label="Tạo phiếu mới" onclick="goToCreate()" title="Phím tắt: Alt+N">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         <span data-vi-text="Tạo phiếu mới">Tạo phiếu mới</span>
+        <kbd class="kbd-shortcut">Alt+N</kbd>
       </button>
     </div>
 
@@ -109,7 +122,7 @@
         <div class="search-box">
           <div class="input-wrapper">
             <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <input type="search" id="searchInput" aria-label="Tìm phiếu theo mã, khách hàng, số điện thoại hoặc serial" placeholder="Tra cứu theo mã phiếu (BH-...), SĐT, tên khách, số Serial/IMEI, sự cố..." oninput="onSearchInput()">
+    <input type="search" id="searchInput" aria-label="Tìm phiếu theo mã, khách hàng, số điện thoại hoặc serial" placeholder="Tra cứu theo mã phiếu (BH-...), SĐT, tên khách, Serial/IMEI... (Nhấn '/' để tìm)" oninput="onSearchInput()">
           </div>
         </div>
 
@@ -216,11 +229,9 @@
         <div class="form-card" style="background: rgba(15, 23, 42, 0.65); padding: 28px 32px; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);">
           <!-- Header quầy tiếp nhận -->
           <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px; margin-bottom: 22px;">
-            <div style="display: flex; align-items: center;">
-              <div class="mockup-header-dots">
-                <span class="mockup-dot red"></span>
-                <span class="mockup-dot yellow"></span>
-                <span class="mockup-dot green"></span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="form-header-badge" style="width: 32px; height: 32px; border-radius: var(--radius-sm); background: rgba(99, 102, 241, 0.15); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(99, 102, 241, 0.3);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--secondary);"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
               </div>
               <h3 style="font-size: 16px; font-weight: 700; color: #FFFFFF; margin: 0;">Phiếu tiếp nhận thiết bị tại quầy</h3>
             </div>
@@ -392,7 +403,7 @@
       <div class="screen-title">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
         <h2>Chi tiết phiếu bảo hành: <span id="detailTicketCode" class="ticket-code" style="font-size: 16px; margin-left: 6px;">BH-000231/26</span></h2>
-        <span class="screen-tag">FR4 / QT-06</span>
+        <span class="screen-tag">Vòng đời xử lý kỹ thuật</span>
       </div>
       <div style="display: flex; align-items: center; gap: 10px;">
         <span class="badge badge-new" id="detailStatusBadge" style="font-size: 13px; padding: 6px 14px;">Trạng thái: MỚI</span>
