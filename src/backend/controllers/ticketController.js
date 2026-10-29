@@ -1,4 +1,6 @@
 const TicketService = require('../services/ticketService');
+const dataLoader = require('../data/dataLoader');
+const { normalizePhone } = require('../utils/phoneHelper');
 
 // Bảng ánh xạ MÃ NGHIỆP VỤ (Service) -> MÃ HTTP (Controller / Routes)
 const HTTP_BY_CODE = {
@@ -25,10 +27,33 @@ function handleControllerError(res, error) {
 }
 
 class TicketController {
+  static recordServiceConsent(req, res) {
+    try {
+      const note = typeof req.body.note === 'string' ? req.body.note.trim() : '';
+      if (!note || note.length > 180) return res.status(400).json({ success: false, message: 'Vui lòng ghi nhận nội dung khách đồng ý (tối đa 180 ký tự).' });
+      const ticket = TicketService.recordServiceConsent(req.params.id, req.user.username, note);
+      if (!ticket) return res.status(404).json({ success: false, message: 'Không tìm thấy phiếu bảo hành.' });
+      return res.json({ success: true, data: ticket });
+    } catch (error) { return handleControllerError(res, error); }
+  }
+  static approveWarrantyException(req, res) {
+    try {
+      const note = typeof req.body.note === 'string' ? req.body.note.trim() : '';
+      if (!note || note.length > 180) return res.status(400).json({ success: false, message: 'Vui lòng nhập lý do phê duyệt (tối đa 180 ký tự).' });
+      const ticket = TicketService.approveWarrantyException(req.params.id, req.user.username, note);
+      if (!ticket) return res.status(404).json({ success: false, message: 'Không tìm thấy phiếu bảo hành.' });
+      return res.json({ success: true, data: ticket });
+    } catch (error) { return handleControllerError(res, error); }
+  }
   // US1: Tạo phiếu mới
   static create(req, res) {
     try {
-      const ticket = TicketService.createTicket({ ...req.body, created_by: req.user.username });
+      const customer = dataLoader.findCustomerByPhone(normalizePhone(req.validatedBody.customer_phone));
+      if (!customer) return res.status(404).json({ success: false, error: 'KHACH_KHONG_TON_TAI', message: 'Hãy tra cứu hoặc đăng ký khách hàng trước khi tạo phiếu.' });
+      // Không tin cờ bảo hành hoặc ngày mua do trình duyệt tự gửi lên.
+      const ticket = TicketService.createTicket({ ...req.body, ...req.validatedBody, customer_id: customer.customer_id,
+        customer_name: customer.full_name, customer_phone: customer.phone, customer_address: customer.address,
+        is_warranty: false, warranty_verified: false, sold_at: null, purchase_date: null, created_by: req.user.username });
       return res.status(201).json({
         success: true,
         message: 'Tạo phiếu bảo hành thành công.',

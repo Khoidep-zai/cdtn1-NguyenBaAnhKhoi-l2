@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS ticket (
 
     -- QT-06: Vòng đời trạng thái một chiều
     status        VARCHAR(30) NOT NULL DEFAULT 'MOI'
-                  CHECK (status IN ('MOI', 'DA_PHAN_CONG', 'DANG_XU_LY', 'CHO_LINH_KIEN', 'HOAN_TAT', 'DA_DONG', 'DA_HUY')),
+                  CHECK (status IN ('MOI', 'DA_PHAN_CONG', 'DANG_XU_LY', 'CHO_LINH_KIEN', 'HOAN_TAT', 'DA_BAN_GIAO', 'DA_DONG', 'DA_HUY')),
 
     received_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     due_date      TIMESTAMPTZ NOT NULL,        -- QT-04: Tự động tính toán theo SLA Engine

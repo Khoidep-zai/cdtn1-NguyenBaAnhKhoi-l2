@@ -14,6 +14,10 @@
 const ITicketRepository = require('./ITicketRepository');
 const dataLoader = require('../data/dataLoader');
 
+function normalizeSearch(value) {
+  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase().trim();
+}
+
 class TicketRepository extends ITicketRepository {
   constructor() {
     super();
@@ -72,11 +76,6 @@ class TicketRepository extends ITicketRepository {
 
     let result = [...this._tickets];
 
-    if (status && status !== 'ALL') {
-      const normStatus = status.toUpperCase();
-      result = result.filter((t) => t.status && t.status.toUpperCase() === normStatus);
-    }
-
     if (center_id && center_id !== 'ALL') {
       result = result.filter((t) => Number(t.center_id) === Number(center_id));
     } else if (store_id && store_id !== 'ALL') {
@@ -85,24 +84,36 @@ class TicketRepository extends ITicketRepository {
       );
     }
 
+    // Các ô thống kê phản ánh toàn bộ phạm vi chi nhánh, không chỉ trang hoặc bộ lọc tìm kiếm.
+    const nowMs = Date.now();
+    const summary = { total: result.length, new: 0, processing: 0, urgent: 0 };
+    for (const ticket of result) {
+      const st = String(ticket.status || '').toUpperCase();
+      const active = !['HOAN_TAT', 'DA_BAN_GIAO', 'DA_DONG', 'DA_HUY'].includes(st);
+      if (st === 'MOI') summary.new++;
+      if (['DA_PHAN_CONG', 'DANG_XU_LY', 'CHO_LINH_KIEN'].includes(st)) summary.processing++;
+      if (active && (String(ticket.priority || '').toUpperCase() === 'CAO' || (ticket.due_date && new Date(ticket.due_date).getTime() < nowMs))) summary.urgent++;
+    }
+
+    if (status && status !== 'ALL') {
+      const normStatus = status.toUpperCase();
+      result = result.filter((t) => t.status && t.status.toUpperCase() === normStatus);
+    }
+
     if (overdue === true || overdue === 'true') {
       const now = new Date();
       result = result.filter(
-        (t) => t.status !== 'HOAN_TAT' && t.status !== 'DA_HUY' && new Date(t.due_date) < now
+        (t) => !['HOAN_TAT', 'DA_BAN_GIAO', 'DA_DONG', 'DA_HUY'].includes(t.status) && new Date(t.due_date) < now
       );
     }
 
     if (q) {
-      const query = q.toLowerCase().trim();
+      const terms = normalizeSearch(q).split(/\s+/).filter(Boolean);
       result = result.filter(
-        (t) =>
-          (t.ticket_code && t.ticket_code.toLowerCase().includes(query)) ||
-          (t.id && t.id.toLowerCase().includes(query)) ||
-          (t.customer_name && t.customer_name.toLowerCase().includes(query)) ||
-          (t.customer_phone && t.customer_phone.includes(query)) ||
-          (t.serial_no && t.serial_no.toLowerCase().includes(query)) ||
-          (t.product_name && t.product_name.toLowerCase().includes(query)) ||
-          (t.issue_description && t.issue_description.toLowerCase().includes(query))
+        (t) => {
+          const fields = [t.ticket_code, t.id, t.customer_name, t.customer_phone, t.serial_no, t.product_name, t.issue_description].map(normalizeSearch);
+          return terms.every((term) => fields.some((value) => value.includes(term)));
+        }
       );
     }
 
@@ -112,7 +123,7 @@ class TicketRepository extends ITicketRepository {
     const offsetNum = (pageNum - 1) * limitNum;
     const data = result.slice(offsetNum, offsetNum + limitNum);
 
-    return { data, total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) || 1, offset: offsetNum };
+    return { data, total, summary, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) || 1, offset: offsetNum };
   }
 
   /**

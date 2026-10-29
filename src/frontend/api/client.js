@@ -48,6 +48,7 @@ const apiClient = {
   async request(path, options = {}) {
     const baseUrl = this.getBaseUrl();
     const token = this.getToken();
+    const { unwrapData = true, ...fetchOptions } = options;
 
     const headers = {
       'Content-Type': 'application/json',
@@ -58,7 +59,7 @@ const apiClient = {
     let res;
     try {
       res = await fetch(`${baseUrl}${path}`, {
-        ...options,
+        ...fetchOptions,
         credentials: 'same-origin',
         headers,
       });
@@ -98,7 +99,7 @@ const apiClient = {
       throw new ApiError(res.status, code, message, body?.fields);
     }
 
-    return body?.data ?? body;
+    return unwrapData ? (body?.data ?? body) : body;
   },
 
   get(path, options = {}) {

@@ -1,5 +1,7 @@
 # Nhật ký Gỡ lỗi & Xử lý sự cố (Bug Log)
 
+> **Lỗi còn mở — mất dữ liệu khi khởi động lại:** phiếu, khách hàng mới, nhật ký và ảnh bàn giao hiện lưu trong bộ nhớ; sau khi khởi động lại, dữ liệu phát sinh mất. Cần chuyển sang lưu trữ bền vững và kiểm thử khởi động lại. Đã ghi nhận ngày 29/10/2026, chưa đánh dấu đã sửa.
+
 **Dự án:** Chuyên đề Tốt nghiệp 1 (CDTN1 - HK1 2026–2027) | Khoa CNTT – Đại học Văn Lang  
 **Phân hệ:** L2 – Tiếp nhận và phân loại yêu cầu bảo hành (Mekong Mobile CRM)  
 **Sinh viên:** Nguyễn Bá Anh Khôi | **MSSV:** 2374802010247 | **Track:** Software Engineering (SE)  

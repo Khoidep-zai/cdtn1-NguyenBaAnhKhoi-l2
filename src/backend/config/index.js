@@ -12,7 +12,7 @@ const config = {
     port: parseInt(process.env.DB_PORT || '5433', 10),
     name: process.env.DB_NAME || 'cdtn1_warranty_db',
     user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD !== undefined ? process.env.DB_PASSWORD : '12345',
+    password: process.env.DB_PASSWORD || '',
   },
   // Must be provided outside source control. Auth fails closed without it.
   jwtSecret: process.env.JWT_SECRET || '',
@@ -24,6 +24,7 @@ const config = {
     DANG_XU_LY: 'DANG_XU_LY',
     CHO_LINH_KIEN: 'CHO_LINH_KIEN',
     HOAN_TAT: 'HOAN_TAT',
+    DA_BAN_GIAO: 'DA_BAN_GIAO',
     DA_DONG: 'DA_DONG',
     DA_HUY: 'DA_HUY',
 

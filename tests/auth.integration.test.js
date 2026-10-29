@@ -89,7 +89,44 @@ test('Auth API: session, profile, and branch-scoped account permissions', async 
     assert.equal(createdTicket.status, 201);
     const ticketData = (await createdTicket.json()).data;
     assert.equal(ticketData.center_id, 1);
-    assert.equal(ticketData.customer_address, 'Địa chỉ QA chi nhánh');
+    assert.notEqual(ticketData.customer_name, ticketPayload.customer_name, 'Thông tin phải lấy từ hồ sơ đã đăng ký');
+    const approvalPath = `/tickets/${ticketData.id}/warranty-exception`;
+    const approvalBody = JSON.stringify({ note: 'Khách đồng ý sửa dịch vụ' });
+    assert.equal((await request(approvalPath, createdCookie, { method: 'PATCH', body: approvalBody })).status, 403);
+    const otherCookie = await login(names[3]);
+    assert.equal((await request(approvalPath, otherCookie, { method: 'PATCH', body: approvalBody })).status, 403);
+    assert.equal((await request(approvalPath, cookie, { method: 'PATCH', body: approvalBody })).status, 200);
+
+    const photoPath = `/tickets/${ticketData.id}/handover-photo`;
+    const image = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a3H0AAAAASUVORK5CYII=', 'base64');
+    const upload = (who, data = image, type = 'image/png') => request(photoPath, who, {
+      method: 'PUT', body: data, headers: { 'Content-Type': type },
+    });
+    assert.equal((await upload(createdCookie)).status, 409);
+    for (const status of ['DA_PHAN_CONG', 'DANG_XU_LY', 'HOAN_TAT']) {
+      const moved = await request(`/tickets/${ticketData.id}/status`, createdCookie, {
+        method: 'PATCH', body: JSON.stringify({ status, updated_by: createdName }),
+      });
+      assert.equal(moved.status, 200);
+    }
+    assert.equal((await request(`/tickets/${ticketData.id}/status`, createdCookie, {
+      method: 'PATCH', body: JSON.stringify({ status: 'DA_BAN_GIAO', updated_by: createdName }),
+    })).status, 409);
+    assert.equal((await upload(otherCookie)).status, 403);
+    assert.equal((await upload(createdCookie, Buffer.from('not an image'))).status, 415);
+    assert.equal((await upload(createdCookie)).status, 200);
+    assert.equal((await request(`/tickets/${ticketData.id}/status`, createdCookie, {
+      method: 'PATCH', body: JSON.stringify({ status: 'DA_BAN_GIAO', updated_by: createdName }),
+    })).status, 200);
+    assert.equal((await upload(cookie)).status, 200);
+    const systemCookie = await login(names[0]);
+    assert.equal((await upload(systemCookie)).status, 200);
+    const photo = await request(photoPath, createdCookie);
+    assert.equal(photo.status, 200);
+    assert.equal(photo.headers.get('content-type'), 'image/png');
+    assert.deepEqual(Buffer.from(await photo.arrayBuffer()), image);
+    assert.equal((await request(photoPath, otherCookie)).status, 403);
+    assert.equal((await request(photoPath)).status, 401);
 
     const wrongBranchTicket = await request('/tickets', createdCookie, {
       method: 'POST', body: JSON.stringify({

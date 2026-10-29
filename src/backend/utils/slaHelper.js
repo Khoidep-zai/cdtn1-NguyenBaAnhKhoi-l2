@@ -10,7 +10,7 @@
 const SLA_HOURS_MAP = {
   CAO: 24,
   HIGH: 24,
-  URGENT: 12,
+  URGENT: 24,
   TRUNG_BINH: 72,
   MEDIUM: 72,
   THAP: 120,
@@ -28,19 +28,27 @@ function calculateDueDate(receivedAt = new Date(), priority = 'TRUNG_BINH') {
   const normalizedPriority = String(priority).toUpperCase();
   const totalWorkingHoursNeeded = SLA_HOURS_MAP[normalizedPriority] || 72;
 
-  let current = new Date(startDate.getTime());
-  let workingHoursAdded = 0;
-
-  // Tăng từng giờ: nếu giờ đó không thuộc Chủ Nhật thì tính 1 giờ làm việc
-  while (workingHoursAdded < totalWorkingHoursNeeded) {
-    current.setTime(current.getTime() + 60 * 60 * 1000);
-    // getDay() === 0 là Chủ Nhật (nghỉ)
-    if (current.getDay() !== 0) {
-      workingHoursAdded += 1;
+  if (Number.isNaN(startDate.getTime())) throw new RangeError('Thời điểm tiếp nhận không hợp lệ.');
+  // Việt Nam dùng UTC+7; tính theo từng đoạn đến nửa đêm để giữ chính xác phút/giây.
+  const offset = 7 * 60 * 60 * 1000;
+  const dayMs = 24 * 60 * 60 * 1000;
+  let current = startDate.getTime();
+  let remaining = totalWorkingHoursNeeded * 60 * 60 * 1000;
+  while (remaining > 0) {
+    const local = current + offset;
+    const nextMidnight = (Math.floor(local / dayMs) + 1) * dayMs - offset;
+    const interval = nextMidnight - current;
+    if (new Date(local).getUTCDay() === 0) {
+      current = nextMidnight;
+    } else if (remaining <= interval) {
+      current += remaining;
+      remaining = 0;
+    } else {
+      remaining -= interval;
+      current = nextMidnight;
     }
   }
-
-  return current;
+  return new Date(current);
 }
 
 module.exports = {

@@ -2239,6 +2239,18 @@ body[data-theme="light"] #screen-detail #detailDueDate { color: #B91C1C !importa
 .toolbar > .btn-secondary span,
 .phone-lookup-button span { white-space: nowrap; }
 
+.handover-photo-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, 280px); gap: 20px; padding: 20px; margin-bottom: 28px; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: var(--bg-card, rgba(15, 23, 42, .6)); }
+.handover-photo-panel[hidden] { display: none; }
+.handover-photo-copy h3 { font-size: 15px; margin-bottom: 8px; }
+.handover-photo-copy > p { color: var(--text-secondary); margin-bottom: 12px; }
+.handover-photo-copy label { display: block; margin: 12px 0 6px; }
+.handover-photo-copy input { max-width: 100%; }
+.handover-photo-hint { font-size: 12px; color: var(--text-secondary); margin: 10px 0; }
+.handover-photo-frame { min-height: 160px; display: grid; place-items: center; overflow: hidden; border: 1px dashed var(--border-subtle); border-radius: var(--radius-lg); color: var(--text-secondary); }
+.handover-photo-frame img { width: 100%; max-height: 280px; object-fit: contain; }
+.handover-photo-frame img[hidden] { display: none; }
+@media (max-width: 640px) { .handover-photo-panel { grid-template-columns: 1fr; } }
+
 /* Keep keyboard focus visible across buttons, form controls and custom actions. */
 :is(a[href], button, input, select, textarea, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
   outline: 3px solid var(--focus-ring);

@@ -134,6 +134,8 @@ Toàn bộ 9 User Story dưới đây đều tuân thủ chuẩn INVEST (Độc 
   *WHEN* API khởi tạo phiếu nhận được request,  
   *THEN* hệ thống trả về mã lỗi HTTP 400 Bad Request kèm thông điệp "Thiết bị không thuộc sở hữu của khách hàng này" và hoàn tác toàn bộ giao dịch.
 
+  Với Serial/IMEI chưa có trong hồ sơ nào, cho phép tạo thiết bị mới gắn với khách hàng đã chọn và đánh dấu chưa xác minh bảo hành. Không tự chuyển quyền sở hữu nếu Serial đã thuộc hồ sơ khách hàng khác.
+
 **3. US3: Cập nhật trạng thái phiếu tiếp nhận bảo hành (Mức MUST)**
 - **AC3.1 (Luồng chính - Chuyển tiếp trạng thái thành công):**  
   *GIVEN* phiếu bảo hành hiện đang ở trạng thái `MOI`,  
@@ -201,12 +203,12 @@ Căn cứ theo sơ đồ Use Case (`docs/usecase.drawio`), **UC2: Khởi tạo p
 - **QT-05 (Xác minh điều kiện bảo hành thiết bị):**  
   Thiết bị được công nhận là **Còn bảo hành chính hãng** khi thỏa mãn:  
   $$(Ngày\_tiếp\_nhận - Ngày\_mua) \le warranty\_months$$  
-  Trường hợp thiết bị không đối soát được ngày mua trên hệ thống bán lẻ Mekong Core hoặc khách làm mất chứng từ mua hàng, phiếu bảo hành bắt buộc phải được đánh dấu trạng thái cờ `is_warranty = false` ("Chưa xác minh bảo hành") và phải được Quản lý trung tâm phê duyệt ngoại lệ trước khi bàn giao kỹ thuật viên xử lý.
+  Trường hợp thiết bị không đối soát được ngày mua trên hệ thống bán lẻ Mekong Core hoặc khách làm mất chứng từ mua hàng, phiếu được đánh dấu `is_warranty = false` ("Chưa xác minh bảo hành"). Trước khi bàn giao kỹ thuật viên, phải có phê duyệt ngoại lệ của quản lý **hoặc** nhân viên ghi nhận rõ khách hàng đồng ý sửa dịch vụ tính phí. Người ghi nhận, thời điểm và nội dung đồng ý được lưu trong lịch sử. Thiết bị hết hạn áp dụng cùng lựa chọn sửa dịch vụ.
 
 - **QT-06 (Vòng đời trạng thái phiếu một chiều):**  
   Vòng đời trạng thái của phiếu bảo hành tuân thủ quy tắc chuyển đổi một chiều nghiêm ngặt:
   ```
-  MỚI (MOI) → ĐÃ PHÂN CÔNG (DA_PHAN_CONG) → ĐANG XỬ LÝ (DANG_XU_LY) → HOÀN TẤT (HOAN_TAT)
+  MỚI (MOI) → ĐÃ PHÂN CÔNG (DA_PHAN_CONG) → ĐANG XỬ LÝ (DANG_XU_LY) → ĐÃ HOÀN THÀNH (HOAN_TAT) → ĐÃ BÀN GIAO (DA_BAN_GIAO)
                                          ↘ ĐÃ HỦY (DA_HUY)
   ```
   Tuyệt đối không cho phép quay ngược trạng thái trước đó. Mỗi lần chuyển trạng thái hợp lệ bắt buộc phải ghi nhận đồng thời 1 bản ghi vào bảng `ticket_status_log` trong cùng một giao dịch.

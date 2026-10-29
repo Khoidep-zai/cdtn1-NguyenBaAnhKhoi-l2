@@ -63,9 +63,9 @@ function validateReceive(body = {}) {
   }
 
   const desc = body.issue_description || body.issue_desc || body.issueDesc;
-  if (!desc || typeof desc !== 'string' || desc.trim() === '') {
-    errors.push('issue_description là bắt buộc để mô tả sự cố.');
-    fields.push({ truong: 'issue_description', ly_do: 'thiếu trường bắt buộc' });
+  if (typeof desc !== 'string' || desc.trim().length < 10) {
+    errors.push('issue_description phải có ít nhất 10 ký tự.');
+    fields.push({ truong: 'issue_description', ly_do: 'phải có ít nhất 10 ký tự' });
   }
 
   if (body.priority) {

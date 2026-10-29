@@ -13,6 +13,7 @@ const { calculateDueDate } = require('../utils/slaHelper');
 const { AppError } = require('../errors/AppError');
 // Phụ thuộc vào GIAO DIỆN Repository, không phụ thuộc vào cài đặt cụ thể
 const ticketRepo = require('../repositories/ticketRepository');
+const handoverPhotos = require('../repositories/handoverPhotoStore');
 
 // -------------------------------------------------------------------------
 // Danh sách chuyển trạng thái hợp lệ (QT-06 — Vòng đời một chiều)
@@ -22,7 +23,8 @@ const VALID_TRANSITIONS = {
   DA_PHAN_CONG: ['DANG_XU_LY', 'DA_HUY'],
   DANG_XU_LY:  ['CHO_LINH_KIEN', 'HOAN_TAT', 'DA_HUY'],
   CHO_LINH_KIEN: ['DANG_XU_LY', 'HOAN_TAT', 'DA_HUY'],
-  HOAN_TAT:    [],
+  HOAN_TAT:    ['DA_BAN_GIAO'],
+  DA_BAN_GIAO: [],
   DA_HUY:      [],
 };
 
@@ -56,7 +58,7 @@ class TicketService {
     if (serial) {
       const existing = ticketRepo.findBySerial(serial);
       const openOne = existing.find(
-        (t) => !['HOAN_TAT', 'DA_HUY', 'DA_DONG'].includes((t.status || '').toUpperCase())
+        (t) => !['HOAN_TAT', 'DA_BAN_GIAO', 'DA_HUY', 'DA_DONG'].includes((t.status || '').toUpperCase())
       );
       if (openOne) {
         throw new AppError(
@@ -166,6 +168,34 @@ class TicketService {
     return { ...ticket, status_history: history };
   }
 
+  static approveWarrantyException(ticketId, username, note) {
+    const ticket = ticketRepo.findById(ticketId);
+    if (!ticket) return null;
+    if (ticket.status !== 'MOI' || (ticket.is_warranty && ticket.warranty_verified !== false) || ticket.warranty_exception_approved) {
+      const err = new AppError('PHE_DUYET_KHONG_HOP_LE', 'Chỉ có thể phê duyệt ngoại lệ bảo hành cho phiếu mới chưa được phê duyệt.');
+      err.statusCode = 409;
+      throw err;
+    }
+    const updated = ticketRepo.update(ticketId, { warranty_exception_approved: true });
+    ticketRepo.addStatusLog({ ticket_id: ticket.id, from_status: ticket.status, to_status: ticket.status,
+      changed_by: username, note: `Phê duyệt ngoại lệ bảo hành: ${note}` });
+    return updated;
+  }
+
+  static recordServiceConsent(ticketId, username, note) {
+    const ticket = ticketRepo.findById(ticketId);
+    if (!ticket) return null;
+    if (ticket.status !== 'MOI' || (ticket.is_warranty && ticket.warranty_verified !== false) || ticket.service_consent) {
+      const err = new AppError('XAC_NHAN_KHONG_HOP_LE', 'Chỉ ghi nhận đồng ý sửa dịch vụ cho phiếu mới chưa có xác nhận.');
+      err.statusCode = 409;
+      throw err;
+    }
+    const updated = ticketRepo.update(ticketId, { service_consent: true, service_consent_by: username, service_consent_at: new Date().toISOString() });
+    ticketRepo.addStatusLog({ ticket_id: ticket.id, from_status: ticket.status, to_status: ticket.status,
+      changed_by: username, note: `Khách đồng ý sửa dịch vụ tính phí: ${note}` });
+    return updated;
+  }
+
   /**
    * Phân loại phiếu và cập nhật thông tin sự cố (FR2 / US3)
    */
@@ -226,6 +256,17 @@ class TicketService {
         `Quy tắc vòng đời trạng thái là một chiều: không thể chuyển từ ${oldStatus} sang ${targetStatus}.`
       );
       err.statusCode = 400;
+      throw err;
+    }
+
+    if (targetStatus === 'DA_PHAN_CONG' && (!ticket.is_warranty || ticket.warranty_verified === false) && !ticket.warranty_exception_approved && !ticket.service_consent) {
+      const err = new AppError('CHUA_PHE_DUYET_BAO_HANH', 'Cần quản lý phê duyệt ngoại lệ hoặc ghi nhận khách đồng ý sửa dịch vụ trước khi phân công.');
+      err.statusCode = 409;
+      throw err;
+    }
+    if (targetStatus === 'DA_BAN_GIAO' && !handoverPhotos.has(ticket)) {
+      const err = new AppError('THIEU_ANH_BAN_GIAO', 'Vui lòng thêm ảnh xác nhận trước khi bàn giao thiết bị.');
+      err.statusCode = 409;
       throw err;
     }
 

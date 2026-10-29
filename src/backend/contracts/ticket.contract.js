@@ -11,7 +11,7 @@
  *    - product_name  : string, bắt buộc
  *    - serial_imei   : string, bắt buộc (serial_no)
  *    - issue_name    : string, tên nhóm sự cố kỹ thuật
- *    - status        : string, thuộc tập ['MOI', 'DA_PHAN_CONG', 'DANG_XU_LY', 'CHO_LINH_KIEN', 'HOAN_TAT', 'DA_HUY']
+ *    - status        : string, thuộc tập ['MOI', 'DA_PHAN_CONG', 'DANG_XU_LY', 'CHO_LINH_KIEN', 'HOAN_TAT', 'DA_BAN_GIAO', 'DA_DONG', 'DA_HUY']
  *    - due_date      : chuỗi ISO 8601 kèm múi giờ, luôn có (tính theo SLA QT-04)
  *    - technician    : string (họ tên KTV) HOẶC null nếu chưa phân công
  *    - notes         : string hoặc null

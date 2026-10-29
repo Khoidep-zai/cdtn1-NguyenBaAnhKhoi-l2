@@ -94,6 +94,12 @@ test('Unit Test: TicketService - Lớp nghiệp vụ cốt lõi (Buổi 7)', asy
     assert.strictEqual(dueDate.getUTCHours(), 11, 'Giờ hẹn phải bảo toàn đúng 11:00');
   });
 
+  await t.test('QT-04: Dùng giờ Việt Nam và giữ chính xác phút qua Chủ Nhật', () => {
+    // 23:30 thứ Bảy giờ Việt Nam: 30 phút trước Chủ Nhật, sau đó thêm 23h30 thứ Hai.
+    assert.equal(calculateDueDate('2026-10-03T16:30:00Z', 'CAO').toISOString(), '2026-10-05T16:30:00.000Z');
+    assert.equal(calculateDueDate('2026-10-04T03:15:00Z', 'CAO').toISOString(), '2026-10-05T17:00:00.000Z');
+  });
+
   // =========================================================================
   // LOẠI 3: Dữ liệu sai / Vi phạm quy tắc nghiệp vụ
   // Một số Serial/IMEI đã có phiếu đang xử lý thì bị từ chối với PHIEU_DANG_MO (QT-09)
@@ -144,6 +150,7 @@ test('Unit Test: TicketService - Lớp nghiệp vụ cốt lõi (Buổi 7)', asy
       center_id: 1,
       category_id: 2,
       priority: 'TRUNG_BINH',
+      is_warranty: true,
       issue_description: 'Nguồn chập chờn khi cắm sạc',
     });
 
@@ -168,6 +175,54 @@ test('Unit Test: TicketService - Lớp nghiệp vụ cốt lõi (Buổi 7)', asy
         return true;
       }
     );
+  });
+
+  await t.test('QT-05: Chặn phân công cho đến khi ngoại lệ được phê duyệt', () => {
+    const ticket = TicketService.createTicket({ serial_no: 'TEST-WARRANTY-APPROVAL', issue_description: 'Màn hình không hoạt động' });
+    assert.throws(() => TicketService.updateStatus(ticket.id, { status: 'DA_PHAN_CONG' }), { code: 'CHUA_PHE_DUYET_BAO_HANH' });
+    TicketService.approveWarrantyException(ticket.id, 'manager', 'Khách đồng ý sửa dịch vụ');
+    assert.strictEqual(TicketService.updateStatus(ticket.id, { status: 'DA_PHAN_CONG' }).status, 'DA_PHAN_CONG');
+    assert.ok(TicketService.getTicketById(ticket.id).status_history.some(log => log.changed_by === 'manager' && log.note.includes('Phê duyệt')));
+  });
+
+  await t.test('QT-05: Khách đồng ý sửa dịch vụ cho phép phân công và có nhật ký', () => {
+    const ticket = TicketService.createTicket({ serial_no: 'TEST-SERVICE-CONSENT', issue_description: 'Màn hình không hoạt động' });
+    assert.throws(() => TicketService.updateStatus(ticket.id, { status: 'DA_PHAN_CONG' }), { code: 'CHUA_PHE_DUYET_BAO_HANH' });
+    TicketService.recordServiceConsent(ticket.id, 'staff', 'Đã giải thích dịch vụ tính phí và khách đồng ý');
+    assert.strictEqual(TicketService.updateStatus(ticket.id, { status: 'DA_PHAN_CONG' }).status, 'DA_PHAN_CONG');
+    assert.ok(TicketService.getTicketById(ticket.id).status_history.some(log => log.changed_by === 'staff' && log.note.includes('đồng ý')));
+  });
+
+  await t.test('QT-06: Hoàn thành rồi bàn giao; không cho nhảy bước hoặc quay ngược', () => {
+    const ticket = TicketService.createTicket({ serial_no: 'TEST-HANDOVER-001', is_warranty: true, issue_description: 'Kiểm tra thiết bị' });
+    TicketService.updateStatus(ticket.id, { status: 'DA_PHAN_CONG', updated_by: 'staff' });
+    assert.throws(() => TicketService.updateStatus(ticket.id, { status: 'DA_BAN_GIAO', updated_by: 'staff' }), { code: 'TRANG_THAI_KHONG_HOP_LE' });
+    TicketService.updateStatus(ticket.id, { status: 'DANG_XU_LY', updated_by: 'staff' });
+    TicketService.updateStatus(ticket.id, { status: 'HOAN_TAT', updated_by: 'staff' });
+    const closedAt = TicketService.getTicketById(ticket.id).closed_at;
+    assert.throws(() => TicketService.updateStatus(ticket.id, { status: 'DA_BAN_GIAO', updated_by: 'staff' }), { code: 'THIEU_ANH_BAN_GIAO' });
+    require('../src/backend/repositories/handoverPhotoStore').set(ticket, { type: 'image/png', bytes: Buffer.from('test') });
+    const delivered = TicketService.updateStatus(ticket.id, { status: 'DA_BAN_GIAO', updated_by: 'staff' });
+    assert.equal(delivered.status, 'DA_BAN_GIAO');
+    assert.equal(delivered.closed_at, closedAt);
+    assert.throws(() => TicketService.updateStatus(ticket.id, { status: 'DANG_XU_LY', updated_by: 'staff' }), { code: 'TRANG_THAI_KHONG_HOP_LE' });
+    assert.equal(TicketService.getTicketById(ticket.id).status_history.at(-1).to_status, 'DA_BAN_GIAO');
+    assert.ok(TicketService.createTicket({ serial_no: 'TEST-HANDOVER-001' }));
+  });
+
+  await t.test('Danh sách tìm tên không dấu và thống kê theo chi nhánh, không theo trang', () => {
+    const before = TicketService.getTickets({ center_id: 1, limit: 1 }).summary;
+    const ticket = TicketService.createTicket({ customer_name: 'Nguyễn Bá Anh Khôi', customer_phone: '0901234567',
+      serial_no: 'SUMMARY-TEST-01', center_id: 1, issue_description: 'Kiểm tra sự cố thiết bị', priority: 'CAO' });
+    TicketService.createTicket({ customer_name: 'Khách chi nhánh khác', serial_no: 'SUMMARY-TEST-02',
+      center_id: 2, issue_description: 'Kiểm tra sự cố thiết bị', priority: 'CAO' });
+    const found = TicketService.getTickets({ center_id: 1, q: 'nguyen ba anh khoi', limit: 1 });
+    assert.equal(found.data.some(row => row.id === ticket.id), true);
+    assert.equal(TicketService.getTickets({ center_id: 1, q: 'khoi nguyen' }).data.some(row => row.id === ticket.id), true);
+    assert.equal(found.summary.total, before.total + 1);
+    assert.equal(found.summary.new, before.new + 1);
+    assert.equal(found.summary.urgent, before.urgent + 1);
+    assert.deepEqual(TicketService.getTickets({ center_id: 1, status: 'DA_HUY', q: 'không tồn tại', limit: 1 }).summary, found.summary);
   });
 
   // =========================================================================

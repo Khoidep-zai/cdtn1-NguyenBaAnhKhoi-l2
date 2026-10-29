@@ -133,7 +133,8 @@
             <option value="DA_PHAN_CONG">ĐÃ PHÂN CÔNG (Bàn giao KTV)</option>
             <option value="DANG_XU_LY">ĐANG XỬ LÝ (Kỹ thuật đang sửa)</option>
             <option value="CHO_LINH_KIEN">CHỜ LINH KIỆN (Chờ điều phối)</option>
-            <option value="HOAN_TAT">HOÀN TẤT (Đã sửa xong)</option>
+            <option value="HOAN_TAT">ĐÃ HOÀN THÀNH (Đã sửa xong)</option>
+            <option value="DA_BAN_GIAO">ĐÃ BÀN GIAO (Đã trả khách)</option>
             <option value="DA_HUY">ĐÃ HỦY</option>
           </select>
         </div>
@@ -254,6 +255,7 @@
               </button>
             </div>
             <p class="lookup-feedback" id="customerLookupFeedback" role="status" aria-live="polite" hidden></p>
+            <button class="btn btn-secondary" type="button" onclick="registerCustomer()">Đăng ký khách hàng mới</button>
           </div>
 
           <!-- (2) Họ tên khách -->
@@ -470,6 +472,23 @@
         </p>
       </div>
 
+      <section id="handoverPhotoPanel" class="handover-photo-panel" aria-labelledby="handoverPhotoTitle" hidden>
+        <div class="handover-photo-copy">
+          <h3 id="handoverPhotoTitle">Ảnh xác nhận bàn giao</h3>
+          <p>Thêm ảnh nhân viên và khách hàng chụp cùng trước khi xác nhận bàn giao.</p>
+          <label for="handoverPhotoInput">Chọn ảnh từ thiết bị</label>
+          <input id="handoverPhotoInput" type="file" accept="image/jpeg,image/png,image/webp">
+          <p class="handover-photo-hint">JPEG, PNG hoặc WebP, tối đa 8 MB. Ảnh mới sẽ thay thế ảnh hiện có.</p>
+          <p class="handover-photo-hint">Ảnh chỉ được giữ trong phiên chạy hiện tại và sẽ mất khi máy chủ khởi động lại.</p>
+          <button id="handoverPhotoSave" type="button" class="btn btn-primary" onclick="uploadHandoverPhoto()">Lưu ảnh bàn giao</button>
+          <p id="handoverPhotoMessage" class="handover-photo-hint" role="status" aria-live="polite"></p>
+        </div>
+        <div class="handover-photo-frame">
+          <img id="handoverPhotoImage" alt="Ảnh nhân viên và khách hàng xác nhận bàn giao thiết bị" hidden>
+          <p id="handoverPhotoEmpty">Chưa có ảnh bàn giao</p>
+        </div>
+      </section>
+
       <!-- Action Panel & Activity Log Columns -->
       <div class="form-row" style="align-items: flex-start;">
         <!-- Left: Workflow Transition Panel -->
@@ -490,6 +509,8 @@
           <div class="form-group">
             <label>Ghi chú nội bộ / Lý do chuyển trạng thái:</label>
             <textarea id="transitionNoteText" aria-label="Ghi chú chuyển trạng thái" rows="3" placeholder="Nhập ghi chú chuyển giao công việc cho Kỹ thuật viên..."></textarea>
+            <button id="approveWarrantyException" type="button" class="btn btn-secondary" onclick="approveWarrantyException()" hidden>Phê duyệt ngoại lệ bảo hành</button>
+            <button id="recordServiceConsent" type="button" class="btn btn-secondary" onclick="recordServiceConsent()" hidden>Ghi nhận khách đồng ý sửa dịch vụ tính phí</button>
           </div>
 
           <button class="btn btn-primary" style="width: 100%;" onclick="updateTicketStatus()">

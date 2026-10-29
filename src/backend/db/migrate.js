@@ -58,6 +58,7 @@ async function migrate() {
     const schemaPath = path.resolve(__dirname, 'schema.sql');
     const schemaSql = fs.readFileSync(schemaPath, 'utf-8');
     await pool.query(schemaSql);
+    await pool.query(fs.readFileSync(path.resolve(__dirname, 'ticket-integrity.sql'), 'utf-8'));
     console.log('✔ Tạo cấu trúc bảng (schema.sql) thành công: service_center, issue_category, customer, device, ticket, ticket_status_log.');
 
     // 3. Nạp Master Data: Trung tâm bảo hành (service_center)

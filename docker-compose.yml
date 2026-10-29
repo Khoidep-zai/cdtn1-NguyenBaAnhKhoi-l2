@@ -39,7 +39,7 @@ services:
       DB_NAME: ${DB_NAME:-cdtn1_warranty_db}
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET:-cdtn1_super_secure_jwt_secret_key_2026}
+      JWT_SECRET: ${JWT_SECRET:?Hãy cấu hình JWT_SECRET trong .env}
       LOG_LEVEL: ${LOG_LEVEL:-info}
     depends_on:
       postgres:

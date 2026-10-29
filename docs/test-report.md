@@ -1,5 +1,7 @@
 # Test Report — Báo cáo kết quả kiểm thử (L2)
 
+> Cập nhật 29/10/2026: lần chạy `npm test` mới nhất trên máy phát triển đạt 44/44 kiểm thử, 0 thất bại, 0 bỏ qua. Bảng và số liệu 21/21 bên dưới là báo cáo lịch sử, không phải số lượng của lần chạy mới nhất. Kiểm thử hiện tại không chứng minh dữ liệu được lưu qua khởi động lại.
+
 Học phần: Chuyên đề Tốt nghiệp 1 (CDTN1) — Track SE  
 Sinh viên: Nguyễn Bá Anh Khôi — MSSV: 2374802010247  
 

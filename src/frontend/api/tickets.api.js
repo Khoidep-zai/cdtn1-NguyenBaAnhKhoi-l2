@@ -18,7 +18,7 @@ const ticketsApi = {
     if (status && status !== 'ALL') params.set('status', status);
     if (center_id && center_id !== 'ALL') params.set('center_id', center_id);
 
-    return (window.apiClient || apiClient).get(`/api/tickets?${params.toString()}`);
+    return (window.apiClient || apiClient).get(`/api/tickets?${params.toString()}`, { unwrapData: false });
   },
 
   /**
@@ -46,6 +46,14 @@ const ticketsApi = {
     });
   },
 
+  pheDuyetNgoaiLe(ticketId, note) {
+    return (window.apiClient || apiClient).patch(`/api/tickets/${encodeURIComponent(ticketId)}/warranty-exception`, { note });
+  },
+
+  ghiNhanDongYSuaDichVu(ticketId, note) {
+    return (window.apiClient || apiClient).patch(`/api/tickets/${encodeURIComponent(ticketId)}/service-consent`, { note });
+  },
+
   /**
    * Phân loại sự cố kỹ thuật và gán mức ưu tiên (QT-02, QT-04 SLA)
    */
@@ -63,6 +71,10 @@ const ticketsApi = {
   traCuuKhachHang(phone) {
     const q = new URLSearchParams({ phone: phone.trim() });
     return (window.apiClient || apiClient).get(`/api/customers?${q.toString()}`);
+  },
+
+  dangKyKhachHang(data) {
+    return (window.apiClient || apiClient).post('/api/customers', data);
   },
 
   /**

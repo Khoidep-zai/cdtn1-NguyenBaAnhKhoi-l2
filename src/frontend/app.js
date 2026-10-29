@@ -9,6 +9,7 @@ let pageSize = 25;
 let totalPages = 1;
 let totalTickets = 0;
 let currentTicketsList = [];
+let ticketLoadSequence = 0;
 let selectedWarrantyStatus = null;
 let currentTheme = 'dark';
 let currentLanguage = 'vi';
@@ -140,7 +141,9 @@ function applyUserRoleToUI() {
   if (nameEl) nameEl.textContent = currentUser.name;
   if (roleTagEl) {
     roleTagEl.className = `role-tag ${currentUser.badgeClass}`;
-    roleTagEl.innerHTML = `<span class="role-dot"></span><span>${escapeHtml(currentUser.roleLabel)}</span>`;
+    const roleLabels = { NHAN_VIEN: 'Receptionist', QUAN_LY_CHI_NHANH: 'Branch manager', QUAN_LY_HE_THONG: 'System manager' };
+    const roleLabel = currentLanguage === 'en' ? (roleLabels[currentUser.role] || currentUser.roleLabel) : currentUser.roleLabel;
+    roleTagEl.innerHTML = `<span class="role-dot"></span><span>${escapeHtml(roleLabel)}</span>`;
   }
   if (branchTagEl) branchTagEl.textContent = currentUser.branchName;
   if (accountButton) accountButton.hidden = !currentUser.canManageStaff;
@@ -186,6 +189,7 @@ function initializePreferences() {
   const languageLabel = document.getElementById('languageLabel');
   if (languageLabel) languageLabel.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
   else if (languageButton) languageButton.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
+  applyLanguage();
 }
 
 function toggleTheme() {
@@ -202,6 +206,19 @@ function toggleLanguage() {
   const label = document.getElementById('languageLabel');
   if (label) label.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
   else if (button) button.textContent = currentLanguage === 'vi' ? 'EN' : 'VI';
+  try { localStorage.setItem('mekong_crm_language', currentLanguage); } catch (e) { console.debug('Cannot save language:', e); }
+  applyLanguage();
+  if (currentUser) {
+    applyUserRoleToUI();
+    loadTickets(currentPage);
+    const detail = document.getElementById('screen-detail');
+    const code = document.getElementById('detailTicketCode')?.textContent.trim();
+    if (detail && detail.style.display !== 'none' && code) loadTicketDetail(code);
+  }
+}
+
+const translatedTextNodes = new WeakMap();
+function applyLanguage() {
   const pairs = {
     'Danh sách phiếu bảo hành tiếp nhận': 'Warranty ticket list', 'Tạo phiếu mới': 'Create ticket',
     'Khởi tạo phiếu tiếp nhận bảo hành mới': 'Create a warranty intake ticket', '← Quay lại danh sách': '← Back to list',
@@ -226,22 +243,77 @@ function toggleLanguage() {
     'Tạo phiếu bảo hành thành công.': 'Warranty ticket created successfully.',
     'Thiết bị & model': 'Device & model', 'Số Serial/IMEI': 'Serial/IMEI',
     'Thông báo tình trạng bảo hành': 'Warranty status', 'Thiết bị còn bảo hành': 'Device is under warranty',
-    'Chưa có dữ liệu': 'No data available', 'Không tìm thấy phiếu bảo hành': 'Warranty ticket not found'
+    'Chưa có dữ liệu': 'No data available', 'Không tìm thấy phiếu bảo hành': 'Warranty ticket not found',
+    'HỆ THỐNG TIẾP NHẬN & PHÂN LOẠI BẢO HÀNH (L2)': 'WARRANTY INTAKE & CLASSIFICATION SYSTEM (L2)',
+    'TỔNG PHIẾU TIẾP NHẬN': 'TOTAL TICKETS', 'MỚI TIẾP NHẬN': 'NEW TICKETS',
+    'ĐANG XỬ LÝ KỸ THUẬT': 'IN TECHNICAL REPAIR', 'CẢNH BÁO HẠN SLA': 'SLA ALERTS',
+    'Hệ thống L2 CRM': 'L2 CRM system', 'Trạng thái: MỚI': 'Status: NEW', 'KTV đang bảo hành': 'Under repair',
+    'Ưu tiên cao / Cần xử lý': 'High priority / Needs attention', 'Phân hệ Quầy L2 · Tiếp nhận & Tra cứu': 'L2 counter · Intake & search',
+    'Phiếu tiếp nhận thiết bị tại quầy': 'Device intake at the counter', 'MẪU TIẾP NHẬN QUẦY (L2)': 'COUNTER INTAKE FORM (L2)',
+    'Đăng ký khách hàng mới': 'Register new customer', 'Tạo phiếu tiếp nhận': 'Create intake ticket',
+    'Ảnh xác nhận bàn giao': 'Handover confirmation photo', 'Chọn ảnh từ thiết bị': 'Choose a photo from your device',
+    'Lưu ảnh bàn giao': 'Save handover photo', 'Chưa có ảnh bàn giao': 'No handover photo',
+    'Thêm ảnh nhân viên và khách hàng chụp cùng trước khi xác nhận bàn giao.': 'Add a photo of the employee and customer together before confirming handover.',
+    'JPEG, PNG hoặc WebP, tối đa 8 MB. Ảnh mới sẽ thay thế ảnh hiện có.': 'JPEG, PNG or WebP, up to 8 MB. The new photo replaces the existing one.',
+    'Ảnh chỉ được giữ trong phiên chạy hiện tại và sẽ mất khi máy chủ khởi động lại.': 'The photo is stored for this server session and is lost on restart.',
+    'Chuyển tiếp trạng thái (Vòng đời QT-06)': 'Change status (QT-06 lifecycle)', 'Chuyển sang trạng thái tiếp theo:': 'Next status:',
+    'Ghi chú nội bộ / Lý do chuyển trạng thái:': 'Internal note / reason:', 'Xác nhận chuyển trạng thái & Ghi Log (FR4)': 'Confirm status change & record log (FR4)',
+    'Lịch sử thay đổi trạng thái (Audit Trail)': 'Status history (audit trail)', 'Toàn hệ thống': 'All branches',
+    'Phê duyệt ngoại lệ bảo hành': 'Approve warranty exception', 'Ghi nhận khách đồng ý sửa dịch vụ tính phí': 'Record customer consent to paid service',
+    'Chọn thiết bị & Model': 'Choose device & model', 'Số serial / IMEI thiết bị': 'Device serial / IMEI',
+    'Nhóm sự cố kỹ thuật': 'Technical issue category', 'Mức ưu tiên tiếp nhận': 'Intake priority',
+    'Cao (24h làm việc)': 'High (24 working hours)', 'Trung bình (72h làm việc)': 'Medium (72 working hours)', 'Thấp (120h làm việc)': 'Low (120 working hours)',
+    'Hạn cam kết (SLA) dự kiến:': 'Estimated SLA deadline:', '(QT-04: Tự động trừ Chủ Nhật)': '(QT-04: Sundays excluded)',
+    'Nhấp để chọn hoặc gõ tên và nhấn Enter': 'Click to choose or type a name and press Enter', 'Tất cả': 'All',
+    'Chi tiết phiếu bảo hành:': 'Warranty ticket details:', 'Vòng đời xử lý kỹ thuật': 'Technical workflow', 'In biên nhận': 'Print receipt',
+    'Họ tên:': 'Name:', 'SĐT:': 'Phone:', 'Địa chỉ:': 'Address:', 'Thiết bị & Bảo hành': 'Device & warranty', 'Chế độ:': 'Coverage:',
+    'Phân loại & Cam kết SLA': 'Classification & SLA', 'Nhóm lỗi:': 'Issue category:', 'Ưu tiên:': 'Priority:', 'Hạn SLA:': 'SLA deadline:',
+    'Mô tả triệu chứng tiếp nhận từ khách hàng:': 'Symptoms reported by the customer:',
+    'Chưa xác minh bảo hành': 'Warranty unverified', 'Còn bảo hành chính hãng': 'Manufacturer warranty active', 'Hết hạn bảo hành': 'Warranty expired',
+    '1 - MAN_HINH (Màn hình cảm ứng, sọc mực)': '1 - SCREEN (Touchscreen, display lines)',
+    '2 - PIN (Pin phù, hao pin nhanh, sập nguồn)': '2 - BATTERY (Swelling, drain, shutdown)',
+    '3 - SAC (Chân sạc, nguồn, không vào điện)': '3 - CHARGING (Port, power, no charge)',
+    '4 - PHAN_MEM (Treo logo, lỗi cập nhật)': '4 - SOFTWARE (Boot or update failure)',
+    '5 - NUOC_VAO (Rơi vào nước, ẩm bo mạch)': '5 - WATER DAMAGE (Liquid or moisture)',
+    '6 - KHAC (Sự cố phần cứng khác)': '6 - OTHER (Other hardware issue)',
+    'ĐÃ PHÂN CÔNG (Bàn giao kỹ thuật viên)': 'ASSIGNED (To technician)',
+    'ĐANG XỬ LÝ (KTV tiếp nhận khám máy)': 'IN PROGRESS (Technician inspection)',
+    'ĐÃ HỦY (Khách không đồng ý để lại máy)': 'CANCELLED (Customer declined)',
+    'ĐÃ HỦY (Khách lấy lại máy)': 'CANCELLED (Customer collected device)',
+    'ĐÃ HỦY (Không sửa chữa được)': 'CANCELLED (Cannot repair)', 'ĐÃ HỦY': 'CANCELLED',
+    'ĐÃ HOÀN THÀNH (sau khi xử lý)': 'COMPLETED (after repair)',
+    'ĐÃ BÀN GIAO (sau khi hoàn thành)': 'HANDED OVER (after completion)',
+    'CHỜ LINH KIỆN (Yêu cầu kho cung ứng)': 'WAITING FOR PARTS',
+    'ĐÃ HOÀN THÀNH (Đã sửa chữa và kiểm tra)': 'COMPLETED (Repaired and checked)',
+    'ĐANG XỬ LÝ (Linh kiện đã về)': 'IN PROGRESS (Parts received)',
+    'ĐÃ HOÀN THÀNH (Hoàn tất thay thế)': 'COMPLETED (Parts replaced)',
+    'ĐÃ BÀN GIAO (Đã trả thiết bị cho khách)': 'HANDED OVER (Returned to customer)',
+    '(Phiếu đã đóng - không thể chuyển tiếp)': '(Ticket closed — no further transitions)'
   };
   const textWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   for (let node = textWalker.nextNode(); node; node = textWalker.nextNode()) {
     const parent = node.parentElement;
     if (!parent || parent.closest('script,style')) continue;
-    const original = parent.dataset.viText || node.nodeValue.trim();
-    if (!parent.dataset.viText && pairs[original]) parent.dataset.viText = original;
-    if (parent.dataset.viText) node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), currentLanguage === 'en' ? (pairs[parent.dataset.viText] || parent.dataset.viText) : parent.dataset.viText);
+    const current = node.nodeValue.trim();
+    if (!current) continue;
+    const original = translatedTextNodes.get(node) || (pairs[current] ? current : null);
+    if (original) {
+      translatedTextNodes.set(node, original);
+      node.nodeValue = node.nodeValue.replace(current, currentLanguage === 'en' ? pairs[original] : original);
+    }
   }
   [['searchInput','Tra cứu theo mã phiếu (BH-...), SĐT, tên khách, số Serial/IMEI, sự cố...','Search by ticket, phone, customer, serial/IMEI or issue...'],
    ['custPhoneInput','Nhập số điện thoại khách hàng (VD: 0909123456)...','Enter customer phone number (e.g. 0909123456)...'],
    ['custNameInput','Nhập họ và tên khách hàng...','Enter customer full name...'],
-   ['custAddressInput','Nhập địa chỉ liên hệ của khách hàng...','Enter customer contact address...']].forEach(([id, vi, en]) => {
+   ['custAddressInput','Nhập địa chỉ liên hệ của khách hàng...','Enter customer contact address...'],
+   ['deviceNameInput','Nhấp để xem danh sách hoặc gõ tên dòng máy (VD: iPhone 15, Galaxy S23, Redmi...)','Click to choose or type a device model...'],
+   ['deviceImeiInput','Nhập số Serial/IMEI thiết bị...','Enter device serial/IMEI...'],
+   ['issueDescText','Mô tả chi tiết tình trạng sự cố (tối thiểu 10 ký tự theo quy tắc QT-03)...','Describe the issue (at least 10 characters)...'],
+   ['transitionNoteText','Nhập ghi chú chuyển giao công việc cho Kỹ thuật viên...','Enter a note for the technician...']].forEach(([id, vi, en]) => {
     const input = document.getElementById(id); if (input) input.placeholder = currentLanguage === 'en' ? en : vi;
   });
+  const allBranches = document.querySelector('#centerFilter option[value="ALL"]');
+  if (allBranches) allBranches.textContent = currentLanguage === 'en' ? `All branches (${CENTER_OPTIONS.length} centers)` : `Tất cả chi nhánh (${CENTER_OPTIONS.length} trung tâm)`;
 }
 
 const dialogPreviousFocus = new WeakMap();
@@ -438,7 +510,7 @@ async function loadCenters() {
   const centerFilter = document.getElementById('centerFilter');
   if (centerFilter) {
     const selected = centerFilter.value;
-    centerFilter.replaceChildren(new Option(`Tất cả chi nhánh (${CENTER_OPTIONS.length} trung tâm)`, 'ALL'));
+    centerFilter.replaceChildren(new Option(currentLanguage === 'en' ? `All branches (${CENTER_OPTIONS.length} centers)` : `Tất cả chi nhánh (${CENTER_OPTIONS.length} trung tâm)`, 'ALL'));
     CENTER_OPTIONS.forEach((center) => centerFilter.add(new Option(center.center_name, String(center.center_id))));
     centerFilter.value = [...centerFilter.options].some((option) => option.value === selected) ? selected : 'ALL';
   }
@@ -601,6 +673,7 @@ function clearCreateForm() {
 // 2. TICKETS LIST: LOAD & RENDER REAL DATA (AI COMMITMENT)
 // -------------------------------------------------------------
 async function loadTickets(page = 1) {
+  const requestSequence = ++ticketLoadSequence;
   currentPage = page;
   const tbody = document.getElementById('ticketsTableBody');
   const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value.trim() : '';
@@ -627,6 +700,7 @@ async function loadTickets(page = 1) {
 
   let tickets = [];
   let total = 0;
+  let summary = null;
 
   let apiError = null;
   // Gọi API Backend qua lớp ticketsApi chuyên dụng (Buổi 9 A1-A2)
@@ -642,6 +716,7 @@ async function loadTickets(page = 1) {
       if (body) {
         tickets = body.data || (Array.isArray(body) ? body : []);
         total = body.total ?? tickets.length;
+        summary = body.summary || null;
         totalPages = body.totalPages || Math.ceil(total / pageSize) || 1;
       }
     } catch (err) {
@@ -650,18 +725,21 @@ async function loadTickets(page = 1) {
     }
   }
 
+  if (requestSequence !== ticketLoadSequence) return;
+
   // Khi tắt backend hoặc lỗi mạng: Hiển thị Error State có nút Thử lại (Tiêu chí Buổi 10)
   if (apiError && !window.__FORCE_OFFLINE__) {
     if (window.dataState) {
       window.dataState.renderError(tbody, apiError, () => loadTickets(page));
     }
     const badge = document.getElementById('totalTicketsBadge');
-    if (badge) badge.innerText = '0';
+    if (badge) badge.innerText = '—';
+    updateKpiDashboard(null);
     return;
   }
 
   // Fallback sang dữ liệu mẫu cục bộ nạp sẵn từ dataset khi chủ động bật chế độ offline
-  if (tickets.length === 0 && window.OFFLINE_TICKETS_SAMPLE) {
+  if (window.__FORCE_OFFLINE__ && tickets.length === 0 && window.OFFLINE_TICKETS_SAMPLE) {
     let dataset = [...window.OFFLINE_TICKETS_SAMPLE];
     if (statusVal && statusVal !== 'ALL') {
       dataset = dataset.filter(t => t.status === statusVal);
@@ -695,12 +773,13 @@ async function loadTickets(page = 1) {
   const statsPill = document.getElementById('datasetStatsPill');
   if (statsPill) statsPill.innerText = `Dataset ${total.toLocaleString()} phiếu · ${CENTER_OPTIONS.length} Chi nhánh · 6 Nhóm lỗi`;
 
-  updateKpiDashboard(tickets, total);
+  updateKpiDashboard(summary);
   renderTicketsTable(tickets, total);
   updatePaginationControls(total);
+  applyLanguage();
 }
 
-function updateKpiDashboard(tickets, total) {
+function updateKpiDashboard(summary) {
   const kpiTotalEl = document.getElementById('kpiTotalTickets');
   const kpiNewEl = document.getElementById('kpiNewTickets');
   const kpiProcessingEl = document.getElementById('kpiProcessingTickets');
@@ -708,26 +787,10 @@ function updateKpiDashboard(tickets, total) {
 
   if (!kpiTotalEl) return;
 
-  const sampleList = window.OFFLINE_TICKETS_SAMPLE || [];
-  const source = (sampleList.length > (tickets || []).length) ? sampleList : (tickets || []);
-
-  kpiTotalEl.textContent = (total || source.length || 0).toLocaleString();
-
-  let newCount = 0;
-  let processingCount = 0;
-  let urgentCount = 0;
-
-  source.forEach(t => {
-    const st = t.status || 'MOI';
-    const prio = t.priority || 'TRUNG_BINH';
-    if (st === 'MOI') newCount++;
-    if (st === 'DA_PHAN_CONG' || st === 'DANG_XU_LY' || st === 'CHO_LINH_KIEN') processingCount++;
-    if (prio === 'CAO') urgentCount++;
-  });
-
-  if (kpiNewEl) kpiNewEl.textContent = newCount.toLocaleString();
-  if (kpiProcessingEl) kpiProcessingEl.textContent = processingCount.toLocaleString();
-  if (kpiUrgentEl) kpiUrgentEl.textContent = urgentCount.toLocaleString();
+  kpiTotalEl.textContent = summary ? summary.total.toLocaleString() : '—';
+  if (kpiNewEl) kpiNewEl.textContent = summary ? summary.new.toLocaleString() : '—';
+  if (kpiProcessingEl) kpiProcessingEl.textContent = summary ? summary.processing.toLocaleString() : '—';
+  if (kpiUrgentEl) kpiUrgentEl.textContent = summary ? summary.urgent.toLocaleString() : '—';
 }
 
 function renderTicketsTable(tickets, total) {
@@ -767,7 +830,7 @@ function renderTicketsTable(tickets, total) {
     const custPhone = t.customer_phone || '0901234567';
     const prodName = t.product_name || 'Thiết bị điện thoại';
     const serial = t.serial_no || t.serial_imei || '—';
-    const catName = CATEGORY_MAP[t.category_id || t.issue_category_id] || t.category_name || 'Sự cố kỹ thuật';
+    const catName = categoryLabel(t.category_id || t.issue_category_id, t.category_name);
     const priority = t.priority || 'TRUNG_BINH';
     const status = t.status || 'MOI';
     const dueDateFormatted = formatDateTime(t.due_date);
@@ -1194,8 +1257,8 @@ async function simulateLookup() {
   if (window.ticketsApi) {
     try {
       const body = await window.ticketsApi.traCuuKhachHang(cleanPhone);
-      if (body && body.found && body.data) {
-        const cust = body.data;
+      if (body && body.customer_id) {
+        const cust = body;
         showLookupFeedback(`Đã tìm thấy khách hàng: ${cust.full_name}.`, 'success');
 
         // Điền họ tên khách hàng
@@ -1209,7 +1272,8 @@ async function simulateLookup() {
         // Điền thông tin thiết bị và lịch sử gắn liền với khách hàng
         if (cust.devices && cust.devices.length > 0) {
           const dev = cust.devices[0];
-          selectedWarrantyStatus = typeof dev.is_warranty === 'boolean' ? dev.is_warranty : null;
+          // Lịch sử phiếu cũ không chứng minh tình trạng bảo hành hiện tại.
+          selectedWarrantyStatus = null;
 
           if (dev.product_name) {
             const devNameInput = document.getElementById('deviceNameInput');
@@ -1248,15 +1312,8 @@ async function simulateLookup() {
           if (alertBox && alertText) {
             const s = dev.serial_no || dev.serial_imei;
             const p = dev.product_name;
-            if (dev.is_warranty === false) {
-              alertBox.className = 'warranty-alert-box';
-              alertText.innerHTML = `⚠ Thiết bị ${escapeHtml(s)} (${escapeHtml(p)}) đã hết hạn bảo hành (QT-01).`;
-            } else {
-              alertBox.className = 'warranty-alert-box valid';
-              alertText.textContent = selectedWarrantyStatus === true
-                ? `Thiết bị ${s} (${p}) còn hạn theo hồ sơ bảo hành đã tra cứu (QT-05).`
-                : `Chưa xác minh bảo hành cho thiết bị ${s} (${p}) (QT-05).`;
-            }
+            alertBox.className = 'warranty-alert-box';
+            alertText.textContent = `Chưa xác minh bảo hành cho thiết bị ${s} (${p}) (QT-05).`;
           }
 
           showToast(`Đã tìm thấy hồ sơ: ${cust.full_name} (${dev.product_name})`);
@@ -1302,16 +1359,9 @@ async function simulateLookup() {
     const alertBox = document.getElementById('warrantyAlertBox');
     const alertText = document.getElementById('warrantyAlertText');
     if (alertBox && alertText) {
-      selectedWarrantyStatus = typeof foundSample.is_warranty === 'boolean' ? foundSample.is_warranty : null;
-      if (foundSample.is_warranty === false) {
-        alertBox.className = 'warranty-alert-box';
-        alertText.innerHTML = `⚠ Thiết bị ${escapeHtml(foundSample.serial_no)} (${escapeHtml(foundSample.product_name)}) đã hết hạn bảo hành (QT-01).`;
-      } else {
-        alertBox.className = 'warranty-alert-box valid';
-        alertText.textContent = selectedWarrantyStatus === true
-          ? `Thiết bị ${foundSample.serial_no} (${foundSample.product_name}) còn hạn theo hồ sơ bảo hành đã tra cứu (QT-05).`
-          : `Chưa xác minh bảo hành cho thiết bị ${foundSample.serial_no} (${foundSample.product_name}) (QT-05).`;
-      }
+      selectedWarrantyStatus = null;
+      alertBox.className = 'warranty-alert-box';
+      alertText.textContent = `Chưa xác minh bảo hành cho thiết bị ${foundSample.serial_no} (${foundSample.product_name}) (QT-05).`;
     }
     showToast(`Đã tìm thấy thông tin khách hàng: ${foundSample.customer_name}`);
     showLookupFeedback(`Đã tìm thấy khách hàng: ${foundSample.customer_name}.`, 'success');
@@ -1320,7 +1370,7 @@ async function simulateLookup() {
 
   // 3. Khách hàng mới chưa có trong hệ thống
   selectedWarrantyStatus = null;
-  showLookupFeedback('Số điện thoại chưa có trên hệ thống. Nhập họ tên và thông tin khách hàng để tiếp tục tạo phiếu.', 'not-found');
+  showLookupFeedback('Số điện thoại chưa có trên hệ thống. Nhập họ tên và chọn Đăng ký khách hàng mới.', 'not-found');
   showToast('Số điện thoại chưa có trên hệ thống.');
   document.getElementById('custNameInput').focus();
 }
@@ -1391,6 +1441,18 @@ function onIssueDescInput(val) {
 // -------------------------------------------------------------
 // 7. KHỞI TẠO PHIẾU BẢO HÀNH MỚI (AC2.2 / US1 / FR1 / QT-03 / QT-06)
 // -------------------------------------------------------------
+async function registerCustomer() {
+  const phone = document.getElementById('custPhoneInput').value.trim();
+  const full_name = document.getElementById('custNameInput').value.trim();
+  const address = document.getElementById('custAddressInput').value.trim();
+  if (!phone || !full_name) { alert('Vui lòng nhập số điện thoại và họ tên khách hàng.'); return; }
+  try {
+    await window.ticketsApi.dangKyKhachHang({ phone, full_name, address });
+    showToast('Đã đăng ký khách hàng.');
+    await simulateLookup();
+  } catch (error) { alert(`Không thể đăng ký khách hàng: ${error.message}`); }
+}
+
 async function submitTicket() {
   const phone = document.getElementById('custPhoneInput').value.trim();
   const name = document.getElementById('custNameInput').value.trim();
@@ -1468,6 +1530,8 @@ async function submitTicket() {
 
   showToast(`Tạo phiếu thành công: ${newTicketCode} (Ghi log kiểm toán QT-06)!`);
   clearCreateForm();
+  // Tránh bộ lọc cũ che phiếu vừa tạo khỏi danh sách.
+  resetTicketFiltersForLogin();
 
   // Tải lại danh sách phiếu và chuyển hướng sang xem chi tiết
   setTimeout(() => {
@@ -1482,6 +1546,8 @@ async function submitTicket() {
 async function loadTicketDetail(ticketIdentifier) {
   const codeEl = document.getElementById('detailTicketCode');
   if (codeEl) codeEl.innerText = ticketIdentifier;
+  const panel = document.getElementById('handoverPhotoPanel');
+  if (panel) panel.hidden = true;
 
   let ticket = null;
 
@@ -1503,6 +1569,24 @@ async function loadTicketDetail(ticketIdentifier) {
   }
 
   if (ticket) {
+    const photoPanel = document.getElementById('handoverPhotoPanel');
+    if (photoPanel) {
+      photoPanel.hidden = !['HOAN_TAT', 'DA_BAN_GIAO'].includes(ticket.status);
+      const input = document.getElementById('handoverPhotoInput');
+      const message = document.getElementById('handoverPhotoMessage');
+      const img = document.getElementById('handoverPhotoImage');
+      const empty = document.getElementById('handoverPhotoEmpty');
+      input.value = '';
+      message.textContent = '';
+      img.hidden = true;
+      img.removeAttribute('src');
+      empty.hidden = false;
+      if (!photoPanel.hidden) {
+        img.onload = () => { img.hidden = false; empty.hidden = true; };
+        img.onerror = () => { img.hidden = true; empty.hidden = false; };
+        img.src = `/api/tickets/${encodeURIComponent(ticketIdentifier)}/handover-photo?t=${Date.now()}`;
+      }
+    }
     const custName = document.getElementById('detailCustName');
     if (custName) custName.innerText = ticket.customer_name || 'Khách hàng';
 
@@ -1515,7 +1599,7 @@ async function loadTicketDetail(ticketIdentifier) {
     const statusBadge = document.getElementById('detailStatusBadge');
     if (statusBadge) {
       statusBadge.className = `badge ${getStatusBadgeClass(ticket.status)}`;
-      statusBadge.innerText = `Trạng thái: ${formatStatusLabel(ticket.status)}`;
+      statusBadge.innerText = `${currentLanguage === 'en' ? 'Status' : 'Trạng thái'}: ${formatStatusLabel(ticket.status)}`;
     }
 
     const devModel = document.getElementById('detailDeviceModel');
@@ -1531,10 +1615,15 @@ async function loadTicketDetail(ticketIdentifier) {
       warrantyStatus.innerText = !isVerified ? 'Chưa xác minh bảo hành' : (isW ? 'Còn bảo hành chính hãng' : 'Hết hạn bảo hành');
       warrantyStatus.style.color = !isVerified ? '#FBBF24' : (isW ? '#34D399' : '#F87171');
     }
+    const approvalButton = document.getElementById('approveWarrantyException');
+    const needsException = !ticket.is_warranty || ticket.warranty_verified === false;
+    if (approvalButton) approvalButton.hidden = !currentUser?.canManageStaff || ticket.status !== 'MOI' || !needsException || ticket.warranty_exception_approved;
+    const consentButton = document.getElementById('recordServiceConsent');
+    if (consentButton) consentButton.hidden = ticket.status !== 'MOI' || !needsException || ticket.service_consent;
 
     const catName = document.getElementById('detailCategoryName');
     if (catName) {
-      const catText = CATEGORY_MAP[ticket.category_id || ticket.issue_category_id] || ticket.category_name || 'Sự cố kỹ thuật';
+      const catText = categoryLabel(ticket.category_id || ticket.issue_category_id, ticket.category_name);
       catName.innerText = catText;
     }
 
@@ -1566,19 +1655,24 @@ async function loadTicketDetail(ticketIdentifier) {
         ],
         'DA_PHAN_CONG': [
           { val: 'DANG_XU_LY', label: 'ĐANG XỬ LÝ (KTV tiếp nhận khám máy)' },
-          { val: 'DA_HUY', label: 'ĐÃ HỦY (Khách lấy lại máy)' }
+          { val: 'DA_HUY', label: 'ĐÃ HỦY (Khách lấy lại máy)' },
+          { val: 'HOAN_TAT', label: 'ĐÃ HOÀN THÀNH (sau khi xử lý)', disabled: true },
+          { val: 'DA_BAN_GIAO', label: 'ĐÃ BÀN GIAO (sau khi hoàn thành)', disabled: true }
         ],
         'DANG_XU_LY': [
           { val: 'CHO_LINH_KIEN', label: 'CHỜ LINH KIỆN (Yêu cầu kho cung ứng)' },
-          { val: 'HOAN_TAT', label: 'HOÀN TẤT (Đã sửa chữa và kiểm tra)' },
-          { val: 'DA_HUY', label: 'ĐÃ HỦY (Không sửa chữa được)' }
+          { val: 'HOAN_TAT', label: 'ĐÃ HOÀN THÀNH (Đã sửa chữa và kiểm tra)' },
+          { val: 'DA_HUY', label: 'ĐÃ HỦY (Không sửa chữa được)' },
+          { val: 'DA_BAN_GIAO', label: 'ĐÃ BÀN GIAO (sau khi hoàn thành)', disabled: true }
         ],
         'CHO_LINH_KIEN': [
           { val: 'DANG_XU_LY', label: 'ĐANG XỬ LÝ (Linh kiện đã về)' },
-          { val: 'HOAN_TAT', label: 'HOÀN TẤT (Hoàn tất thay thế)' },
-          { val: 'DA_HUY', label: 'ĐÃ HỦY' }
+          { val: 'HOAN_TAT', label: 'ĐÃ HOÀN THÀNH (Hoàn tất thay thế)' },
+          { val: 'DA_HUY', label: 'ĐÃ HỦY' },
+          { val: 'DA_BAN_GIAO', label: 'ĐÃ BÀN GIAO (sau khi hoàn thành)', disabled: true }
         ],
-        'HOAN_TAT': [],
+        'HOAN_TAT': [{ val: 'DA_BAN_GIAO', label: 'ĐÃ BÀN GIAO (Đã trả thiết bị cho khách)' }],
+        'DA_BAN_GIAO': [],
         'DA_HUY': []
       };
 
@@ -1588,7 +1682,7 @@ async function loadTicketDetail(ticketIdentifier) {
         selectEl.disabled = true;
       } else {
         selectEl.disabled = false;
-        selectEl.innerHTML = nextOptions.map(opt => `<option value="${opt.val}">${opt.label}</option>`).join('');
+        selectEl.innerHTML = nextOptions.map(opt => `<option value="${opt.val}"${opt.disabled ? ' disabled' : ''}>${opt.label}</option>`).join('');
       }
     }
 
@@ -1597,9 +1691,9 @@ async function loadTicketDetail(ticketIdentifier) {
     if (timeline && ticket.status_history && Array.isArray(ticket.status_history) && ticket.status_history.length > 0) {
       timeline.innerHTML = ticket.status_history.map(item => `
         <div class="timeline-item">
-          <div class="timeline-time">${escapeHtml(formatDateTime(item.created_at))}</div>
+          <div class="timeline-time">${escapeHtml(formatDateTime(item.changed_at || item.created_at))}</div>
           <div class="timeline-text">
-            ${item.old_status ? `${escapeHtml(formatStatusLabel(item.old_status))} → ` : ''}
+            ${item.old_status || item.from_status ? `${escapeHtml(formatStatusLabel(item.old_status || item.from_status))} → ` : ''}
             <span class="badge ${getStatusBadgeClass(item.new_status || item.to_status)}" style="font-size: 11px; padding: 2px 8px;">
               ${escapeHtml(formatStatusLabel(item.new_status || item.to_status))}
             </span>
@@ -1608,7 +1702,10 @@ async function loadTicketDetail(ticketIdentifier) {
           <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Ghi chú: ${escapeHtml(item.note || item.notes || 'Khởi tạo / chuyển trạng thái')}</div>
         </div>
       `).join('');
+    } else if (timeline) {
+      timeline.textContent = currentLanguage === 'en' ? 'No status history available.' : 'Chưa có lịch sử trạng thái.';
     }
+    applyLanguage();
   } else {
     const emptyFields = [
       'detailCustName', 'detailCustPhone', 'detailCustAddress', 'detailDeviceModel', 'detailDeviceSerial',
@@ -1624,6 +1721,53 @@ async function loadTicketDetail(ticketIdentifier) {
   }
 }
 
+async function uploadHandoverPhoto() {
+  const input = document.getElementById('handoverPhotoInput');
+  const message = document.getElementById('handoverPhotoMessage');
+  const button = document.getElementById('handoverPhotoSave');
+  const file = input.files[0];
+  if (!file) { message.textContent = 'Vui lòng chọn ảnh trước khi lưu.'; return false; }
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 8 * 1024 * 1024) {
+    message.textContent = 'Chọn ảnh JPEG, PNG hoặc WebP không quá 8 MB.'; return false;
+  }
+  const code = document.getElementById('detailTicketCode').innerText.trim();
+  button.disabled = true;
+  message.textContent = 'Đang lưu ảnh...';
+  try {
+    const response = await fetch(`/api/tickets/${encodeURIComponent(code)}/handover-photo`, {
+      method: 'PUT', credentials: 'same-origin', headers: { 'Content-Type': file.type }, body: file,
+    });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.message || 'Không thể lưu ảnh.');
+    await loadTicketDetail(code);
+    document.getElementById('handoverPhotoMessage').textContent = 'Đã lưu ảnh bàn giao.';
+    return true;
+  } catch (error) { message.textContent = error.message || 'Không thể kết nối máy chủ.'; return false; }
+  finally { button.disabled = false; }
+}
+
+async function recordServiceConsent() {
+  const note = document.getElementById('transitionNoteText').value.trim();
+  if (!note) { alert('Vui lòng ghi nhận nội dung khách đồng ý sửa dịch vụ tính phí.'); return; }
+  const code = document.getElementById('detailTicketCode').innerText.trim();
+  try {
+    await window.ticketsApi.ghiNhanDongYSuaDichVu(code, note);
+    showToast('Đã ghi nhận khách đồng ý sửa dịch vụ tính phí.');
+    await loadTicketDetail(code);
+  } catch (error) { alert(`Không thể ghi nhận: ${error.message}`); }
+}
+
+async function approveWarrantyException() {
+  const note = document.getElementById('transitionNoteText').value.trim();
+  if (!note) { alert('Vui lòng nhập lý do phê duyệt ngoại lệ.'); return; }
+  const code = document.getElementById('detailTicketCode').innerText.trim();
+  try {
+    await window.ticketsApi.pheDuyetNgoaiLe(code, note);
+    showToast('Đã phê duyệt ngoại lệ bảo hành.');
+    await loadTicketDetail(code);
+  } catch (error) { alert(`Không thể phê duyệt: ${error.message}`); }
+}
+
 async function updateTicketStatus() {
   const selectEl = document.getElementById('nextStatusSelect');
   if (!selectEl || selectEl.disabled) {
@@ -1637,6 +1781,10 @@ async function updateTicketStatus() {
   if (!nextStatus) {
     alert('Vui lòng chọn trạng thái tiếp theo!');
     return;
+  }
+
+  if (nextStatus === 'DA_BAN_GIAO' && document.getElementById('handoverPhotoInput').files.length) {
+    if (!await uploadHandoverPhoto()) return;
   }
 
   // Gọi API Backend qua ticketsApi (Buổi 9 & 10 SE)
@@ -1696,6 +1844,7 @@ function getPriorityBadgeClass(p) {
 
 function formatPriorityLabel(p) {
   const norm = String(p || '').toUpperCase();
+  if (currentLanguage === 'en') return norm === 'CAO' || norm === 'HIGH' ? 'HIGH' : norm === 'THAP' || norm === 'LOW' ? 'LOW' : 'MEDIUM';
   if (norm === 'CAO' || norm === 'HIGH') return 'CAO';
   if (norm === 'THAP' || norm === 'LOW') return 'THẤP';
   return 'TRUNG BÌNH';
@@ -1707,20 +1856,30 @@ function getStatusBadgeClass(s) {
   if (norm === 'DA_PHAN_CONG' || norm === 'ASSIGNED') return 'badge-assigned';
   if (norm === 'DANG_XU_LY' || norm === 'PROCESSING') return 'badge-processing';
   if (norm === 'CHO_LINH_KIEN') return 'badge-parts';
-  if (norm === 'HOAN_TAT' || norm === 'COMPLETED' || norm === 'DA_DONG') return 'badge-closed';
+  if (norm === 'HOAN_TAT' || norm === 'DA_BAN_GIAO' || norm === 'COMPLETED' || norm === 'DA_DONG') return 'badge-closed';
   if (norm === 'DA_HUY' || norm === 'CANCELLED') return 'badge-cancelled';
   return 'badge-new';
 }
 
 function formatStatusLabel(s) {
   const norm = String(s || '').toUpperCase();
+  if (currentLanguage === 'en') return ({ MOI: 'NEW', NEW: 'NEW', DA_PHAN_CONG: 'ASSIGNED', ASSIGNED: 'ASSIGNED', DANG_XU_LY: 'IN PROGRESS', PROCESSING: 'IN PROGRESS', CHO_LINH_KIEN: 'WAITING FOR PARTS', DA_BAN_GIAO: 'HANDED OVER', HOAN_TAT: 'COMPLETED', COMPLETED: 'COMPLETED', DA_DONG: 'CLOSED', DA_HUY: 'CANCELLED', CANCELLED: 'CANCELLED' })[norm] || norm;
   if (norm === 'MOI' || norm === 'NEW') return 'MỚI';
   if (norm === 'DA_PHAN_CONG' || norm === 'ASSIGNED') return 'ĐÃ PHÂN CÔNG';
   if (norm === 'DANG_XU_LY' || norm === 'PROCESSING') return 'ĐANG XỬ LÝ';
   if (norm === 'CHO_LINH_KIEN') return 'CHỜ LINH KIỆN';
-  if (norm === 'HOAN_TAT' || norm === 'COMPLETED' || norm === 'DA_DONG') return 'HOÀN TẤT';
+  if (norm === 'DA_BAN_GIAO') return 'ĐÃ BÀN GIAO';
+  if (norm === 'HOAN_TAT' || norm === 'COMPLETED' || norm === 'DA_DONG') return 'ĐÃ HOÀN THÀNH';
   if (norm === 'DA_HUY' || norm === 'CANCELLED') return 'ĐÃ HỦY';
   return norm || 'MỚI';
+}
+
+function categoryLabel(id, fallback) {
+  if (currentLanguage === 'en') {
+    const labels = { 1: 'Touchscreen', 2: 'Battery & power', 3: 'Charging / connectivity', 4: 'Operating system / software', 5: 'Water / moisture damage', 6: 'Other hardware', MAN_HINH: 'Touchscreen', PIN: 'Battery & power', SAC: 'Charging / connectivity', PHAN_MEM: 'Operating system / software', NUOC_VAO: 'Water / moisture damage', KHAC: 'Other hardware' };
+    return labels[id] || fallback || 'Technical issue';
+  }
+  return CATEGORY_MAP[id] || fallback || 'Sự cố kỹ thuật';
 }
 
 function showToast(msg) {
