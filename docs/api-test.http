@@ -1,0 +1,152 @@
+### Mekong Mobile CRM - Warranty Receipt & Triage API Testing (Workflow L2)
+### Environment Variables
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### 1. Health Probes
+# @name HealthCheck
+GET {{baseUrl}}/health
+Content-Type: {{contentType}}
+
+###
+# @name DatabaseHealth
+GET {{baseUrl}}/health/db
+Content-Type: {{contentType}}
+
+### 2. Authentication & Session Management
+# @name LoginSystemAdmin
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "system.admin",
+  "password": "admin123"
+}
+
+###
+# @name LoginStaff
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "staff.hcm",
+  "password": "123456"
+}
+
+###
+# @name GetCurrentUser
+GET {{baseUrl}}/api/auth/me
+Content-Type: {{contentType}}
+
+### 3. Master Data
+# @name GetCenters
+GET {{baseUrl}}/api/centers
+Content-Type: {{contentType}}
+
+###
+# @name GetCategories
+GET {{baseUrl}}/api/categories
+Content-Type: {{contentType}}
+
+### 4. Customer Lookup & Registration (QT-01)
+# @name LookupCustomerSuccess
+GET {{baseUrl}}/api/customers?phone=+84901234567
+Content-Type: {{contentType}}
+
+###
+# @name LookupCustomerNotFound
+GET {{baseUrl}}/api/customers?phone=0999999999
+Content-Type: {{contentType}}
+
+### 5. Ticket Receipt & Intake Triage (QT-03, QT-04, QT-05)
+# @name CreateTicketSuccess
+POST {{baseUrl}}/api/tickets
+Content-Type: {{contentType}}
+
+{
+  "customer_id": 1,
+  "customer_phone": "0901234567",
+  "customer_name": "Nguyễn Văn A",
+  "product_id": 5,
+  "product_name": "iPhone 15 Pro",
+  "serial_imei": "SN-NEW-10293",
+  "center_id": 1,
+  "store_id": "STORE_01",
+  "category_id": 1,
+  "priority": "CAO",
+  "issue_description": "Màn hình bị sọc xanh và không lên nguồn khi cắm sạc",
+  "sold_at": "2026-06-01"
+}
+
+###
+# @name CreateTicketMissingFields
+# Expected: 400 Bad Request with missing fields listed
+POST {{baseUrl}}/api/tickets
+Content-Type: {{contentType}}
+
+{
+  "customer_name": "Nguyễn Văn A"
+}
+
+###
+# @name CreateTicketDuplicateSerial
+# Expected: 409 Conflict with PHIEU_DANG_MO (QT-09)
+POST {{baseUrl}}/api/tickets
+Content-Type: {{contentType}}
+
+{
+  "customer_id": 1,
+  "customer_phone": "0901234567",
+  "customer_name": "Nguyễn Văn A",
+  "product_id": 5,
+  "serial_imei": "SN-NEW-10293",
+  "center_id": 1,
+  "category_id": 1,
+  "priority": "CAO",
+  "issue_description": "Tiếp tục tạo phiếu trùng serial khi phiếu trước chưa xong",
+  "sold_at": "2026-06-01"
+}
+
+### 6. Ticket Management & Lifecycle Transitions (QT-06)
+# @name GetTicketList
+GET {{baseUrl}}/api/tickets?center_id=1&status=MOI
+Content-Type: {{contentType}}
+
+###
+# @name GetTicketDetail
+GET {{baseUrl}}/api/tickets/TKT-8801
+Content-Type: {{contentType}}
+
+###
+# @name UpdateTicketStatusSuccess
+PATCH {{baseUrl}}/api/tickets/TKT-8801/status
+Content-Type: {{contentType}}
+
+{
+  "status": "DA_TIEP_NHAN",
+  "updated_by": "NV_KHOI",
+  "note": "Tiếp nhận thiết bị tại quầy và chuyển kỹ thuật viên"
+}
+
+###
+# @name UpdateTicketStatusRollbackViolation
+# Expected: 409 Conflict with TRANG_THAI_KHONG_HOP_LE (QT-06)
+PATCH {{baseUrl}}/api/tickets/TKT-8801/status
+Content-Type: {{contentType}}
+
+{
+  "status": "MOI",
+  "updated_by": "NV_TEST"
+}
+
+### 7. Security: Broken Access Control (OWASP A01:2025)
+# @name ApproveWarrantyExceptionForbidden
+# Expected: 403 Forbidden for Staff role
+PATCH {{baseUrl}}/api/tickets/TKT-8801/warranty-exception
+Content-Type: {{contentType}}
+
+{
+  "approved": true,
+  "reason": "Phê duyệt ngoại lệ bảo hành"
+}
+

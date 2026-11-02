@@ -1,0 +1,313 @@
+{
+  "info": {
+    "_postman_id": "7b13e9a0-9e2b-4231-8f51-a9c67b9d14f2",
+    "name": "Mekong Mobile CRM - Warranty Receipt & Triage API (L2)",
+    "description": "Collection kiểm thử API phân hệ L2 phục vụ Chuyên đề tốt nghiệp 1 (CDTN1) - Track SE - Sinh viên Nguyễn Bá Anh Khôi (MSSV: 2374802010247). Đủ các test case Luồng đúng, Biên, Dữ liệu sai, và Bảo mật OWASP A01/A02.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Probes",
+      "item": [
+        {
+          "name": "GET /health - Service Smoke Test",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /health/db - Database Connection Probe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/db",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", "db"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication (OWASP A07)",
+      "item": [
+        {
+          "name": "POST /api/auth/login - Staff Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"staff.hcm\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/auth/me - Verify Current Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Master Data",
+      "item": [
+        {
+          "name": "GET /api/centers - Service Centers List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/centers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "centers"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/categories - Issue Categories List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Customer Lookup (QT-01)",
+      "item": [
+        {
+          "name": "GET /api/customers - Lookup by Valid Phone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/customers?phone=+84901234567",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "customers"],
+              "query": [
+                {
+                  "key": "phone",
+                  "value": "+84901234567"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ticket Intake & Triage (QT-03, QT-04, QT-05)",
+      "item": [
+        {
+          "name": "POST /api/tickets - Create Valid Ticket (Happy Path)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": 1,\n  \"customer_phone\": \"0901234567\",\n  \"customer_name\": \"Nguyễn Văn A\",\n  \"product_id\": 5,\n  \"product_name\": \"iPhone 15 Pro\",\n  \"serial_imei\": \"SN-TEST-10293\",\n  \"center_id\": 1,\n  \"category_id\": 1,\n  \"priority\": \"CAO\",\n  \"issue_description\": \"Màn hình bị sọc xanh và không lên nguồn\",\n  \"sold_at\": \"2026-06-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/tickets - Missing Fields Error (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_name\": \"Nguyễn Văn A\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/tickets - Duplicate Serial Open Ticket (409 QT-09)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": 1,\n  \"customer_phone\": \"0901234567\",\n  \"customer_name\": \"Nguyễn Văn A\",\n  \"product_id\": 5,\n  \"serial_imei\": \"SN-TEST-10293\",\n  \"center_id\": 1,\n  \"category_id\": 1,\n  \"priority\": \"CAO\",\n  \"issue_description\": \"Trùng serial đang có phiếu mở\",\n  \"sold_at\": \"2026-06-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lifecycle Management (QT-06)",
+      "item": [
+        {
+          "name": "GET /api/tickets - Filter by Center & Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets?center_id=1&status=MOI",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"],
+              "query": [
+                {
+                  "key": "center_id",
+                  "value": "1"
+                },
+                {
+                  "key": "status",
+                  "value": "MOI"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /api/tickets/:id/status - Valid Forward Transition",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DA_TIEP_NHAN\",\n  \"updated_by\": \"NV_KHOI\",\n  \"note\": \"Chuyển quầy kỹ thuật kiểm tra\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets/TKT-8801/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets", "TKT-8801", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /api/tickets/:id/status - Invalid Rollback Violation (409)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"MOI\",\n  \"updated_by\": \"NV_TEST\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets/TKT-8801/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets", "TKT-8801", "status"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Access Control (OWASP A01:2025)",
+      "item": [
+        {
+          "name": "PATCH /api/tickets/:id/warranty-exception - Forbidden for Staff (403)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"approved\": true,\n  \"reason\": \"Nhân viên không có quyền phê duyệt\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets/TKT-8801/warranty-exception",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets", "TKT-8801", "warranty-exception"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
+

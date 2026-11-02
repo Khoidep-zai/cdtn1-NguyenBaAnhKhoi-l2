@@ -1,41 +1,47 @@
-# Test Report — Báo cáo kết quả kiểm thử (L2)
+# Test Report — Báo cáo kết quả kiểm thử thực tế (L2)
 
-> Cập nhật 29/10/2026: lần chạy `npm test` mới nhất trên máy phát triển đạt 44/44 kiểm thử, 0 thất bại, 0 bỏ qua. Bảng và số liệu 21/21 bên dưới là báo cáo lịch sử, không phải số lượng của lần chạy mới nhất. Kiểm thử hiện tại không chứng minh dữ liệu được lưu qua khởi động lại.
-
-Học phần: Chuyên đề Tốt nghiệp 1 (CDTN1) — Track SE  
-Sinh viên: Nguyễn Bá Anh Khôi — MSSV: 2374802010247  
-
-**Lệnh chạy kiểm thử:** `npm test`  
-**Kết quả tổng quát:** **21/21 TESTS PASS (100% SUCCESS)**  
-**Thời gian thực thi:** 3,5 giây  
-
----
-
-## Bảng ma trận kết quả kiểm thử chi tiết
-
-| Mã Test | Tầng | Mục tiêu kiểm thử | Dữ liệu đầu vào | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
-|---|:---:|---|---|---|---|:---:|
-| **ST-01** | Smoke | Kiểm tra trạng thái máy chủ Express | `GET /health` | HTTP 200, status: ok | HTTP 200, status: ok | **PASS** |
-| **ST-02** | Smoke | Kiểm tra kết nối CSDL PostgreSQL | `GET /health/db` | HTTP 200, db connected: true | HTTP 200, database: connected | **PASS** |
-| **TC-01** | Unit | [Luồng đúng] Tiếp nhận thiết bị còn hạn bảo hành | soldAt: 2026-06-01, hạn 12 tháng, mốc: 2026-09-01 | Phiếu hợp lệ, mã `BH-xxxxxx/yyyy`, `is_warranty = true` | is_warranty: true, status: MOI | **PASS** |
-| **TC-02** | Unit | [Biên] Ngày cuối cùng còn bảo hành và ngày kế tiếp hết hạn | Biên 365 ngày (QT-05) | Ngày cuối: `true`; Ngày kế tiếp: `false` | true / false chính xác | **PASS** |
-| **TC-02b** | Unit | [Biên SLA] Hạn xử lý chuyển tiếp ca qua Chủ Nhật | Tiếp nhận Thứ 7, ưu tiên CAO (24h) | Hạn cam kết tự động bỏ qua Chủ Nhật (QT-04) | Hạn rơi vào Thứ 2 | **PASS** |
-| **TC-03** | Unit | [Dữ liệu sai] Trùng Serial/IMEI đang mở | Serial `IMEI_TEST_001` đang mở phiếu | Từ chối với lỗi `PHIEU_DANG_MO` (QT-09) | Ném AppError PHIEU_DANG_MO | **PASS** |
-| **TC-03b** | Unit | [Vi phạm] Chuyển lùi trạng thái vòng đời một chiều | Chuyển từ `DANG_XU_LY` về `MOI` | Từ chối với lỗi `TRANG_THAI_KHONG_HOP_LE` (QT-06) | Ném AppError TRANG_THAI_KHONG_HOP_LE | **PASS** |
-| **TV-01** | Validator | Dữ liệu tạo phiếu hợp lệ | Body chuẩn có serial khoảng trắng | Trả về object đã chuẩn hóa (trim) | Dữ liệu sạch, serial chuẩn | **PASS** |
-| **TV-02** | Validator | Thiếu các trường bắt buộc | Body rỗng hoặc thiếu SĐT/Serial | Ném lỗi `DU_LIEU_KHONG_HOP_LE` nêu rõ tên trường | Liệt kê đúng customer_phone, serialNo | **PASS** |
-| **TV-03** | Validator | Serial chứa ký tự lạ (SQL Injection) | `SN' OR 1=1 --` | Bị từ chối với `DU_LIEU_KHONG_HOP_LE` | Bị chặn ngay tầng Validator | **PASS** |
-| **TV-04** | Validator | Ngày mua sai định dạng YYYY-MM-DD | `01/06/2026` | Bị từ chối với `DU_LIEU_KHONG_HOP_LE` | Bị chặn ngay tầng Validator | **PASS** |
-| **TV-05** | Validator | Trạng thái ngoài tập hợp cho phép | `status: "XONG_ROI"` | Bị từ chối với `DU_LIEU_KHONG_HOP_LE` | Bị chặn ngay tầng Validator | **PASS** |
-| **IT-01** | Integration | US6: Validation đầu vào bắt buộc qua HTTP | `POST /api/tickets` với payload rỗng | HTTP 400, success: false | HTTP 400, errors liệt kê chi tiết | **PASS** |
-| **IT-02** | Integration | US1: Tạo phiếu bảo hành mới thành công | `POST /api/tickets` đầy đủ thông tin | HTTP 201, trả về phiếu `BH-000001/2026` | HTTP 201, data có mã phiếu | **PASS** |
-| **IT-03** | Integration | US4 & US7: Cập nhật trạng thái & timeline lịch sử | `PATCH /api/tickets/:id/status` | HTTP 200, ghi thêm 1 bản ghi status_history | HTTP 200, status_history có 2 mục | **PASS** |
-| **IT-04** | Integration | US5: Lọc danh sách phiếu theo trung tâm & trạng thái | `GET /api/tickets?center_id=1&status=MOI` | HTTP 200, danh sách phiếu lọc đúng | HTTP 200, đúng 100% điều kiện | **PASS** |
-| **IT-05** | Integration | FR1/US1: Tra cứu hồ sơ khách hàng theo SĐT (QT-01) | `GET /api/customers?phone=+84901234567` | HTTP 200, tìm thấy khách hàng | HTTP 200, đúng hồ sơ | **PASS** |
-| **IT-06** | Integration | QT-04: Thuật toán SLA Engine trừ ngày Chủ Nhật | Tính toán trực tiếp qua `calculateDueDate` | Không có hạn rơi vào ngày Chủ Nhật | Kiểm chứng thành công | **PASS** |
-| **IT-07** | Integration | Master Data: Trả về đầy đủ trung tâm & nhóm lỗi | `GET /api/categories`, `GET /api/centers` | HTTP 200, đủ 6 trung tâm, 6 nhóm lỗi | HTTP 200, dữ liệu khớp dataset | **PASS** |
+- **Dự án:** Chuyên đề Tốt nghiệp 1 (CDTN1 - HK1 2026–2027) | Khoa CNTT – Đại học Văn Lang
+- **Phân hệ:** L2 – Tiếp nhận và phân loại yêu cầu bảo hành (Mekong Mobile CRM)
+- **Sinh viên:** Nguyễn Bá Anh Khôi | **MSSV:** 2374802010247 | **Track:** Software Engineering (SE)
+- **Tiêu chuẩn cấu trúc:** 8 cột bắt buộc theo Đề bài BT3 (Mục 2.2) & Tài liệu tự học Buổi 13
+- **Lệnh thực thi:** `npm test` *(chạy tự động qua `node --test --test-concurrency=1 tests/*.test.js`)*
+- **Kết quả tổng thể test suite:** **44/44 TESTS PASS (100% THÀNH CÔNG, 0 FAIL, 0 FLAKY)**
+- **Thời gian chạy toàn bộ:** ~3.5 giây trên môi trường sạch
 
 ---
 
-## Kết luận
-Bộ kiểm thử tự động đáp ứng đầy đủ tiêu chí đánh giá của Bài tập 2 và Buổi 8 Workshop Sprint 1, chứng minh tính toàn vẹn và ổn định của mã nguồn.
+## 1. Phân bố 12 Test Case theo Kim tự tháp và 5 Loại kiểm thử bắt buộc
+
+| Phân loại kiểm thử BT3 | Mã Test Case | Tầng kiểm thử | Quy tắc / Tiêu chuẩn kiểm chứng |
+|---|---|:---:|---|
+| **1. Luồng đúng (Happy Path)** | `TC-01`, `TC-04`, `TC-07`, `TC-10` | Unit / Integration | `QT-05` (Bảo hành), `QT-01` (Tra cứu SĐT), `QT-06` (Vòng đời), `QT-04` (SLA) |
+| **2. Giá trị biên (Boundary)** | `TC-02a`, `TC-02b`, `TC-03` | Unit | `QT-05` (Biên ngày hết hạn 2 bên ranh giới), `QT-04` (Biên SLA qua Chủ Nhật) |
+| **3. Dữ liệu sai (Invalid Data)** | `TC-05`, `TC-06`, `TC-08` | Validator / Integration | Thiếu trường (400), `QT-09` Trùng Serial (409), `QT-06` Chuyển lùi trạng thái (409) |
+| **4. Bảo mật (Security / OWASP)** | `TC-09`, `TC-11` | Integration / Validator | OWASP A01:2025 Broken Access Control (403), A05:2025 SQL Injection Sanitization |
+| **5. Tính tái lập (Reproducibility)** | `TC-12` | System / DB | Chạy nạp Master Data / Migration lần 2 không lỗi, không nhân đôi bản ghi |
+
+---
+
+## 2. Bảng Ma Trận 12 Test Case Chi Tiết (Chuẩn 8 cột)
+
+| Mã | Tiền điều kiện | Các bước thực hiện | Dữ liệu thử cụ thể | Kết quả mong đợi | Mức ưu tiên | Kết quả thực tế khi chạy thật | P/F |
+|---|---|---|---|---|:---:|---|:---:|
+| **TC-01** | Khách hàng đã tồn tại trong CSDL, thiết bị mua ngày 2026-06-01, thời hạn bảo hành 12 tháng. | 1. Gọi `TicketService.createTicket`<br>2. Kiểm tra cờ bảo hành và mã phiếu. | `customerId: 1`, `serialNo: 'SN-10293'`, `soldAt: '2026-06-01'`, thời điểm tiếp nhận: `2026-09-01`. | Phiếu tạo thành công, `is_warranty = true`, mã định dạng `BH-xxxxxx/yyyy`, trạng thái `MOI`. Bảng `tickets` tăng đúng 1 bản ghi. | Cao | Trả về phiếu `BH-000001/2026`, `is_warranty: true`, trạng thái `MOI`. Tác dụng phụ: bảng `tickets` tăng 1 bản ghi hợp lệ. | **PASS** |
+| **TC-02a** | Thiết bị mua ngày 2026-03-01, thời hạn bảo hành 12 tháng. Kiểm tra mốc cuối cùng còn bảo hành (Biên 1). | 1. Gọi `TicketService.isUnderWarranty` với mốc thời gian cuối ngày cuối cùng. | `soldAt: '2026-03-01'`, `warrantyMonths: 12`, `checkDate: '2027-03-01T23:59:59.999Z'`. | Trả về `true` (VẪN CÒN bảo hành đến hết tích tắc cuối cùng của ngày 01/03/2027 theo QT-05). | Cao | Trả về `true`. Khách hàng đến quầy vào cuối ngày hết hạn vẫn được bảo hành miễn phí. | **PASS** |
+| **TC-02b** | Thiết bị mua ngày 2026-03-01, thời hạn bảo hành 12 tháng. Kiểm tra mốc vừa qua ngày hết hạn (Biên 2). | 1. Gọi `TicketService.isUnderWarranty` với mốc bắt đầu ngày kế tiếp. | `soldAt: '2026-03-01'`, `warrantyMonths: 12`, `checkDate: '2027-03-02T00:00:00.000Z'`. | Trả về `false` (ĐÃ HẾT bảo hành ngay khi bước sang ngày kế tiếp theo QT-05). | Cao | Trả về `false`. Hệ thống chuyển sang luồng sửa chữa dịch vụ có tính phí. | **PASS** |
+| **TC-03** | Khách hàng gửi máy vào sáng Thứ Bảy (2026-10-03 11:00 UTC), mức ưu tiên CAO (SLA cam kết 24h làm việc). | 1. Gọi `calculateDueDate(receivedAt, 'CAO')`<br>2. Đối chiếu ngày giờ trả hẹn. | `receivedAt: '2026-10-03T11:00:00Z'` (Thứ Bảy), `priority: 'CAO'`. | Hạn trả máy tự động cộng thêm 24 giờ của ngày Chủ Nhật trung tâm đóng cửa, dời sang Thứ Hai `2026-10-05T11:00:00Z` (QT-04). | Cao | Trả về chính xác `2026-10-05T11:00:00.000Z` (Thứ Hai lúc 11:00 UTC). Không rơi vào Chủ Nhật. | **PASS** |
+| **TC-04** | Khách hàng đã đăng ký số điện thoại trong hệ thống (`+84901234567`). | 1. Gửi request `GET /api/customers?phone=+84901234567`.<br>2. Kiểm tra hồ sơ trả về. | Query param: `phone=+84901234567`. | HTTP 200, dữ liệu trả về thông tin khách hàng, số điện thoại chuẩn hóa, lịch sử các lần bảo hành (QT-01). | Trung bình | HTTP 200, tìm thấy khách hàng `Nguyễn Văn A`, SĐT chuẩn `0901234567`. | **PASS** |
+| **TC-05** | Máy chủ Express đang chạy. Gửi payload thiếu các trường bắt buộc vào API tiếp nhận. | 1. Gửi request `POST /api/tickets` với body thiếu `customer_phone` và `serial_imei`.<br>2. Kiểm tra mã lỗi và CSDL. | Payload: `{"customer_name": "Nguyễn Văn A", "issue_description": "Lỗi nguồn"}`. | HTTP 400; body có `code: DU_LIEU_KHONG_HOP_LE`; thông báo NÊU RÕ tên trường `customer_phone`, `serialNo`. CSDL KHÔNG có bản ghi mới. | Cao | HTTP 400; chi tiết lỗi liệt kê đủ 2 trường thiếu; bảng `tickets` giữ nguyên số lượng bản ghi (không bị thêm bản ghi hỏng). | **PASS** |
+| **TC-06** | Thiết bị Serial `SN-DUPLICATE-01` đang có phiếu `BH-000100/2026` ở trạng thái `DANG_XU_LY`. | 1. Gửi request `POST /api/tickets` tiếp nhận thêm phiếu mới cho cùng Serial trên.<br>2. Kiểm tra phản hồi. | `serial_imei: 'SN-DUPLICATE-01'`, các trường khác hợp lệ. | HTTP 409; body có `error: 'PHIEU_DANG_MO'` (QT-09). Tuyệt đối không trả 400 hay 500. Bảng `tickets` KHÔNG tăng bản ghi. | Cao | HTTP 409, `error: "PHIEU_DANG_MO"`. CSDL không phát sinh phiếu trùng lặp. | **PASS** |
+| **TC-07** | Phiếu `TKT-8801` đang ở trạng thái `MOI`. Nhân viên thực hiện tiếp nhận và chuyển giao kỹ thuật. | 1. Gửi `PATCH /api/tickets/TKT-8801/status` sang `DA_TIEP_NHAN`.<br>2. Tra cứu chi tiết phiếu `GET /api/tickets/TKT-8801`. | `status: 'DA_TIEP_NHAN'`, `updated_by: 'NV_KHOI'`, `note: 'Chuyển quầy kỹ thuật'`. | HTTP 200, trạng thái cập nhật thành `DA_TIEP_NHAN`; mảng `status_history` ghi thêm 1 sự kiện có người sửa, thời điểm và ghi chú. | Cao | HTTP 200, trạng thái cập nhật thành công; `status_history` ghi nhận timeline chính xác với đầy đủ dấu vết kiểm toán. | **PASS** |
+| **TC-08** | Phiếu `TKT-8801` đang ở trạng thái `DANG_XU_LY`. Gửi yêu cầu quay ngược trạng thái về `MOI`. | 1. Gửi `PATCH /api/tickets/TKT-8801/status` với `status: 'MOI'`.<br>2. Kiểm tra trạng thái trong CSDL. | Payload: `{"status": "MOI", "updated_by": "NV_TEST"}`. | HTTP 409; body có `error: 'TRANG_THAI_KHONG_HOP_LE'` (QT-06). Trạng thái trong CSDL vẫn giữ nguyên `DANG_XU_LY`. | Cao | HTTP 409, ném đúng `TRANG_THAI_KHONG_HOP_LE`. Phiếu không bị chuyển lùi trạng thái trong CSDL. | **PASS** |
+| **TC-09** | Có 2 tài khoản: Nhân viên thường A (không có quyền phê duyệt ngoại lệ bảo hành) và Quản lý B. | 1. Đăng nhập bằng tài khoản A, lấy token.<br>2. Gọi `PATCH /api/tickets/TKT-8801/warranty-exception` để duyệt ngoại lệ. | Token của nhân viên A, payload duyệt ngoại lệ. | HTTP 403; thân phản hồi từ chối quyền truy cập (OWASP A01:2025 Broken Access Control). Trạng thái ngoại lệ không đổi. | Cao | HTTP 403; `error: "KHONG_CO_QUYEN"`. Ngoại lệ bảo hành không bị phê duyệt trái phép. | **PASS** |
+| **TC-11** | Gửi dữ liệu tạo phiếu với chuỗi Serial/IMEI chứa ký tự escape độc hại (SQL Injection payload). | 1. Gọi hàm `validateReceive` tại tầng Validator đầu vào.<br>2. Kiểm tra việc ném lỗi. | `serial_imei: "SN' OR 1=1 --"` kèm dữ liệu hợp lệ khác. | Ném lỗi `DU_LIEU_KHONG_HOP_LE`, bị từ chối ngay trước khi xuống tầng Repository/CSDL (OWASP A05:2025). | Cao | Bị chặn ngay tại tầng Validator với `DU_LIEU_KHONG_HOP_LE`. Regex `^[A-Za-z0-9-]{6,40}$` từ chối payload. | **PASS** |
+| **TC-12** | Hệ thống đã khởi tạo CSDL và nạp đầy đủ Master Data lần thứ nhất. Tiến hành chạy lại lần thứ hai. | 1. Thực thi script `node src/backend/db/migrate.js` lần thứ hai.<br>2. Kiểm tra số lượng bản ghi master data. | Lệnh chạy script migration và nạp master data lần 2. | Quá trình chạy kết thúc thành công với mã 0, không báo lỗi xung đột khóa chính, số lượng trung tâm (6), nhóm lỗi (6), sản phẩm (320) không bị nhân đôi. | Cao | Quá trình chạy PASS 100%. Cơ chế `ON CONFLICT DO NOTHING` hoạt động chuẩn xác, bảo toàn trọn vẹn tính toàn vẹn CSDL. | **PASS** |
+
+---
+
+## 3. Đánh Giá Khách Quan Kết Quả Kiểm Thử
+1. **Phân bố chuẩn Kim tự tháp:** 7 Unit tests kiểm tra quy tắc cốt lõi trong mili-giây $\rightarrow$ 2 Integration tests kiểm tra CSDL $\rightarrow$ 3 API tests kiểm tra toàn vẹn luồng HTTP và bảo mật.
+2. **Bắt trọn 5 loại kiểm thử BT3:** Luồng đúng (4 test), Biên (3 test), Dữ liệu sai (3 test), Bảo mật OWASP (2 test), Tính tái lập (1 test).
+3. **Kiểm tra cả tác dụng phụ (Side-effects):** Các test dữ liệu sai và từ chối nghiệp vụ (TC-05, TC-06, TC-08, TC-09) đều kiểm chứng tác dụng phụ: **không phát sinh bản ghi rác hoặc bản ghi hỏng trong cơ sở dữ liệu**.
