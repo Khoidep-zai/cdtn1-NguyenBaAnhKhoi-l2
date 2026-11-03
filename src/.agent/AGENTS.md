@@ -40,6 +40,12 @@ Prompt Người Dùng
       │
       ▼
 [BƯỚC B: PHÂN LOẠI Ý ĐỊNH & XÁC ĐỊNH VAI TRÒ CHÍNH (Intent Classification)]
+  ├─ Xem hoặc cập nhật quy chuẩn cốt lõi dự án (Hiến pháp) ──► /speckit-constitution (.specify/memory/constitution.md)
+  ├─ (Tùy chọn) Làm rõ điểm mơ hồ, biên yêu cầu, ngoại lệ ───► /speckit-clarify (.agents/skills/speckit-clarify/SKILL.md)
+  ├─ Lập kế hoạch kiến trúc kỹ thuật (plan, data model, API) ─► /speckit-plan (.agents/skills/speckit-plan/SKILL.md)
+  ├─ Phân rã checklist tác vụ theo thứ tự TDD ─────► /speckit-tasks (.agents/skills/speckit-tasks/SKILL.md)
+  ├─ Rà soát khớp nối 3 file (spec, plan, tasks) trước khi code► /speckit-analyze (.agents/skills/speckit-analyze/SKILL.md)
+  ├─ Thực thi viết code theo từng task và kiểm thử ───────────► /speckit-implement (.agents/skills/speckit-implement/SKILL.md)
   ├─ Phỏng vấn sâu / Đào bới yêu cầu / Làm sắc nét kế hoạch ──► BA (grill-with-docs / interview-me / idea-refine)
   ├─ Chuẩn hóa thuật ngữ & mô hình nghiệp vụ / GLOSSARY / ADR ─► BA (domain-modeling / documentation-and-adrs)
   ├─ Chuyển hội thoại thành đặc tả SRS & User Stories ────────► BA (to-spec / spec-driven-development)
@@ -77,6 +83,12 @@ Prompt Người Dùng
 
 | Dấu hiệu từ khóa trong Prompt (Việt / Anh) | Vai trò | File `SKILL.md` DUY NHẤT cần nạp |
 | :--- | :---: | :--- |
+| Quy chuẩn cốt lõi dự án, Hiến pháp dự án, constitution, /speckit-constitution | **SPEC-KIT** | `.agents/skills/speckit-constitution/SKILL.md` (Luật tối thượng: `.specify/memory/constitution.md`) |
+| Làm rõ điểm mơ hồ, hỏi thêm chi tiết, clarify spec, /speckit-clarify | **SPEC-KIT** | `.agents/skills/speckit-clarify/SKILL.md` |
+| Lập kế hoạch kiến trúc kỹ thuật, plan, data model, contract, /speckit-plan | **SPEC-KIT** | `.agents/skills/speckit-plan/SKILL.md` |
+| Phân rã checklist tác vụ, chia task TDD, /speckit-tasks | **SPEC-KIT** | `.agents/skills/speckit-tasks/SKILL.md` |
+| Rà soát khớp nối 3 file (spec - plan - tasks) trước khi code, /speckit-analyze | **SPEC-KIT** | `.agents/skills/speckit-analyze/SKILL.md` |
+| Thực thi viết code theo từng task, code TDD, /speckit-implement | **SPEC-KIT** | `.agents/skills/speckit-implement/SKILL.md` |
 | Mơ hồ, chưa rõ, phỏng vấn, clarify, hỏi thêm yêu cầu | **BA** | `.agent/BA/interview-me/SKILL.md` |
 | Phỏng vấn sâu, thử thách kế hoạch kèm tự động tạo ADR & GLOSSARY | **BA** | `.agent/BA/grill-with-docs/SKILL.md` |
 | Chuẩn hóa mô hình nghiệp vụ, thuật ngữ miền (Ubiquitous Language), ADR | **BA** | `.agent/BA/domain-modeling/SKILL.md` |
@@ -229,27 +241,52 @@ Mọi tính năng, quy tắc nghiệp vụ hoặc phản hồi điều chỉnh t
   └─ Đầu ra: Source code sạch + Git commit nguyên tử theo Conventional Commits + `codegraph sync`
          │
          ▼
-[GIAI ĐOẠN 4: TESTER (KIỂM THỬ 3 LOẠI CHUẨN BUỔI 7)]
+[GIAI ĐOẠN 4: TESTER (KIỂM THỬ KIM TỰ THÁP, ĐỦ 5 LOẠI CHUẨN BUỔI 13 & BT3)]
   ├─ Tra cứu CodeGraph: codegraph affected [danh_sách_file_sửa]
-  ├─ Nạp: .agent/TESTER/test-driven-development + .agent/TESTER/api-skill
-  ├─ Ràng buộc: Đủ 3 loại test theo tiêu chí đánh giá Buổi 7:
-  │    1. Luồng đúng (Happy Path): TC-01 tiếp nhận thiết bị hợp lệ.
-  │    2. Giá trị biên (Boundary): TC-02 hết hạn bảo hành; TC-02b biên ca làm việc qua Chủ Nhật.
-  │    3. Dữ liệu sai / Vi phạm: TC-03 trùng Serial mở (QT-09); TC-03b vòng đời một chiều (QT-06).
-  └─ Đầu ra: 16/16 test pass 100% bằng lệnh `npm test`
+  ├─ Nạp: .agent/TESTER/test-driven-development + .agent/TESTER/api-skill + .agent/TESTER/tdd
+  ├─ Ràng buộc Kim tự tháp kiểm thử (Tránh hình nón ngược):
+  │    - Unit test (6–8 test): Kiểm tra hàm thuần, cô lập CSDL/mạng bằng repo giả và tiêm đồng hồ cố định.
+  │    - Integration test (2–4 test): Service + PostgreSQL thật, kiểm tra lưu trữ và ràng buộc DDL.
+  │    - System/API test (1–3 test): Gọi qua HTTP/Supertest kiểm tra toàn bộ luồng, status code và header.
+  ├─ Ràng buộc 5 loại test BT3 (Bắt buộc đủ 5 loại, chuẩn 8 cột có kiểm tra tác dụng phụ):
+  │    1. Luồng đúng (Happy Path): ≥ 1 test cho MỖI quy tắc đã hiện thực (QT-01, QT-04, QT-05, QT-06, QT-09).
+  │    2. Giá trị biên (Boundary): 2 test ở đúng hai bên ranh giới (QT-05 biên ngày hết hạn, QT-04 biên ca qua Chủ Nhật).
+  │    3. Dữ liệu sai (Invalid Data): 2 test kiểm tra status code (400, 409) VÀ thông báo lỗi NÊU RÕ tên trường.
+  │    4. Bảo mật / Chất lượng dữ liệu: 1 test OWASP A01:2025 Broken Access Control (tài khoản không có quyền -> 403).
+  │    5. Tính tái lập: 1 test chạy nạp master data / migration lần thứ hai không lỗi, không nhân đôi.
+  ├─ Tự động hóa CI: Thiết lập .github/workflows/ci.yml chạy trên máy sạch GitHub Actions (Node 20, npm ci, npm test).
+  └─ Đầu ra: 100% test pass bằng lệnh npm test (suite 44/44 pass) + Bảng Test Report 8 cột trong docs/test-report.md
          │
          ▼
-[GIAI ĐOẠN 5: QC (KIỂM SOÁT CHẤT LƯỢNG & AN TOÀN BẢO MẬT)]
+[GIAI ĐOẠN 5: QC (KIỂM SOÁT CHẤT LƯỢNG, BẢO MẬT OWASP TOP 10:2025 & BUG LOG 7 DÒNG)]
   ├─ Nạp: .agent/QC/spec-to-code-compliance + .agent/QC/code-review-and-quality + .agent/QC/differential-review
-  ├─ Ràng buộc: Đối chiếu từng dòng code với SRS và quy tắc QT, quét lỗi tiềm ẩn trong JS (sharp-edges)
-  └─ Đầu ra: Đảm bảo không có lỗi bảo mật SQL Injection, không lộ credential trong git, diff sạch sẽ
+  ├─ Tự kiểm 5 mục OWASP Top 10:2025 (Track SE):
+  │    - A01 Broken Access Control: Kiểm tra phân quyền chi nhánh và vai trò, chặn sửa phiếu người khác (403/404).
+  │    - A02 Security Misconfiguration: Phản hồi lỗi tuyệt đối không để lộ stack trace, tên bảng hay chuỗi kết nối.
+  │    - A04 Cryptographic Failures: Mật khẩu băm an toàn (scrypt salt riêng), số điện thoại che theo QT-15.
+  │    - A05 Injection: Sanitize Serial/IMEI bằng regex, 100% truy vấn CSDL dùng Parameterized Queries ($1, $2).
+  │    - A07 Authentication Failures: Thiếu hoặc sai lệch 1 ký tự token phải trả về HTTP 401.
+  ├─ Ghi nhận Bug Log chuẩn 7 dòng (docs/bug-log.md):
+  │    - Phân loại khách quan bằng 2 câu hỏi: Critical (hỏng hệ thống / sai dữ liệu / bảo mật) -> Major -> Minor.
+  │    - Đủ 7 dòng: Mã&Mức độ, Phát hiện bởi, Triệu chứng, Cách tái lập, Nguyên nhân thật, Cách sửa, Link commit.
+  └─ Đầu ra: Checklist bảo mật 7 mục (docs/checklist-bao-mat.md) + Bug Log ≥ 3 bug (≥ 1 Critical/Major) có link commit thật.
          │
          ▼
-[GIAI ĐOẠN 6: QA & BÁO CÁO HỌC PHẦN (RELEASE & WORKSHOP SPRINT)]
+[GIAI ĐOẠN 6: QA & ĐÓNG GÓI BÀN GIAO BT3 (PHÉP THỬ MÁY TRẮNG & RELEASE v1.0)]
   ├─ Nạp: .agent/QA/constraint-driven-development + .agent/QA/shipping-and-launch
-  ├─ Ràng buộc: Kiểm tra checklist .agent/_shared/references/definition-of-done.md, cập nhật README mục 2 & 6
-  ├─ Đóng gói: Gắn git tag (v0.1, v0.2), chụp ảnh kết quả test, cập nhật báo cáo qua OfficeCLI
-  └─ Đầu ra: Báo cáo BT1/BT2/BT3 (.docx) và Slide (.pptx) sẵn sàng nộp và thuyết trình
+  ├─ Ràng buộc 9 tiêu chí kỹ thuật BT3 (4 mục CỐT LÕI C1–C4 và 4 mục riêng SE S1–S4):
+  │    - C1 (CỐT LÕI): Gói đóng gói dựng lại từ máy sạch bằng ≤ 2 lệnh theo Deployment Guide (cp .env.example .env && docker compose up -d --build).
+  │    - C2 (CỐT LÕI): Test Report có 10–12 test case đủ 8 cột, đủ 5 loại kiểm thử.
+  │    - C3 (CỐT LÕI): Bộ kiểm thử PASS bằng 1 lệnh; một test case ngẫu nhiên chạy lại được tại chỗ.
+  │    - C4 (CỐT LÕI): Bug Log ≥ 3 bug, ≥ 1 Critical/Major, đủ 7 dòng, link commit mở được và trỏ đúng thay đổi.
+  │    - C5: Deployment Guide tiếng Anh đủ 5 mục (Yêu cầu, Dựng hệ thống, Biến môi trường, Dữ liệu mẫu, Cách kiểm tra).
+  │    - C6: Checklist bảo mật 7 mục đã điền đủ kèm minh chứng cụ thể.
+  │    - C7: Không có secret trong repo, .env chưa từng bị commit vào lịch sử git.
+  │    - C8: Chạy lại nạp dữ liệu / migration lần thứ hai không lỗi, không nhân đôi.
+  │    - C9: Tài liệu kỹ thuật mô tả đúng hệ thống thật (API docs đủ 7 mục cho mọi endpoint).
+  ├─ Thực hiện Phép thử máy trắng (White-box clean machine test) kiểm chứng khả năng tái lập độc lập.
+  ├─ Gắn tag Git: git tag -a v1.0 -m "Bai tap 3" và git push origin v1.0 lên repo PUBLIC.
+  └─ Đầu ra: Báo cáo BT3 (.docx / .pdf), Slide (.pptx), ảnh chụp minh chứng chạy thật ở mục 7 của PDF.
 ```
 
 ---
@@ -350,4 +387,100 @@ Toàn bộ các kỹ năng được lưu trữ có cấu trúc bên dưới thư
         ├── performance-checklist.md   # Checklist hiệu năng ứng dụng
         ├── security-checklist.md      # Checklist bảo mật ứng dụng
         └── testing-patterns.md        # Mẫu thiết kế bộ test 3 loại (Happy/Edge/Error)
+```
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as GitHub issues (`gh` CLI). See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context layout (`GLOSSARY.md` + `docs/adr/`). See `docs/agents/domain.md`.
+
+---
+
+## 7. QUY CHUẨN KIỂM THỬ & BẢO ĐẢM CHẤT LƯỢNG BUỔI 13 & BÀI TẬP 3 (PHÂN HỆ L2 SE)
+
+Toàn bộ quy trình kiểm thử và hoàn thiện Bài tập 3 (Giai đoạn 3) của sinh viên Nguyễn Bá Anh Khôi tuân thủ nghiêm ngặt 7 trụ cột tri thức từ Buổi 13:
+
+### 7.1. Mô Hình Kim Tự Tháp Kiểm Thử (Testing Pyramid)
+- **Cấu trúc kim tự tháp (Đáy rộng - Đỉnh hẹp):**
+  - **Unit Test (6–8 test):** Tập trung vào tầng Service (`ticketService.js`) và Validator. Kiểm tra logic nghiệp vụ thuần, chạy trong vài mili-giây, cô lập CSDL và mạng.
+  - **Integration Test (2–4 test):** Kiểm tra tích hợp giữa Service, Repository và CSDL PostgreSQL thật (`schema.sql`, ràng buộc khoá ngoại, CHECK, UNIQUE).
+  - **System / API Test (1–3 test):** Kiểm thử toàn diện qua giao diện HTTP Express bằng test runner, kiểm tra mã trạng thái, header và thân phản hồi.
+- **Quy tắc cô lập phụ thuộc:**
+  - Tiêm phụ thuộc (Dependency Injection): Service nhận repository và đồng hồ (`dongHo = () => new Date()`) từ bên ngoài.
+  - Trong test: Dùng repo giả + đồng hồ cố định mốc thời gian để ngăn chặn triệt để hiện tượng test nhấp nháy (flaky test).
+  - Tiền điều kiện dựng bằng code (`resetDb()`, `seedDemo()`), không phụ thuộc vào dữ liệu ngẫu nhiên có sẵn trên máy phát triển.
+
+### 7.2. Chuẩn 8 Cột Của Một Test Case (Mục 2.2 Đề Bài BT3)
+Mỗi test case trong `docs/test-report.md` bắt buộc phải có đầy đủ 8 cột:
+1. **Mã test case:** Mã định danh duy nhất (`TC-01`, `TC-02`...) để Bug Log dễ dàng tham chiếu.
+2. **Tiền điều kiện:** Trạng thái dữ liệu và hệ thống trước khi chạy test.
+3. **Các bước thực hiện:** Đánh số từng bước hành động cụ thể.
+4. **Dữ liệu thử cụ thể:** Giá trị đầu vào rõ ràng, không dùng giá trị chung chung.
+5. **Kết quả mong đợi:** Quan sát được, đo lường được, và **phải kiểm tra cả tác dụng phụ** (ví dụ: bị từ chối 409 và CSDL KHÔNG phát sinh bản ghi mới).
+6. **Mức ưu tiên:** Cao / Trung bình / Thấp.
+7. **Kết quả thực tế:** Ghi nhận bằng lời cụ thể khi chạy thật.
+8. **PASS / FAIL:** Khớp 100% kết quả mong đợi mới ghi PASS; kèm minh chứng lệnh chạy.
+
+### 7.3. Hai Kỹ Thuật Chọn Dữ Liệu Thử
+- **Phân vùng tương đương (Equivalence Partitioning):** Chia miền dữ liệu thành các nhóm hệ thống xử lý giống nhau; chọn 1 giá trị đại diện mỗi nhóm (Ví dụ: độ dài mô tả lỗi: < 10, 10–2000, > 2000; số điện thoại đúng 10 số vs sai định dạng).
+- **Giá trị biên (Boundary Value Analysis):** Lỗi thường tập trung ở ranh giới giữa các vùng. Đặt 2 test biên ở đúng hai bên ranh giới để phát hiện lỗi sai toán tử so sánh (`<` thay vì `≤`). Ví dụ: ngày cuối bảo hành (còn hạn) vs ngày kế tiếp (hết hạn).
+
+### 7.4. Đảm Bảo Đủ 5 Loại Test BT3 Yêu Cầu
+Bộ 10–12 test case trong Test Report phải phân bố đủ 5 loại kiểm thử:
+1. **Luồng đúng (Happy Path):** $\ge 1$ test cho MỖI quy tắc nghiệp vụ đã hiện thực (`QT-01`, `QT-04`, `QT-05`, `QT-06`, `QT-09`).
+2. **Giá trị biên (Boundary):** 2 test ở hai bên của cùng một ranh giới (`QT-05` biên kết thúc bảo hành và `QT-04` biên ca làm việc qua Chủ Nhật).
+3. **Dữ liệu sai (Invalid Data):** 2 test kiểm tra cả mã trạng thái (400, 409) VÀ nội dung thông báo lỗi nêu rõ tên trường vi phạm.
+4. **Bảo mật (OWASP Top 10:2025):** 1 test kiểm tra Broken Access Control (A01) — tài khoản không có quyền bị từ chối với HTTP 403.
+5. **Tính tái lập (Reproducibility):** 1 test chạy nạp dữ liệu / migration lần thứ hai không lỗi và không nhân đôi dữ liệu.
+
+### 7.5. Tiêu Chuẩn Test Plan 4 Mục & Bug Log 7 Dòng
+- **Test Plan 4 mục rút gọn (`docs/test-plan.md`):**
+  1. Phạm vi: Những gì kiểm và CHỦ Ý KHÔNG KIỂM kèm lý do rõ ràng.
+  2. Loại test & số lượng mỗi tầng: Kim tự tháp kiểm thử, kỹ thuật chọn dữ liệu, đủ 5 loại BT3.
+  3. Tiêu chí thành công đo được: Phát biểu bằng số (`100% pass`, thời gian chạy $\le 5$s, không còn bug Critical).
+  4. Môi trường & dữ liệu thử: Môi trường chạy, nguồn dữ liệu fixtures, cơ chế dựng và dọn dẹp.
+- **Bug Log 7 dòng (`docs/bug-log.md`):**
+  - Phân loại khách quan bằng 2 câu hỏi:
+    1. *Hệ thống không dùng được, dữ liệu sai, hoặc lỗ hổng bảo mật?* $\rightarrow$ **CÓ** $\rightarrow$ **CRITICAL** (bắt buộc sửa hết).
+    2. *Chức năng quan trọng sai nhưng có cách làm khác?* $\rightarrow$ **CÓ** $\rightarrow$ **MAJOR** (phải sửa hoặc nêu lý do).
+    3. *Không thuộc 2 câu trên:* $\rightarrow$ **MINOR**.
+  - Đủ 7 dòng: 1. Mã & Mức độ · 2. Phát hiện bởi · 3. Triệu chứng · 4. Cách tái lập · 5. Nguyên nhân thật sự (không phải triệu chứng) · 6. Cách sửa (tệp nào, hàm nào) · 7. Link commit mở được + xác nhận test PASS + hồi quy.
+
+### 7.6. Bảng 9 Tiêu Chí Kỹ Thuật BT3 (C1–C9) & 4 Tiêu Chí Riêng SE (S1–S4)
+- **Mục kiểm chứng chung:**
+  - **C1 (CỐT LÕI):** Gói đóng gói dựng lại từ thư mục trống bằng $\le 2$ lệnh theo đúng Deployment Guide.
+  - **C2 (CỐT LÕI):** Test Report có 10–12 test case đủ 8 cột, đủ 5 loại kiểm thử.
+  - **C3 (CỐT LÕI):** Bộ kiểm thử PASS bằng 1 lệnh (`npm test`); một test case ngẫu nhiên chạy lại được tại chỗ.
+  - **C4 (CỐT LÕI):** Bug Log có $\ge 3$ bug, $\ge 1$ Critical/Major, đủ 7 dòng, link commit mở được và trỏ đúng.
+  - **C5:** Deployment Guide đủ 5 mục tiếng Anh, có mục "cách kiểm tra hệ thống đã chạy đúng".
+  - **C6:** Checklist bảo mật 7 mục đã điền đủ kèm minh chứng cụ thể.
+  - **C7:** Không có secret trong repo, và `.env` chưa từng bị commit vào lịch sử git.
+  - **C8:** Chạy lại lần thứ hai (nạp dữ liệu / migration) không lỗi, không nhân đôi.
+  - **C9:** Tài liệu kỹ thuật mô tả đúng hệ thống thật, không mô tả tính năng chưa có.
+- **Mục kiểm chứng riêng Track SE:**
+  - **S1:** API docs đủ mọi endpoint, mỗi endpoint đủ 7 mục, có ví dụ request/response THẬT.
+  - **S2:** Có test kiểm quyền truy cập theo chủ sở hữu (OWASP A01) và test đó PASS.
+  - **S3:** Mật khẩu trong CSDL là chuỗi băm (scrypt salt riêng), không đọc được.
+  - **S4:** Thông báo lỗi hệ thống không để lộ vết ngăn xếp (stack trace), tên bảng hay chuỗi kết nối.
+
+### 7.7. Quy Trình Phép Thử Máy Trắng (White-Box Clean Machine Test)
+Quy trình chuẩn giảng viên dùng để kiểm tra độ tin cậy và tính độc lập của prototype:
+```bash
+# 1. Xóa sạch container và volume cũ
+docker compose down -v
+# 2. Clone repo theo tag v1.0 vào thư mục sạch
+git clone --branch v1.0 https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2.git .
+# 3. Thực thi đúng 2 lệnh trong Deployment Guide
+cp .env.example .env
+docker compose up -d --build
+# 4. Kiểm tra sức khỏe dịch vụ
+docker compose ps               # api và postgres phải healthy
+curl -s http://localhost:3000/health
+# 5. Chạy bộ kiểm thử tự động
+npm test                        # Toàn bộ test case PASS 100%
 ```

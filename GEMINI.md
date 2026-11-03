@@ -40,6 +40,12 @@ Prompt Người Dùng
       │
       ▼
 [BƯỚC B: PHÂN LOẠI Ý ĐỊNH & XÁC ĐỊNH VAI TRÒ CHÍNH (Intent Classification)]
+  ├─ Xem hoặc cập nhật quy chuẩn cốt lõi dự án (Hiến pháp) ──► /speckit-constitution (.specify/memory/constitution.md)
+  ├─ (Tùy chọn) Làm rõ điểm mơ hồ, biên yêu cầu, ngoại lệ ───► /speckit-clarify (.agents/skills/speckit-clarify/SKILL.md)
+  ├─ Lập kế hoạch kiến trúc kỹ thuật (plan, data model, API) ─► /speckit-plan (.agents/skills/speckit-plan/SKILL.md)
+  ├─ Phân rã checklist tác vụ theo thứ tự TDD ─────► /speckit-tasks (.agents/skills/speckit-tasks/SKILL.md)
+  ├─ Rà soát khớp nối 3 file (spec, plan, tasks) trước khi code► /speckit-analyze (.agents/skills/speckit-analyze/SKILL.md)
+  ├─ Thực thi viết code theo từng task và kiểm thử ───────────► /speckit-implement (.agents/skills/speckit-implement/SKILL.md)
   ├─ Phỏng vấn sâu / Đào bới yêu cầu / Làm sắc nét kế hoạch ──► BA (grill-with-docs / interview-me / idea-refine)
   ├─ Chuẩn hóa thuật ngữ & mô hình nghiệp vụ / GLOSSARY / ADR ─► BA (domain-modeling / documentation-and-adrs)
   ├─ Chuyển hội thoại thành đặc tả SRS & User Stories ────────► BA (to-spec / spec-driven-development)
@@ -77,6 +83,12 @@ Prompt Người Dùng
 
 | Dấu hiệu từ khóa trong Prompt (Việt / Anh) | Vai trò | File `SKILL.md` DUY NHẤT cần nạp |
 | :--- | :---: | :--- |
+| Quy chuẩn cốt lõi dự án, Hiến pháp dự án, constitution, /speckit-constitution | **SPEC-KIT** | `.agents/skills/speckit-constitution/SKILL.md` (Luật tối thượng: `.specify/memory/constitution.md`) |
+| Làm rõ điểm mơ hồ, hỏi thêm chi tiết, clarify spec, /speckit-clarify | **SPEC-KIT** | `.agents/skills/speckit-clarify/SKILL.md` |
+| Lập kế hoạch kiến trúc kỹ thuật, plan, data model, contract, /speckit-plan | **SPEC-KIT** | `.agents/skills/speckit-plan/SKILL.md` |
+| Phân rã checklist tác vụ, chia task TDD, /speckit-tasks | **SPEC-KIT** | `.agents/skills/speckit-tasks/SKILL.md` |
+| Rà soát khớp nối 3 file (spec - plan - tasks) trước khi code, /speckit-analyze | **SPEC-KIT** | `.agents/skills/speckit-analyze/SKILL.md` |
+| Thực thi viết code theo từng task, code TDD, /speckit-implement | **SPEC-KIT** | `.agents/skills/speckit-implement/SKILL.md` |
 | Mơ hồ, chưa rõ, phỏng vấn, clarify, hỏi thêm yêu cầu | **BA** | `.agent/BA/interview-me/SKILL.md` |
 | Phỏng vấn sâu, thử thách kế hoạch kèm tự động tạo ADR & GLOSSARY | **BA** | `.agent/BA/grill-with-docs/SKILL.md` |
 | Chuẩn hóa mô hình nghiệp vụ, thuật ngữ miền (Ubiquitous Language), ADR | **BA** | `.agent/BA/domain-modeling/SKILL.md` |
@@ -376,6 +388,16 @@ Toàn bộ các kỹ năng được lưu trữ có cấu trúc bên dưới thư
         ├── security-checklist.md      # Checklist bảo mật ứng dụng
         └── testing-patterns.md        # Mẫu thiết kế bộ test 3 loại (Happy/Edge/Error)
 ```
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as GitHub issues (`gh` CLI). See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context layout (`GLOSSARY.md` + `docs/adr/`). See `docs/agents/domain.md`.
 
 ---
 
