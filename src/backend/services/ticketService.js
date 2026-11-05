@@ -39,6 +39,8 @@ class TicketService {
    * @param {Date} now - Thời điểm đối soát
    * @returns {boolean}
    */
+  // BUG-002 fix: setUTCHours(23,59,59,999) đảm bảo kiểm tra bao gồm toàn bộ ngày cuối (QT-05 biên cuối ngày)
+  // Trước khi fix: expiry dừng ở 00:00:00 → từ chối bảo hành vào buổi chiều ngày hết hạn
   static isUnderWarranty(soldAt, warrantyMonths = 12, now = new Date()) {
     if (!soldAt) return false;
     if (!Number.isFinite(Number(warrantyMonths)) || Number(warrantyMonths) <= 0) return false;
