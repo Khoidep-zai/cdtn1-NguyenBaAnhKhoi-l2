@@ -38,6 +38,8 @@ function calculateDueDate(receivedAt = new Date(), priority = 'TRUNG_BINH') {
     const local = current + offset;
     const nextMidnight = (Math.floor(local / dayMs) + 1) * dayMs - offset;
     const interval = nextMidnight - current;
+    // BUG-003 fix: bỏ qua Chủ Nhật (getUTCDay()===0) trong thuật toán tính SLA (QT-04)
+    // Trước khi fix: cộng giờ tuyến tính → SLA rơi vào Chủ Nhật không hợp lệ
     if (new Date(local).getUTCDay() === 0) {
       current = nextMidnight;
     } else if (remaining <= interval) {
