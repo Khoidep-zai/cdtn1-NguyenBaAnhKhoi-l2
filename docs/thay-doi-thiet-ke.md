@@ -91,3 +91,30 @@ Hệ thống: Mekong Mobile CRM — Luồng L2: Tiếp nhận và phân loại y
 - **Lý do:** Hiện thực hóa trọn vẹn nguyên tắc TÁI LẬP ĐƯỢC (Reproducibility), bảo vệ dữ liệu khách hàng theo QT-15, loại trừ hiện tượng "trên máy em chạy được", và đáp ứng đầy đủ tiêu chí đánh giá C4, C6 của Bài tập 2.
 - **Ảnh hưởng:** Cập nhật `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `.env.example`, `src/backend/utils/logger.js`, `src/backend/index.js`, `src/backend/contracts/ticket.contract.js`, `src/backend/services/ticketService.js`, `docs/bug-log.md`, `tests/ticket.service.test.js`, `tests/ticket.contract.test.js`.
 
+---
+
+## Sau phản hồi Bài tập 2 (Buổi 14, ngày 05/11/2026)
+
+### TD-09 Đóng gói môi trường tái lập bằng tối đa 2 lệnh & Phép thử máy trắng
+- **Phản hồi của GV:** Một số repo ở BT2 clone về không chạy được ngay do thiếu file mẫu cấu hình hoặc hướng dẫn còn nhiều bước suy đoán ngầm; cần đáp ứng chuẩn đóng gói Buổi 14 và BT3 chạy được bằng $\le 2$ lệnh trên thư mục trống sạch (Phép thử máy trắng C1).
+- **Quyết định:** SỬA
+- **Lý do:** Đảm bảo người tiếp nhận hoặc Giảng viên clone repo về máy chưa cài sẵn gì đều dựng được hệ thống ngay lập tức mà không cần hỏi sinh viên bất kỳ câu nào.
+- **Ảnh hưởng:** Hoàn thiện `README.md` chỉ ghi đúng 2 lệnh khởi động: `cp .env.example .env` và `docker compose up -d --build`. Cập nhật `.env.example` liệt kê đầy đủ mọi biến môi trường có giá trị mẫu an toàn; cấu hình container có healthcheck probes sẵn sàng nhận kết nối.
+
+---
+
+### TD-10 Ghim chặt phiên bản phụ thuộc qua package-lock.json & Ngăn rò rỉ secret
+- **Phản hồi của GV:** Cần cam kết chặt chẽ tệp khóa phiên bản và rà soát lịch sử commit bảo đảm repo công khai (PUBLIC) không có bất kỳ secret/password nào bị rò rỉ (Tiêu chí C7).
+- **Quyết định:** SỬA
+- **Lý do:** Tệp khóa phiên bản (`package-lock.json`) đảm bảo quá trình build trên máy sạch hoặc CI/CD luôn cài đặt đúng các package dependencies giống hệt nhau, loại trừ lỗi không tương thích phiên bản; bảo mật tuyệt đối cho repo public.
+- **Ảnh hưởng:** Kiểm tra và commit `package-lock.json` được sinh từ môi trường sạch (`npm ci`); xác nhận `.gitignore` chặn toàn diện `.env` và file nhạy cảm; rà soát `git log` xác nhận 0 secret trong repo.
+
+---
+
+### TD-11 Mở rộng ma trận kiểm thử 5 loại có đo lường tác dụng phụ (Side-effects)
+- **Phản hồi của GV:** Bộ kiểm thử BT2 tập trung nhiều vào luồng đúng, cần bổ sung đầy đủ 5 loại kiểm thử (Luồng đúng, Giá trị biên, Dữ liệu sai, Bảo mật OWASP A01, Tính tái lập) và bắt buộc đo lường tác dụng phụ (đếm bản ghi CSDL trước/sau) kèm ảnh chụp minh chứng từng test case.
+- **Quyết định:** SỬA
+- **Lý do:** Đáp ứng trọn vẹn tiêu chí đánh giá C2, C3 của BT3 và yêu cầu của Workshop Buổi 14: Test Report phải ghi nhận kết quả thực tế cụ thể, minh chứng chạy thật rõ ràng, và kiểm chứng hệ thống không sinh bản ghi rác khi xảy ra lỗi.
+- **Ảnh hưởng:** Cập nhật `docs/test-report.md` đầy đủ 12 test case từ TC-01 đến TC-12 chuẩn 8 cột, bổ sung trường kiểm tra số lượng bản ghi CSDL trước/sau (ví dụ đếm tickets 120 $\rightarrow$ 120), chụp và lưu trữ toàn bộ ảnh kết quả thực tế tại `docs/screenshots/TC-xx.png`.
+
+

@@ -1,13 +1,12 @@
 <!--
 Sync Impact Report:
-- Version change: Initial Draft -> 1.0.0
+- Version change: 1.0.0 -> 1.1.0
 - Ratification Date: 2026-10-15
-- Last Amended: 2026-11-04
+- Last Amended: 2026-11-05
 - Added sections:
-  1. Core Principles (I. 4-Tier Architecture, II. Business Invariants QT-01..QT-09, III. TDD & 5-Type Test Pyramid, IV. Spec & API Contract Compliance, V. RBAC & Fail-Secure Security, VI. Zero-Waste Token & CodeGraph Memory)
-  2. Technology Stack & Execution Invariants
-  3. Spec-Kit 6-Stage Autonomous Engineering Pipeline
-  4. Governance & Amendment Procedures
+  1. Section VII: Tiêu Chuẩn Nghiệm Thu & Đóng Gói Bài Tập 3 (Buổi 14 Workshop & BT3 Invariants)
+  2. Bổ sung quy định 6 thành phần bắt buộc (TP1..TP6) và Phép thử máy trắng (White-box verification)
+  3. Bổ sung quy định bắt buộc minh chứng ảnh chụp thực tế tại `docs/screenshots/`
 - Deferred Items: None. All placeholders fully resolved.
 -->
 
@@ -73,6 +72,18 @@ Mọi dòng code phát sinh MUST tôn trọng đầy đủ các quy tắc nghi�
 - Khi đọc hiểu hoặc tìm kiếm mã nguồn, AI Agent MUST sử dụng `codegraph` (`codegraph_explore` hoặc lệnh `codegraph`) để truy vấn trực tiếp symbol, interface và call graph 2 chiều, KHÔNG dùng lệnh đọc hàng loạt (`NO BULK READING`) gây tràn ngữ cảnh.
 - Tuân thủ nguyên tắc **Tiết lộ Tăng dần (Progressive Disclosure)**: Chỉ nạp đúng ngữ cảnh và artifact cần thiết cho công đoạn hiện tại, giải phóng ngữ cảnh cũ trước khi chuyển giao giai đoạn.
 
+### VII. Tiêu Chuẩn Nghiệm Thu & Đóng Gói Bài Tập 3 (Buổi 14 Workshop & BT3 Invariants)
+- **Đầy đủ 6 Thành phần bắt buộc:**
+  1. `TP1` - Test Plan rút gọn (4 mục, có phần chủ ý không kiểm, kỹ thuật phân vùng tương đương và giá trị biên).
+  2. `TP2` - Test Report (10–12 test case, đủ 8 cột, đủ 5 loại kiểm thử, có kết quả CHẠY THẬT và kiểm tra tác dụng phụ side-effects).
+  3. `TP3` - Bug Log (ít nhất 3 bug, ≥ 1 Critical/Major, mỗi bug đủ 7 dòng, có link commit mở được trên GitHub public).
+  4. `TP4` - Gói đóng gói chạy được bằng $\le 2$ lệnh (`cp .env.example .env` && `docker compose up -d --build`).
+  5. `TP5` - Deployment Guide tiếng Anh 5 mục + Checklist bảo mật 7 mục có minh chứng thực tế.
+  6. `TP6` - API Documentation tiếng Anh (mọi endpoint đủ 7 mục, có request/response JSON thật).
+- **Phép Thử Máy Trắng (Clean Machine Test):** Giảng viên clone thư mục trống chạy $\le 2$ lệnh là hệ thống lên healthy, không cần hỏi sinh viên.
+- **Minh chứng ảnh chụp thực tế:** Mọi test case và minh chứng chạy hệ thống MUST có ảnh chụp lưu tại `docs/screenshots/` (ví dụ `TC-01.png`..`TC-12.png`).
+- **Cập nhật Nhật ký Thay đổi Thiết kế:** Mọi phản hồi từ Giảng viên ở BT2 MUST được phản hồi và ghi nhận quyết định xử lý vào `docs/thay-doi-thiet-ke.md` theo cấu trúc 4 dòng.
+
 ---
 
 ## Technology Stack & Execution Invariants
@@ -81,10 +92,11 @@ Mọi dòng code phát sinh MUST tôn trọng đầy đủ các quy tắc nghi�
 | :--- | :--- | :--- |
 | **Môi trường Runtime** | Node.js (phiên bản v20+ LTS) | Dùng ECMAScript Modules hoặc CommonJS nhất quán theo `package.json`. |
 | **Framework Web Backend**| Express.js 5.x | Sử dụng router modular, middleware tập trung xử lý lỗi. |
-| **Cơ sở Dữ liệu Quan hệ**| PostgreSQL 15 | DDL chuẩn hóa 3NF, khóa ngoại ràng buộc toàn vẹn, index tối ưu `phone`, `serial_no`. |
+| **Cơ sở Dữ liệu Quan hệ**| PostgreSQL 16 Alpine | DDL chuẩn hóa 3NF, khóa ngoại ràng buộc toàn vẹn, index tối ưu `phone`, `serial_no`. |
 | **Thư viện Kiểm thử** | Native `node:test` + `node:assert/strict` | Chạy không cần phụ thuộc thư viện bên ngoài (Jest/Mocha), hỗ trợ `--test-concurrency=1`. |
 | **Giao diện Người dùng** | HTML5 / Modern Vanilla CSS / ES6 JS | SPA tương tác không dùng framework nặng, hỗ trợ Dark Mode và Responsive. |
 | **Quản lý Môi trường** | `dotenv` | Cấu hình qua `.env`, cung cấp file mẫu `.env.example`. |
+| **Đóng gói Môi trường** | Docker & Docker Compose v2 | Multi-stage Dockerfile, user không đặc quyền `app`, healthcheck probes. |
 
 ---
 
@@ -123,7 +135,7 @@ Mọi yêu cầu thêm mới, sửa đổi tính năng hay điều chỉnh quy t
   - Mọi đề xuất thay đổi nguyên tắc cốt lõi phải được ghi nhận rõ lý do trong `docs/thay-doi-thiet-ke.md`.
   - Cập nhật số phiên bản Hiến pháp theo Semantic Versioning:
     - **MAJOR (X.0.0):** Khi thay đổi kiến trúc cốt lõi (ví dụ: đổi mô hình 4 tầng) hoặc thay đổi lớn trong quy tắc nghiệp vụ.
-    - **MINOR (1.X.0):** Khi bổ sung quy tắc nghiệp vụ mới (ví dụ: thêm QT-10) hoặc chuẩn hóa thêm tiêu chuẩn kiểm thử.
+    - **MINOR (1.X.0):** Khi bổ sung quy tắc nghiệp vụ mới hoặc chuẩn hóa thêm tiêu chuẩn kiểm thử (như v1.1.0 cho Buổi 14 & BT3).
     - **PATCH (1.0.X):** Khi chỉnh sửa câu chữ, làm rõ giải thích hoặc cập nhật đường dẫn tài liệu.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-11-04
+**Version**: 1.1.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-11-05
