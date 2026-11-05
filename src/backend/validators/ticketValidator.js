@@ -11,6 +11,8 @@ const UU_TIEN_HOP_LE = new Set([
   'LOW',
   'URGENT',
 ]);
+// BUG-005 fix: giới hạn ký tự serial ^[A-Za-z0-9-]{6,40}$ chặn SQL Injection payload (OWASP A05:2025)
+// Trước khi fix: regex quá lỏng lẻo → "SN' OR 1=1 --" vượt qua validate
 const RE_SERIAL = /^[A-Za-z0-9-]{6,40}$/;
 const RE_NGAY = /^\d{4}-\d{2}-\d{2}$/;
 
