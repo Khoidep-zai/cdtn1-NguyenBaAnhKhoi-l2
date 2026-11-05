@@ -16,7 +16,9 @@ const ticketRepo = require('../repositories/ticketRepository');
 const handoverPhotos = require('../repositories/handoverPhotoStore');
 
 // -------------------------------------------------------------------------
-// Danh sách chuyển trạng thái hợp lệ (QT-06 — Vòng đời một chiều)
+// BUG-001 fix: thêm ma trận VALID_TRANSITIONS để kiểm soát vòng đời một chiều (QT-06)
+// Trước khi fix: API cho phép cập nhật ngược trạng thái (ví dụ DANG_XU_LY -> MOI)
+// Sau khi fix: ném AppError 409 'TRANG_THAI_KHONG_HOP_LE' nếu chuyển trạng thái không hợp lệ
 // -------------------------------------------------------------------------
 const VALID_TRANSITIONS = {
   MOI:          ['DA_PHAN_CONG', 'DA_HUY'],
