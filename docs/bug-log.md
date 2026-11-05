@@ -20,7 +20,7 @@
 4. **Cách tái lập:** Gọi `PATCH /api/tickets/TKT-8801/status` với body `{"status": "MOI", "updated_by": "NV_TEST"}` khi phiếu đã ở trạng thái `DANG_XU_LY` — lỗi xuất hiện 5/5 lần, API vẫn trả 200 trước khi sửa.
 5. **Nguyên nhân:** Tầng `ticketService.js` ban đầu cập nhật trực tiếp trường `status` vào cơ sở dữ liệu mà không thông qua ma trận kiểm tra tính hợp lệ của bước chuyển trạng thái (`VALID_TRANSITIONS`).
 6. **Cách sửa:** Khai báo ma trận chuyển đổi hợp lệ `VALID_TRANSITIONS` trong `src/backend/services/ticketService.js`; kiểm tra nếu trạng thái đích không nằm trong danh sách cho phép của trạng thái hiện tại thì ném ngay lỗi `AppError('TRANG_THAI_KHONG_HOP_LE', 409)`.
-7. **Link commit và xác nhận:** [Commit 8f97195](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/8f97195) · Chạy lại test `TC-08` $\rightarrow$ trả về HTTP 409 `TRANG_THAI_KHONG_HOP_LE` $\rightarrow$ PASS 100%; bổ sung test case hồi quy bảo đảm trạng thái phiếu trong CSDL không bị suy suyển.
+7. **Link commit và xác nhận:** [Commit 18dc1dc](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/18dc1dc) · Chạy lại test `TC-08` $\rightarrow$ trả về HTTP 409 `TRANG_THAI_KHONG_HOP_LE` $\rightarrow$ PASS 100%; bổ sung test case hồi quy bảo đảm trạng thái phiếu trong CSDL không bị suy suyển.
 
 ---
 
@@ -32,7 +32,7 @@
 4. **Cách tái lập:** Gọi `TicketService.isUnderWarranty('2026-03-01', 12, new Date('2027-03-01T15:00:00Z'))` — kết quả trả về `false` dù ngày 01/03/2027 vẫn là ngày còn hạn bảo hành.
 5. **Nguyên nhân:** Đối tượng `Date` khi cộng tháng bảo hành mang mốc giờ mặc định là `00:00:00.000`; do đó bất kỳ thời điểm nào sau 0 giờ sáng của ngày hết hạn đều bị toán tử so sánh `>` xem là đã quá hạn.
 6. **Cách sửa:** Cập nhật hàm `isUnderWarranty` trong `src/backend/services/ticketService.js`, thiết lập mốc hết hạn bảo hành đến thời điểm cuối cùng của ngày: `expiry.setUTCHours(23, 59, 59, 999)` trước khi so sánh với thời điểm tiếp nhận máy.
-7. **Link commit và xác nhận:** [Commit fcb2b8c](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/fcb2b8c) · Chạy lại test `TC-02` với mốc `2027-03-01T23:59:59.999Z` $\rightarrow$ trả về `true` (PASS); kiểm tra mốc `2027-03-02T00:00:00.000Z` $\rightarrow$ trả về `false` (PASS).
+7. **Link commit và xác nhận:** [Commit 5282b6e](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/5282b6e) · Chạy lại test `TC-02` với mốc `2027-03-01T23:59:59.999Z` $\rightarrow$ trả về `true` (PASS); kiểm tra mốc `2027-03-02T00:00:00.000Z` $\rightarrow$ trả về `false` (PASS).
 
 ---
 
@@ -44,7 +44,7 @@
 4. **Cách tái lập:** Gọi `calculateDueDate(new Date('2026-10-03T11:00:00Z'), 'CAO')` — kết quả trả về ngày Chủ Nhật `2026-10-04T11:00:00Z`.
 5. **Nguyên nhân:** Hàm tính toán thời hạn ban đầu trong `slaHelper.js` thực hiện phép cộng thời gian tuyến tính thuần túy (`now.getTime() + hours * 3600 * 1000`) mà không kiểm tra thứ trong tuần.
 6. **Cách sửa:** Xây dựng thuật toán bước nhảy theo giờ làm việc trong `src/backend/utils/slaHelper.js`: kiểm tra nếu thời hạn rơi qua ngày Chủ Nhật (`getUTCDay() === 0`) thì tự động cộng bù thêm 24 giờ để dời hạn cam kết sang ngày làm việc Thứ Hai kế tiếp.
-7. **Link commit và xác nhận:** [Commit dc8c1f1](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/dc8c1f1) · Chạy lại test `TC-03` $\rightarrow$ hạn cam kết dời chính xác sang Thứ Hai lúc 11:00 UTC $\rightarrow$ PASS 100%.
+7. **Link commit và xác nhận:** [Commit 422ee1d](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/422ee1d) · Chạy lại test `TC-03` $\rightarrow$ hạn cam kết dời chính xác sang Thứ Hai lúc 11:00 UTC $\rightarrow$ PASS 100%.
 
 ---
 
@@ -56,7 +56,7 @@
 4. **Cách tái lập:** Gửi request tạo phiếu với `customerId: 1024` (bản ghi khách hàng trong dataset có trường họ tên bị bỏ trống) — lỗi sập 500 xuất hiện 5/5 lần.
 5. **Nguyên nhân:** Hàm chuyển đổi ranh giới dữ liệu `toTicketView` thực hiện gọi `khach.full_name.trim()` khi biến `full_name` mang giá trị `null`, gây ra lỗi không thể đọc thuộc tính của null (TypeError).
 6. **Cách sửa:** Cập nhật `toTicketView` và `TicketService.createTicket` áp dụng toán tử null-coalescing: `(khach.full_name ?? '').trim() || '(không rõ)'`; bảo đảm thuộc tính `tenKhach` luôn là chuỗi hợp lệ theo hợp đồng dữ liệu.
-7. **Link commit và xác nhận:** [Commit 871127e](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/871127e) · Chạy lại test `CT-05` và `TC-04` $\rightarrow$ tạo phiếu thành công với tên `(không rõ)`, trả HTTP 201 $\rightarrow$ PASS.
+7. **Link commit và xác nhận:** [Commit 2dedc9e](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/2dedc9e) · Chạy lại test `CT-05` và `TC-04` $\rightarrow$ tạo phiếu thành công với tên `(không rõ)`, trả HTTP 201 $\rightarrow$ PASS.
 
 ---
 
@@ -68,4 +68,4 @@
 4. **Cách tái lập:** Gửi payload có `serial_imei: "SN' OR 1=1 --"` vào hàm `validateReceive` — hàm không ném lỗi mà trả về đối tượng hợp lệ.
 5. **Nguyên nhân:** Biểu thức chính quy (Regex) kiểm tra chuỗi serial ban đầu quá lỏng lẻo, chưa giới hạn chặt chẽ tập ký tự cho phép.
 6. **Cách sửa:** Cập nhật biểu thức chính quy trong `src/backend/validators/ticketValidator.js` thành `^[A-Za-z0-9-]{6,40}$`, từ chối ngay lập tức mọi chuỗi chứa ký tự đặc biệt hoặc khoảng trắng lạ với mã lỗi `DU_LIEU_KHONG_HOP_LE`.
-7. **Link commit và xác nhận:** [Commit 4a8369f](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/4a8369f) · Chạy lại test `TV-03` $\rightarrow$ ném đúng `DU_LIEU_KHONG_HOP_LE` $\rightarrow$ PASS.
+7. **Link commit và xác nhận:** [Commit 67a106c](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/67a106c) · Chạy lại test `TV-03` $\rightarrow$ ném đúng `DU_LIEU_KHONG_HOP_LE` $\rightarrow$ PASS.
