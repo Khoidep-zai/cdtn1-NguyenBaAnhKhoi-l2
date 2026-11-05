@@ -109,6 +109,8 @@ class TicketService {
       ticket_id: counter,
       ticket_code: ticketCode,
       customer_id: data.customer_id || 1024,
+      // BUG-004 fix: null-coalescing tránh TypeError khi full_name=null từ dataset cũ
+      // Trước khi fix: khach.full_name.trim() crash TypeError → HTTP 500
       customer_name: (data.customer_name !== undefined ? String(data.customer_name || '').trim() : (data.customer?.full_name ? String(data.customer.full_name).trim() : '')) || '(không rõ)',
       customer_phone: data.customer_phone || '0901234567',
       customer_address: data.customer_address || data.customerAddress || '',
