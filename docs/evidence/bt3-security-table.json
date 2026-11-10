@@ -1,0 +1,1925 @@
+{
+  "success": true,
+  "data": {
+    "matches": 1,
+    "results": [
+      {
+        "path": "/body/tbl[4]",
+        "type": "table",
+        "childCount": 8,
+        "format": {
+          "cols": "4",
+          "rows": "8",
+          "_gridCols": "4",
+          "border.top": "single",
+          "border.top.sz": 4,
+          "border.top.color": "#CCCCCC",
+          "border.top.space": 0,
+          "border.bottom": "single",
+          "border.bottom.sz": 4,
+          "border.bottom.color": "#CCCCCC",
+          "border.bottom.space": 0,
+          "border.insideH": "single",
+          "border.insideH.sz": 4,
+          "border.insideH.color": "#CCCCCC",
+          "border.insideH.space": 0,
+          "border.insideV": "single",
+          "border.insideV.sz": 4,
+          "border.insideV.color": "#CCCCCC",
+          "border.insideV.space": 0,
+          "border.left": "single",
+          "border.left.sz": 4,
+          "border.left.color": "#CCCCCC",
+          "border.left.space": 0,
+          "border.right": "single",
+          "border.right.sz": 4,
+          "border.right.color": "#CCCCCC",
+          "border.right.space": 0,
+          "width": "auto",
+          "align": "center",
+          "tblLook": "04A0",
+          "firstRow": true,
+          "firstCol": true,
+          "bandedRows": true,
+          "colWidths": "500dxa,2500dxa,1100dxa,4900dxa"
+        },
+        "children": [
+          {
+            "path": "/body/tbl[4]/tr[1]",
+            "type": "row",
+            "childCount": 4,
+            "format": {
+              "rowAlign": "center"
+            },
+            "children": [
+              {
+                "path": "/body/tbl[4]/tr[1]/tc[1]",
+                "type": "cell",
+                "text": "STT",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#1F497D",
+                  "shading.color": "auto",
+                  "width": "500dxa",
+                  "align": "center",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[1]/tc[1]/p[@paraId=2F48CB0E]",
+                    "type": "paragraph",
+                    "text": "STT",
+                    "preview": "STT",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "2F48CB0E",
+                      "align": "center",
+                      "spaceBefore": "1pt",
+                      "spaceAfter": "1pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#FFFFFF",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[1]/tc[1]/p[@paraId=2F48CB0E]/r[1]",
+                        "type": "run",
+                        "text": "STT",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#FFFFFF",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[1]/tc[2]",
+                "type": "cell",
+                "text": "Mục kiểm tra bảo mật",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#1F497D",
+                  "shading.color": "auto",
+                  "width": "2500dxa",
+                  "align": "center",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[1]/tc[2]/p[@paraId=16A2A677]",
+                    "type": "paragraph",
+                    "text": "Mục kiểm tra bảo mật",
+                    "preview": "Mục kiểm tra bảo mật",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "16A2A677",
+                      "align": "center",
+                      "spaceBefore": "1pt",
+                      "spaceAfter": "1pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#FFFFFF",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[1]/tc[2]/p[@paraId=16A2A677]/r[1]",
+                        "type": "run",
+                        "text": "Mục kiểm tra bảo mật",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#FFFFFF",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[1]/tc[3]",
+                "type": "cell",
+                "text": "Đánh giá",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#1F497D",
+                  "shading.color": "auto",
+                  "width": "1100dxa",
+                  "align": "center",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[1]/tc[3]/p[@paraId=78D8D68E]",
+                    "type": "paragraph",
+                    "text": "Đánh giá",
+                    "preview": "Đánh giá",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "78D8D68E",
+                      "align": "center",
+                      "spaceBefore": "1pt",
+                      "spaceAfter": "1pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#FFFFFF",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[1]/tc[3]/p[@paraId=78D8D68E]/r[1]",
+                        "type": "run",
+                        "text": "Đánh giá",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#FFFFFF",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[1]/tc[4]",
+                "type": "cell",
+                "text": "Minh chứng thực tế trong mã nguồn và  cấu hình Git",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#1F497D",
+                  "shading.color": "auto",
+                  "width": "4900dxa",
+                  "align": "center",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#FFFFFF"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[1]/tc[4]/p[@paraId=31ABEFB0]",
+                    "type": "paragraph",
+                    "text": "Minh chứng thực tế trong mã nguồn và  cấu hình Git",
+                    "preview": "Minh chứng thực tế trong mã nguồn và  cấu hình Git",
+                    "style": "Normal",
+                    "childCount": 3,
+                    "format": {
+                      "paraId": "31ABEFB0",
+                      "align": "center",
+                      "spaceBefore": "1pt",
+                      "spaceAfter": "1pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#FFFFFF",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[1]/tc[4]/p[@paraId=31ABEFB0]/r[1]",
+                        "type": "run",
+                        "text": "Minh chứng thực tế trong mã nguồn ",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#FFFFFF",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      },
+                      {
+                        "path": "/body/tbl[4]/tr[1]/tc[4]/p[@paraId=31ABEFB0]/r[2]",
+                        "type": "run",
+                        "text": "và ",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#FFFFFF",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      },
+                      {
+                        "path": "/body/tbl[4]/tr[1]/tc[4]/p[@paraId=31ABEFB0]/r[3]",
+                        "type": "run",
+                        "text": " cấu hình Git",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#FFFFFF",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/body/tbl[4]/tr[2]",
+            "type": "row",
+            "childCount": 4,
+            "format": {
+              "rowAlign": "center"
+            },
+            "children": [
+              {
+                "path": "/body/tbl[4]/tr[2]/tc[1]",
+                "type": "cell",
+                "text": "1",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[2]/tc[1]/p[@paraId=06BD34BC]",
+                    "type": "paragraph",
+                    "text": "1",
+                    "preview": "1",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "06BD34BC",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[2]/tc[1]/p[@paraId=06BD34BC]/r[1]",
+                        "type": "run",
+                        "text": "1",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[2]/tc[2]",
+                "type": "cell",
+                "text": "Không có secret / password nào trong repo",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "2500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[2]/tc[2]/p[@paraId=239CBCBB]",
+                    "type": "paragraph",
+                    "text": "Không có secret / password nào trong repo",
+                    "preview": "Không có secret / password nào trong repo",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "239CBCBB",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[2]/tc[2]/p[@paraId=239CBCBB]/r[1]",
+                        "type": "run",
+                        "text": "Không có secret / password nào trong repo",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[2]/tc[3]",
+                "type": "cell",
+                "text": "ĐÃ LÀM",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "1100dxa",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#006600"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[2]/tc[3]/p[@paraId=4F0120C2]",
+                    "type": "paragraph",
+                    "text": "ĐÃ LÀM",
+                    "preview": "ĐÃ LÀM",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "4F0120C2",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#006600",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[2]/tc[3]/p[@paraId=4F0120C2]/r[1]",
+                        "type": "run",
+                        "text": "ĐÃ LÀM",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#006600",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[2]/tc[4]",
+                "type": "cell",
+                "text": ".env nằm trong .gitignore; chỉ commit .env.example mẫu. Lệnh git log --all --full-history -- .env không có bản ghi rò rỉ.",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "4900dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[2]/tc[4]/p[@paraId=79528F9C]",
+                    "type": "paragraph",
+                    "text": ".env nằm trong .gitignore; chỉ commit .env.example mẫu. Lệnh git log --all --full-history -- .env không có bản ghi rò rỉ.",
+                    "preview": ".env nằm trong .gitignore; chỉ commit .env.example...",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "79528F9C",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[2]/tc[4]/p[@paraId=79528F9C]/r[1]",
+                        "type": "run",
+                        "text": ".env nằm trong .gitignore; chỉ commit .env.example mẫu. Lệnh git log --all --full-history -- .env không có bản ghi rò rỉ.",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/body/tbl[4]/tr[3]",
+            "type": "row",
+            "childCount": 4,
+            "format": {
+              "rowAlign": "center"
+            },
+            "children": [
+              {
+                "path": "/body/tbl[4]/tr[3]/tc[1]",
+                "type": "cell",
+                "text": "2",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[3]/tc[1]/p[@paraId=42C5B8D0]",
+                    "type": "paragraph",
+                    "text": "2",
+                    "preview": "2",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "42C5B8D0",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[3]/tc[1]/p[@paraId=42C5B8D0]/r[1]",
+                        "type": "run",
+                        "text": "2",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[3]/tc[2]",
+                "type": "cell",
+                "text": "Dữ liệu vào được kiểm ở tầng ứng dụng",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "2500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[3]/tc[2]/p[@paraId=364FC9EC]",
+                    "type": "paragraph",
+                    "text": "Dữ liệu vào được kiểm ở tầng ứng dụng",
+                    "preview": "Dữ liệu vào được kiểm ở tầng ứng dụng",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "364FC9EC",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[3]/tc[2]/p[@paraId=364FC9EC]/r[1]",
+                        "type": "run",
+                        "text": "Dữ liệu vào được kiểm ở tầng ứng dụng",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[3]/tc[3]",
+                "type": "cell",
+                "text": "ĐÃ LÀM",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "1100dxa",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#006600"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[3]/tc[3]/p[@paraId=2E022BB7]",
+                    "type": "paragraph",
+                    "text": "ĐÃ LÀM",
+                    "preview": "ĐÃ LÀM",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "2E022BB7",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#006600",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[3]/tc[3]/p[@paraId=2E022BB7]/r[1]",
+                        "type": "run",
+                        "text": "ĐÃ LÀM",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#006600",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[3]/tc[4]",
+                "type": "cell",
+                "text": "ticketValidator.js kiểm tra payload (NOT NULL, mô tả >= 10 ký tự, regex serial ^[A-Za-z0-9-]{6,40}$); CSDL có ràng buộc CHECK priority và UNIQUE ticket_code.",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "4900dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[3]/tc[4]/p[@paraId=2453E22D]",
+                    "type": "paragraph",
+                    "text": "ticketValidator.js kiểm tra payload (NOT NULL, mô tả >= 10 ký tự, regex serial ^[A-Za-z0-9-]{6,40}$); CSDL có ràng buộc CHECK priority và UNIQUE ticket_code.",
+                    "preview": "ticketValidator.js kiểm tra payload (NOT NULL, mô ...",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "2453E22D",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[3]/tc[4]/p[@paraId=2453E22D]/r[1]",
+                        "type": "run",
+                        "text": "ticketValidator.js kiểm tra payload (NOT NULL, mô tả >= 10 ký tự, regex serial ^[A-Za-z0-9-]{6,40}$); CSDL có ràng buộc CHECK priority và UNIQUE ticket_code.",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/body/tbl[4]/tr[4]",
+            "type": "row",
+            "childCount": 4,
+            "format": {
+              "rowAlign": "center"
+            },
+            "children": [
+              {
+                "path": "/body/tbl[4]/tr[4]/tc[1]",
+                "type": "cell",
+                "text": "3",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[4]/tc[1]/p[@paraId=66A1C4D9]",
+                    "type": "paragraph",
+                    "text": "3",
+                    "preview": "3",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "66A1C4D9",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[4]/tc[1]/p[@paraId=66A1C4D9]/r[1]",
+                        "type": "run",
+                        "text": "3",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[4]/tc[2]",
+                "type": "cell",
+                "text": "Kiểm soát truy cập theo chủ sở hữu (OWASP A01)",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "2500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[4]/tc[2]/p[@paraId=67099DAF]",
+                    "type": "paragraph",
+                    "text": "Kiểm soát truy cập theo chủ sở hữu (OWASP A01)",
+                    "preview": "Kiểm soát truy cập theo chủ sở hữu (OWASP A01)",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "67099DAF",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[4]/tc[2]/p[@paraId=67099DAF]/r[1]",
+                        "type": "run",
+                        "text": "Kiểm soát truy cập theo chủ sở hữu (OWASP A01)",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[4]/tc[3]",
+                "type": "cell",
+                "text": "ĐÃ LÀM",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "1100dxa",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#006600"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[4]/tc[3]/p[@paraId=76F32F24]",
+                    "type": "paragraph",
+                    "text": "ĐÃ LÀM",
+                    "preview": "ĐÃ LÀM",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "76F32F24",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#006600",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[4]/tc[3]/p[@paraId=76F32F24]/r[1]",
+                        "type": "run",
+                        "text": "ĐÃ LÀM",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#006600",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[4]/tc[4]",
+                "type": "cell",
+                "text": "Middleware authenticate xác thực JWT cookie; requireRoles kiểm soát theo branch_id. Test TC-09 kiểm chứng nhân viên thường duyệt ngoại lệ bị chặn với HTTP 403.",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "4900dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[4]/tc[4]/p[@paraId=6A647FD9]",
+                    "type": "paragraph",
+                    "text": "Middleware authenticate xác thực JWT cookie; requireRoles kiểm soát theo branch_id. Test TC-09 kiểm chứng nhân viên thường duyệt ngoại lệ bị chặn với HTTP 403.",
+                    "preview": "Middleware authenticate xác thực JWT cookie; requi...",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "6A647FD9",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[4]/tc[4]/p[@paraId=6A647FD9]/r[1]",
+                        "type": "run",
+                        "text": "Middleware authenticate xác thực JWT cookie; requireRoles kiểm soát theo branch_id. Test TC-09 kiểm chứng nhân viên thường duyệt ngoại lệ bị chặn với HTTP 403.",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/body/tbl[4]/tr[5]",
+            "type": "row",
+            "childCount": 4,
+            "format": {
+              "rowAlign": "center"
+            },
+            "children": [
+              {
+                "path": "/body/tbl[4]/tr[5]/tc[1]",
+                "type": "cell",
+                "text": "4",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[5]/tc[1]/p[@paraId=3303EC5D]",
+                    "type": "paragraph",
+                    "text": "4",
+                    "preview": "4",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "3303EC5D",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[5]/tc[1]/p[@paraId=3303EC5D]/r[1]",
+                        "type": "run",
+                        "text": "4",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[5]/tc[2]",
+                "type": "cell",
+                "text": "Mật khẩu và  dữ liệu nhạy cảm được băm / mã hóa",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "2500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[5]/tc[2]/p[@paraId=388F797D]",
+                    "type": "paragraph",
+                    "text": "Mật khẩu và  dữ liệu nhạy cảm được băm / mã hóa",
+                    "preview": "Mật khẩu và  dữ liệu nhạy cảm được băm / mã hóa",
+                    "style": "Normal",
+                    "childCount": 3,
+                    "format": {
+                      "paraId": "388F797D",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[5]/tc[2]/p[@paraId=388F797D]/r[1]",
+                        "type": "run",
+                        "text": "Mật khẩu ",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      },
+                      {
+                        "path": "/body/tbl[4]/tr[5]/tc[2]/p[@paraId=388F797D]/r[2]",
+                        "type": "run",
+                        "text": "và ",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      },
+                      {
+                        "path": "/body/tbl[4]/tr[5]/tc[2]/p[@paraId=388F797D]/r[3]",
+                        "type": "run",
+                        "text": " dữ liệu nhạy cảm được băm / mã hóa",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[5]/tc[3]",
+                "type": "cell",
+                "text": "ĐÃ LÀM",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "1100dxa",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#006600"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[5]/tc[3]/p[@paraId=733471BF]",
+                    "type": "paragraph",
+                    "text": "ĐÃ LÀM",
+                    "preview": "ĐÃ LÀM",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "733471BF",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#006600",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[5]/tc[3]/p[@paraId=733471BF]/r[1]",
+                        "type": "run",
+                        "text": "ĐÃ LÀM",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#006600",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[5]/tc[4]",
+                "type": "cell",
+                "text": "Mật khẩu băm an toàn bằng scrypt kèm salt ngẫu nhiên 16 bytes trong authService.js. Số điện thoại khách hàng hiển thị trên UI được che theo QT-15 (090****567).",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "4900dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[5]/tc[4]/p[@paraId=3DFC9536]",
+                    "type": "paragraph",
+                    "text": "Mật khẩu băm an toàn bằng scrypt kèm salt ngẫu nhiên 16 bytes trong authService.js. Số điện thoại khách hàng hiển thị trên UI được che theo QT-15 (090****567).",
+                    "preview": "Mật khẩu băm an toàn bằng scrypt kèm salt ngẫu nhi...",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "3DFC9536",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[5]/tc[4]/p[@paraId=3DFC9536]/r[1]",
+                        "type": "run",
+                        "text": "Mật khẩu băm an toàn bằng scrypt kèm salt ngẫu nhiên 16 bytes trong authService.js. Số điện thoại khách hàng hiển thị trên UI được che theo QT-15 (090****567).",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/body/tbl[4]/tr[6]",
+            "type": "row",
+            "childCount": 4,
+            "format": {
+              "rowAlign": "center"
+            },
+            "children": [
+              {
+                "path": "/body/tbl[4]/tr[6]/tc[1]",
+                "type": "cell",
+                "text": "5",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[6]/tc[1]/p[@paraId=5E7E5C6A]",
+                    "type": "paragraph",
+                    "text": "5",
+                    "preview": "5",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "5E7E5C6A",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[6]/tc[1]/p[@paraId=5E7E5C6A]/r[1]",
+                        "type": "run",
+                        "text": "5",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[6]/tc[2]",
+                "type": "cell",
+                "text": "Thông báo lỗi không lộ cấu trúc trong (OWASP A02)",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "2500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[6]/tc[2]/p[@paraId=30AC3D2E]",
+                    "type": "paragraph",
+                    "text": "Thông báo lỗi không lộ cấu trúc trong (OWASP A02)",
+                    "preview": "Thông báo lỗi không lộ cấu trúc trong (OWASP A02)",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "30AC3D2E",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[6]/tc[2]/p[@paraId=30AC3D2E]/r[1]",
+                        "type": "run",
+                        "text": "Thông báo lỗi không lộ cấu trúc trong (OWASP A02)",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[6]/tc[3]",
+                "type": "cell",
+                "text": "ĐÃ LÀM",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "1100dxa",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#006600"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[6]/tc[3]/p[@paraId=5AB3CC0D]",
+                    "type": "paragraph",
+                    "text": "ĐÃ LÀM",
+                    "preview": "ĐÃ LÀM",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "5AB3CC0D",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#006600",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[6]/tc[3]/p[@paraId=5AB3CC0D]/r[1]",
+                        "type": "run",
+                        "text": "ĐÃ LÀM",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#006600",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[6]/tc[4]",
+                "type": "cell",
+                "text": "Middleware lỗi trong index.js trả về JSON chuẩn { success: false, error: '...', requestId: '...' }; che giấu hoàn toàn stack trace khi gặp lỗi 500.",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "4900dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[6]/tc[4]/p[@paraId=3EA7ED5C]",
+                    "type": "paragraph",
+                    "text": "Middleware lỗi trong index.js trả về JSON chuẩn { success: false, error: '...', requestId: '...' }; che giấu hoàn toàn stack trace khi gặp lỗi 500.",
+                    "preview": "Middleware lỗi trong index.js trả về JSON chuẩn { ...",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "3EA7ED5C",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[6]/tc[4]/p[@paraId=3EA7ED5C]/r[1]",
+                        "type": "run",
+                        "text": "Middleware lỗi trong index.js trả về JSON chuẩn { success: false, error: '...', requestId: '...' }; che giấu hoàn toàn stack trace khi gặp lỗi 500.",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/body/tbl[4]/tr[7]",
+            "type": "row",
+            "childCount": 4,
+            "format": {
+              "rowAlign": "center"
+            },
+            "children": [
+              {
+                "path": "/body/tbl[4]/tr[7]/tc[1]",
+                "type": "cell",
+                "text": "6",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[7]/tc[1]/p[@paraId=6366EEF0]",
+                    "type": "paragraph",
+                    "text": "6",
+                    "preview": "6",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "6366EEF0",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[7]/tc[1]/p[@paraId=6366EEF0]/r[1]",
+                        "type": "run",
+                        "text": "6",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[7]/tc[2]",
+                "type": "cell",
+                "text": "Nhật ký không ghi secret hay dữ liệu cá nhân thừa",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "2500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[7]/tc[2]/p[@paraId=7EE95363]",
+                    "type": "paragraph",
+                    "text": "Nhật ký không ghi secret hay dữ liệu cá nhân thừa",
+                    "preview": "Nhật ký không ghi secret hay dữ liệu cá nhân thừa",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "7EE95363",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[7]/tc[2]/p[@paraId=7EE95363]/r[1]",
+                        "type": "run",
+                        "text": "Nhật ký không ghi secret hay dữ liệu cá nhân thừa",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[7]/tc[3]",
+                "type": "cell",
+                "text": "ĐÃ LÀM",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "1100dxa",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#006600"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[7]/tc[3]/p[@paraId=5830F3E0]",
+                    "type": "paragraph",
+                    "text": "ĐÃ LÀM",
+                    "preview": "ĐÃ LÀM",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "5830F3E0",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#006600",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[7]/tc[3]/p[@paraId=5830F3E0]/r[1]",
+                        "type": "run",
+                        "text": "ĐÃ LÀM",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#006600",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[7]/tc[4]",
+                "type": "cell",
+                "text": "logger.js ghi nhật ký JSON chuẩn (timestamp, level, requestId, method, url, statusCode); tự động lọc bỏ mật khẩu và token, không ghi dữ liệu thô.",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#F2F5F9",
+                  "shading.color": "auto",
+                  "width": "4900dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[7]/tc[4]/p[@paraId=6908BC67]",
+                    "type": "paragraph",
+                    "text": "logger.js ghi nhật ký JSON chuẩn (timestamp, level, requestId, method, url, statusCode); tự động lọc bỏ mật khẩu và token, không ghi dữ liệu thô.",
+                    "preview": "logger.js ghi nhật ký JSON chuẩn (timestamp, level...",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "6908BC67",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[7]/tc[4]/p[@paraId=6908BC67]/r[1]",
+                        "type": "run",
+                        "text": "logger.js ghi nhật ký JSON chuẩn (timestamp, level, requestId, method, url, statusCode); tự động lọc bỏ mật khẩu và token, không ghi dữ liệu thô.",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "/body/tbl[4]/tr[8]",
+            "type": "row",
+            "childCount": 4,
+            "format": {
+              "rowAlign": "center"
+            },
+            "children": [
+              {
+                "path": "/body/tbl[4]/tr[8]/tc[1]",
+                "type": "cell",
+                "text": "7",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[8]/tc[1]/p[@paraId=58AC5630]",
+                    "type": "paragraph",
+                    "text": "7",
+                    "preview": "7",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "58AC5630",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[8]/tc[1]/p[@paraId=58AC5630]/r[1]",
+                        "type": "run",
+                        "text": "7",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[8]/tc[2]",
+                "type": "cell",
+                "text": "Thư viện phụ thuộc ghim phiên bản và  quét lỗi",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "2500dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[8]/tc[2]/p[@paraId=66734A40]",
+                    "type": "paragraph",
+                    "text": "Thư viện phụ thuộc ghim phiên bản và  quét lỗi",
+                    "preview": "Thư viện phụ thuộc ghim phiên bản và  quét lỗi",
+                    "style": "Normal",
+                    "childCount": 3,
+                    "format": {
+                      "paraId": "66734A40",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[8]/tc[2]/p[@paraId=66734A40]/r[1]",
+                        "type": "run",
+                        "text": "Thư viện phụ thuộc ghim phiên bản ",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      },
+                      {
+                        "path": "/body/tbl[4]/tr[8]/tc[2]/p[@paraId=66734A40]/r[2]",
+                        "type": "run",
+                        "text": "và ",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      },
+                      {
+                        "path": "/body/tbl[4]/tr[8]/tc[2]/p[@paraId=66734A40]/r[3]",
+                        "type": "run",
+                        "text": " quét lỗi",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[8]/tc[3]",
+                "type": "cell",
+                "text": "ĐÃ LÀM",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "1100dxa",
+                  "size": "7pt",
+                  "bold": true,
+                  "color": "#006600"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[8]/tc[3]/p[@paraId=6FF458C8]",
+                    "type": "paragraph",
+                    "text": "ĐÃ LÀM",
+                    "preview": "ĐÃ LÀM",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "6FF458C8",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "bold": true,
+                      "color": "#006600",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[8]/tc[3]/p[@paraId=6FF458C8]/r[1]",
+                        "type": "run",
+                        "text": "ĐÃ LÀM",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "bold": true,
+                          "color": "#006600",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "/body/tbl[4]/tr[8]/tc[4]",
+                "type": "cell",
+                "text": "Ghim phiên bản qua package-lock.json; runtime Node.js 20 LTS chính thức; kiểm tra npm audit ghi nhận 0 critical vulnerabilities.",
+                "childCount": 1,
+                "format": {
+                  "shading.val": "clear",
+                  "shading.fill": "#FFFFFF",
+                  "shading.color": "auto",
+                  "width": "4900dxa",
+                  "size": "7pt"
+                },
+                "children": [
+                  {
+                    "path": "/body/tbl[4]/tr[8]/tc[4]/p[@paraId=0BFEE134]",
+                    "type": "paragraph",
+                    "text": "Ghim phiên bản qua package-lock.json; runtime Node.js 20 LTS chính thức; kiểm tra npm audit ghi nhận 0 critical vulnerabilities.",
+                    "preview": "Ghim phiên bản qua package-lock.json; runtime Node...",
+                    "style": "Normal",
+                    "childCount": 1,
+                    "format": {
+                      "paraId": "0BFEE134",
+                      "spaceBefore": "0.5pt",
+                      "spaceAfter": "0.5pt",
+                      "lineSpacing": "1x",
+                      "lineRule": "auto",
+                      "size": "7pt",
+                      "effective.font.ascii": "Times New Roman",
+                      "effective.font.ascii.src": "/styles/Normal",
+                      "effective.font.hAnsi": "Times New Roman",
+                      "effective.font.hAnsi.src": "/styles/Normal"
+                    },
+                    "children": [
+                      {
+                        "path": "/body/tbl[4]/tr[8]/tc[4]/p[@paraId=0BFEE134]/r[1]",
+                        "type": "run",
+                        "text": "Ghim phiên bản qua package-lock.json; runtime Node.js 20 LTS chính thức; kiểm tra npm audit ghi nhận 0 critical vulnerabilities.",
+                        "childCount": 0,
+                        "format": {
+                          "size": "7pt",
+                          "effective.font.ascii": "Times New Roman",
+                          "effective.font.ascii.src": "/styles/Normal",
+                          "effective.font.hAnsi": "Times New Roman",
+                          "effective.font.hAnsi.src": "/styles/Normal"
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

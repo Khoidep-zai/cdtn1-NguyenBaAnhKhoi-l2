@@ -117,4 +117,10 @@ Hệ thống: Mekong Mobile CRM — Luồng L2: Tiếp nhận và phân loại y
 - **Lý do:** Đáp ứng trọn vẹn tiêu chí đánh giá C2, C3 của BT3 và yêu cầu của Workshop Buổi 14: Test Report phải ghi nhận kết quả thực tế cụ thể, minh chứng chạy thật rõ ràng, và kiểm chứng hệ thống không sinh bản ghi rác khi xảy ra lỗi.
 - **Ảnh hưởng:** Cập nhật `docs/test-report.md` đầy đủ 12 test case từ TC-01 đến TC-12 chuẩn 8 cột, bổ sung trường kiểm tra số lượng bản ghi CSDL trước/sau (ví dụ đếm tickets 120 $\rightarrow$ 120), chụp và lưu trữ toàn bộ ảnh kết quả thực tế tại `docs/screenshots/TC-xx.png`.
 
+### TD-12 Cập nhật quy chuẩn đóng gói và bảo mật Buổi 15 (09/11/2026)
+- **Nguồn yêu cầu:** Hai tài liệu Buổi 15, phần chung và track SE.
+- **Quyết định:** Bổ sung các nguyên tắc sẵn sàng dịch vụ, dữ liệu mẫu tái lập, bảo mật cấu hình, CORS, phiên và minh chứng trung thực vào hiến pháp phiên bản 1.2.0.
+- **Lý do:** Đảm bảo bản bàn giao có thể kiểm chứng độc lập và tránh công bố bí mật; giữ quyền theo chi nhánh hiện hành.
+- **Ảnh hưởng:** `.specify/memory/constitution.md` và các tài liệu, cấu hình, kiểm thử liên quan sẽ được đối chiếu theo đặc tả Buổi 15.
+
 

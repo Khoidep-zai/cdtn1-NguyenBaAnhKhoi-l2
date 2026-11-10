@@ -1,7 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const app = require('../src/index');
-const config = require('../src/backend/config');
 const { closePool } = require('../src/backend/config/db');
 
 test.after(async () => {
@@ -34,8 +33,12 @@ test('GET /health/db endpoint checks PostgreSQL connection', async () => {
     if (response.status === 200) {
       assert.strictEqual(data.status, 'ok');
       assert.strictEqual(data.database.connected, true);
-      assert.strictEqual(data.database.database, config.db.name);
+      assert.deepStrictEqual(data.database, { connected: true });
+    } else {
+      assert.strictEqual(data.status, 'error');
+      assert.deepStrictEqual(data.database, { connected: false });
     }
+    assert.strictEqual(typeof data.requestId, 'string');
   } finally {
     server.close();
   }

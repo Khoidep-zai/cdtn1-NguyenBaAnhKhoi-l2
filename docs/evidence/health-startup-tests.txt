@@ -1,0 +1,20 @@
+◇ injected env (9) from .env
+[DataLoader] Đã nạp thành công: 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67037 khách hàng, 7800 phiếu bảo hành.
+{"thoi_diem":"2026-11-10T11:47:40.284Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"ebee3535-e99a-4880-9ef2-375b886e8d9a","phuong_thuc":"GET","duong_dan":"/health/db","ma_trang_thai":503,"thoi_gian_ms":20}
+✔ failed health probe exposes no database error details (203.3882ms)
+◇ injected env (9) from .env
+[DataLoader] Đã nạp thành công: 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67037 khách hàng, 7800 phiếu bảo hành.
+{"thoi_diem":"2026-11-10T11:47:40.542Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"3ceebfee-a62b-4080-8ff2-c69d54490d47","phuong_thuc":"GET","duong_dan":"/health","ma_trang_thai":200,"thoi_gian_ms":42}
+✔ GET /health endpoint smoke test (413.089ms)
+{"thoi_diem":"2026-11-10T11:47:40.878Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"68c80bb9-055f-4a23-b047-a3b8cdf02f1f","phuong_thuc":"GET","duong_dan":"/health/db","ma_trang_thai":200,"thoi_gian_ms":227}
+✔ GET /health/db endpoint checks PostgreSQL connection (278.5173ms)
+✔ startup rejects missing JWT_SECRET before listening (304.0051ms)
+✔ startup rejects short JWT_SECRET before listening (465.9247ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3861.4731

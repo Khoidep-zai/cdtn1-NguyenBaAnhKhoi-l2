@@ -1,4 +1,6 @@
 # MÔ HÌNH DỮ LIỆU & HỢP ĐỒNG API (API CONTRACT)
+
+> Tham chiếu endpoint đang chạy, đủ 7 mục và ví dụ HTTP thực tế: [API Reference](api-reference.md). Các mục COULD bên dưới là kế hoạch, không phải API đã hiện thực.
 ## Luồng L2: Tiếp nhận và phân loại yêu cầu bảo hành
 ### Hệ thống: Mekong Mobile CRM — Sinh viên: Nguyễn Bá Anh Khôi (MSSV: 2374802010247, Track SE)
 
@@ -216,10 +218,10 @@ Kiểm tra tính nhất quán giữa 3 màn hình giao diện (docs/wireframes.h
 | `PATCH` | `/api/auth/users/{id}` | Sửa tài khoản trong phạm vi quyền; bảo vệ quản lý hệ thống cuối cùng | **NFR4** |
 | `GET` | `/api/customers?phone={phone}` | Tra cứu hồ sơ khách hàng theo số điện thoại (QT-01) | **US1** (MUST) |
 | `POST` | `/api/customers` | Đăng ký mới hồ sơ khách hàng khi chưa tồn tại | **US1, US2** |
-| `GET` | `/api/devices/{serial}/warranty` | Đối soát dữ liệu bảo hành thiết bị từ hệ thống ERP (QT-05) | **US8** (COULD) |
+| `GET` | `/api/devices/{serial}/warranty` | CHƯA HIỆN THỰC — dự kiến đối soát ERP (QT-05) | **US8** (COULD) |
 | `POST` | `/api/tickets` | Khởi tạo phiếu tiếp nhận bảo hành mới (FR2, QT-04) | **US2, US4** (MUST) |
 | `GET` | `/api/tickets?status=&center_id=&page=` | Truy vấn danh sách phiếu (hỗ trợ lọc và phân trang) | **US6** (SHOULD) |
-| `GET` | `/api/tickets?overdue=true` | Lấy danh sách phiếu sắp hoặc đã quá hạn SLA | **US7** (COULD) |
+| `GET` | `/api/tickets?overdue=true` | CHƯA HIỆN THỰC bộ lọc overdue — hiện tham số này không lọc danh sách | **US7** (COULD) |
 | `GET` | `/api/tickets/{id}` | Xem chi tiết phiếu kèm dòng thời gian lịch sử trạng thái | **US5** (SHOULD) |
 | `PATCH` | `/api/tickets/{id}/status` | Cập nhật trạng thái phiếu và ghi nhật ký kiểm toán (QT-06) | **US3, US5** (MUST) |
 | `GET` | `/api/categories` | Lấy danh mục 6 nhóm lỗi từ issue_category | **US2** (MUST) |

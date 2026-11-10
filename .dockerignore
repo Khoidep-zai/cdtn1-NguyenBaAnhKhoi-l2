@@ -7,11 +7,9 @@ node_modules
 __pycache__
 .git
 .gitignore
-.env
-.env.local
+.env*
 .idea
 .vscode
-tests
 docs
 scratch
 data/raw

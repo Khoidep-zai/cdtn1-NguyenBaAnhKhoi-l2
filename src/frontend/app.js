@@ -859,7 +859,7 @@ function renderTicketsTable(tickets, total) {
           <span class="badge ${getPriorityBadgeClass(priority)}">${formatPriorityLabel(priority)}</span>
         </td>
         <td class="col-nowrap">
-          <span class="badge ${getStatusBadgeClass(status)}">${formatStatusLabel(status)}</span>
+          <span class="badge ${getStatusBadgeClass(status)}">${escapeHtml(formatStatusLabel(status))}</span>
         </td>
         <td class="col-nowrap">
           <div class="sla-timer ${priority === 'CAO' ? 'sla-urgent' : ''}">
@@ -868,7 +868,7 @@ function renderTicketsTable(tickets, total) {
           </div>
         </td>
         <td class="col-nowrap action-column" style="text-align: right;">
-          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="goToDetail('${escapeHtml(code)}')">
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="goToDetail(${escapeHtml(JSON.stringify(String(code)))})">
             Chi tiết →
           </button>
         </td>
@@ -1098,7 +1098,7 @@ function renderDeviceList(query) {
         </div>
         <div class="combobox-item-meta">
           ${priceText ? `<span style="color: #38BDF8; margin-right: 8px;">${priceText}</span>` : ''}
-          <span>${warranty}</span>
+          <span>${escapeHtml(warranty)}</span>
         </div>
       </div>
     `;

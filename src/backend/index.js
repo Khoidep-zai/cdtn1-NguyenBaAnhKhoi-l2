@@ -6,11 +6,13 @@ const customerRoutes = require('./routes/customerRoutes');
 const catalogRoutes = require('./routes/catalogRoutes');
 const authRoutes = require('./routes/authRoutes');
 const { authenticate } = require('./middlewares/authenticate');
+const { createCors } = require('./middlewares/cors');
 
 const { logger, ganRequestId } = require('./utils/logger');
 
 const app = express();
 const PORT = config.port;
+app.use(createCors((process.env.CORS_ORIGINS || '').split(',').map((origin) => origin.trim())));
 
 // Giới hạn kích thước thân yêu cầu chống DoS cạn bộ nhớ (chuẩn bảo mật mekong-se-baohanh)
 app.use(express.json({ limit: '256kb' }));
@@ -29,9 +31,9 @@ app.get('/health/db', async (req, res) => {
   const { testConnection } = require('./config/db');
   const dbStatus = await testConnection();
   if (dbStatus.connected) {
-    return res.status(200).json({ status: 'ok', database: dbStatus, requestId: req.requestId });
+    return res.status(200).json({ status: 'ok', database: { connected: true }, requestId: req.requestId });
   }
-  return res.status(503).json({ status: 'error', database: dbStatus, requestId: req.requestId });
+  return res.status(503).json({ status: 'error', database: { connected: false }, requestId: req.requestId });
 });
 
 // Phân hệ quản lý tiếp nhận bảo hành (L2)
@@ -57,7 +59,6 @@ app.use((err, req, res, _next) => {
     logger.info('Vi phạm quy tắc nghiệp vụ', {
       requestId: req.requestId,
       ma: err.code || err.ma,
-      thong_diep: err.message,
     });
     const status = err.httpStatus || err.statusCode || (err.code === 'PHIEU_DANG_MO' ? 409 : err.code === 'KHACH_KHONG_TON_TAI' ? 404 : 400);
     return res.status(status).json({
@@ -76,7 +77,6 @@ app.use((err, req, res, _next) => {
   logger.error('Lỗi hệ thống', {
     requestId: req.requestId,
     loai: err.name,
-    thong_diep: err.message,
     err,
   });
 
@@ -90,6 +90,7 @@ app.use((err, req, res, _next) => {
 });
 
 if (require.main === module) {
+  config.validateStartup();
   app.listen(PORT, () => {
     console.log(`Mekong Mobile CRM Server running on http://localhost:${PORT}`);
   });

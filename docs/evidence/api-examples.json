@@ -1,0 +1,843 @@
+{
+  "capturedAt": "2026-11-09T10:43:03.048Z",
+  "records": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "request": null,
+      "status": 200,
+      "response": {
+        "status": "ok"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/health/db",
+      "request": null,
+      "status": 200,
+      "response": {
+        "status": "ok",
+        "database": {
+          "connected": true
+        },
+        "requestId": "8c45d244-bca7-4e23-b718-fd2b26bc0027"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "request": {
+        "username": "evidence_a7343314106a",
+        "password": "[REDACTED temporary test password]"
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "320",
+          "username": "evidence_a7343314106a",
+          "name": "Evidence temporary user",
+          "phone": "",
+          "role": "QUAN_LY_HE_THONG",
+          "roleLabel": "Quản lý hệ thống",
+          "branchId": null,
+          "branchName": "Toàn hệ thống",
+          "isActive": true,
+          "avatar": "TU",
+          "canViewAllCenters": true,
+          "canManageStaff": true,
+          "canManageAllAccounts": true,
+          "canOverrideSla": true,
+          "canReassignTechnician": true
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "320",
+          "username": "evidence_a7343314106a",
+          "name": "Evidence temporary user",
+          "phone": "",
+          "role": "QUAN_LY_HE_THONG",
+          "roleLabel": "Quản lý hệ thống",
+          "branchId": null,
+          "branchName": "Toàn hệ thống",
+          "isActive": true,
+          "avatar": "TU",
+          "canViewAllCenters": true,
+          "canManageStaff": true,
+          "canManageAllAccounts": true,
+          "canOverrideSla": true,
+          "canReassignTechnician": true
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/auth/profile",
+      "request": {
+        "full_name": "Evidence User",
+        "phone": ""
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "320",
+          "username": "evidence_a7343314106a",
+          "name": "Evidence User",
+          "phone": "",
+          "role": "QUAN_LY_HE_THONG",
+          "roleLabel": "Quản lý hệ thống",
+          "branchId": null,
+          "branchName": "Toàn hệ thống",
+          "isActive": true,
+          "avatar": "EU",
+          "canViewAllCenters": true,
+          "canManageStaff": true,
+          "canManageAllAccounts": true,
+          "canOverrideSla": true,
+          "canReassignTechnician": true
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/users",
+      "request": {
+        "username": "evidence_child_a7343314106a",
+        "password": "[REDACTED temporary test password]",
+        "full_name": "Evidence Staff",
+        "role": "NHAN_VIEN",
+        "center_id": 1
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "id": "321",
+          "username": "evidence_child_a7343314106a",
+          "name": "Evidence Staff",
+          "phone": "",
+          "role": "NHAN_VIEN",
+          "roleLabel": "Nhân viên tiếp nhận",
+          "branchId": 1,
+          "branchName": "Chi nhánh 01",
+          "isActive": true,
+          "avatar": "ES",
+          "canViewAllCenters": false,
+          "canManageStaff": false,
+          "canManageAllAccounts": false,
+          "canOverrideSla": false,
+          "canReassignTechnician": false
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/auth/users/321",
+      "request": {
+        "full_name": "Evidence Updated Staff"
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "321",
+          "username": "evidence_child_a7343314106a",
+          "name": "Evidence Updated Staff",
+          "phone": "",
+          "role": "NHAN_VIEN",
+          "roleLabel": "Nhân viên tiếp nhận",
+          "branchId": 1,
+          "branchName": "Chi nhánh 01",
+          "isActive": true,
+          "avatar": "US",
+          "canViewAllCenters": false,
+          "canManageStaff": false,
+          "canManageAllAccounts": false,
+          "canOverrideSla": false,
+          "canReassignTechnician": false
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/users",
+      "request": null,
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": "320",
+            "username": "evidence_a7343314106a",
+            "name": "Evidence User",
+            "phone": "",
+            "role": "QUAN_LY_HE_THONG",
+            "roleLabel": "Quản lý hệ thống",
+            "branchId": null,
+            "branchName": "Toàn hệ thống",
+            "isActive": true,
+            "avatar": "EU",
+            "canViewAllCenters": true,
+            "canManageStaff": true,
+            "canManageAllAccounts": true,
+            "canOverrideSla": true,
+            "canReassignTechnician": true
+          },
+          {
+            "id": "321",
+            "username": "evidence_child_a7343314106a",
+            "name": "Evidence Updated Staff",
+            "phone": "",
+            "role": "NHAN_VIEN",
+            "roleLabel": "Nhân viên tiếp nhận",
+            "branchId": 1,
+            "branchName": "TTBH Quận 10",
+            "isActive": true,
+            "avatar": "US",
+            "canViewAllCenters": false,
+            "canManageStaff": false,
+            "canManageAllAccounts": false,
+            "canOverrideSla": false,
+            "canReassignTechnician": false
+          }
+        ]
+      },
+      "excerpt": "Unrelated account rows omitted"
+    },
+    {
+      "method": "GET",
+      "path": "/api/categories",
+      "request": null,
+      "status": 200,
+      "response": {
+        "success": true,
+        "total": 6,
+        "data": [
+          {
+            "category_id": 1,
+            "category_name": "MAN_HINH",
+            "default_priority": "CAO",
+            "is_active": true
+          },
+          {
+            "category_id": 2,
+            "category_name": "PIN",
+            "default_priority": "TRUNG_BINH",
+            "is_active": true
+          },
+          {
+            "category_id": 3,
+            "category_name": "SAC",
+            "default_priority": "TRUNG_BINH",
+            "is_active": true
+          },
+          {
+            "category_id": 4,
+            "category_name": "PHAN_MEM",
+            "default_priority": "THAP",
+            "is_active": true
+          },
+          {
+            "category_id": 5,
+            "category_name": "NUOC_VAO",
+            "default_priority": "CAO",
+            "is_active": true
+          },
+          {
+            "category_id": 6,
+            "category_name": "KHAC",
+            "default_priority": "TRUNG_BINH",
+            "is_active": true
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/centers",
+      "request": null,
+      "status": 200,
+      "response": {
+        "success": true,
+        "total": 11,
+        "data": [
+          {
+            "center_id": 1,
+            "center_code": "TT01",
+            "center_name": "TTBH Quận 10",
+            "thanh_pho": "TP. Hồ Chí Minh"
+          },
+          {
+            "center_id": 2,
+            "center_code": "TT02",
+            "center_name": "TTBH Quận Tân Bình",
+            "thanh_pho": "TP. Hồ Chí Minh"
+          },
+          {
+            "center_id": 3,
+            "center_code": "TT03",
+            "center_name": "TTBH TP. Thủ Đức",
+            "thanh_pho": "TP. Hồ Chí Minh"
+          },
+          {
+            "center_id": 4,
+            "center_code": "TT04",
+            "center_name": "TTBH Ninh Kiều",
+            "thanh_pho": "Cần Thơ"
+          },
+          {
+            "center_id": 5,
+            "center_code": "TT05",
+            "center_name": "TTBH Cái Răng",
+            "thanh_pho": "Cần Thơ"
+          },
+          {
+            "center_id": 6,
+            "center_code": "TT06",
+            "center_name": "TTBH Cầu Giấy",
+            "thanh_pho": "Hà Nội"
+          },
+          {
+            "center_id": 7,
+            "center_code": "TT07",
+            "center_name": "TTBH TP. Hồ Chí Minh",
+            "thanh_pho": "TP. Hồ Chí Minh"
+          },
+          {
+            "center_id": 8,
+            "center_code": "TT08",
+            "center_name": "TTBH Hà Nội",
+            "thanh_pho": "Hà Nội"
+          },
+          {
+            "center_id": 9,
+            "center_code": "TT09",
+            "center_name": "TTBH Nha Trang",
+            "thanh_pho": "Nha Trang"
+          },
+          {
+            "center_id": 10,
+            "center_code": "TT10",
+            "center_name": "TTBH Huế",
+            "thanh_pho": "Huế"
+          },
+          {
+            "center_id": 11,
+            "center_code": "TT11",
+            "center_name": "TTBH Cần Thơ",
+            "thanh_pho": "Cần Thơ"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/products?limit=1",
+      "request": null,
+      "status": 200,
+      "response": {
+        "success": true,
+        "total": 320,
+        "data": [
+          {
+            "product_id": 1,
+            "product_code": "SS0001",
+            "product_name": "Samsung Y2",
+            "thuong_hieu": "Samsung",
+            "nhom_san_pham": "Điện thoại phổ thông",
+            "gia_niem_yet": 1890000,
+            "warranty_months": 12
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/customers",
+      "request": {
+        "full_name": "Synthetic Evidence Customer",
+        "phone": "0920982963"
+      },
+      "status": 201,
+      "response": {
+        "success": true,
+        "message": "Đăng ký hồ sơ khách hàng mới thành công.",
+        "data": {
+          "customer_id": 51282,
+          "full_name": "Synthetic Evidence Customer",
+          "phone": "0920982963",
+          "raw_phone": "0920982963",
+          "email": "",
+          "address": "",
+          "created_at": "2026-11-09"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/customers?phone=0920982963",
+      "request": null,
+      "status": 200,
+      "response": {
+        "success": true,
+        "found": true,
+        "data": {
+          "customer_id": 51282,
+          "full_name": "Synthetic Evidence Customer",
+          "phone": "0920982963",
+          "email": "",
+          "address": "",
+          "created_at": "2026-11-09",
+          "devices": []
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets",
+      "request": {
+        "customer_name": "Synthetic Evidence Customer",
+        "customer_phone": "0920982963",
+        "product_name": "Evidence Device",
+        "serial_imei": "EVID-a7343314106a",
+        "issue_category_id": "1",
+        "store_id": "STORE_01",
+        "center_id": 1,
+        "issue_description": "Synthetic device test issue",
+        "priority": "TRUNG_BINH"
+      },
+      "status": 201,
+      "response": {
+        "success": true,
+        "message": "Tạo phiếu bảo hành thành công.",
+        "data": {
+          "id": "TKT-8801",
+          "ticket_id": 8801,
+          "ticket_code": "BH-008801/2026",
+          "customer_id": 51282,
+          "customer_name": "Synthetic Evidence Customer",
+          "customer_phone": "0920982963",
+          "customer_address": "",
+          "product_id": 1,
+          "product_name": "Evidence Device",
+          "serial_no": "EVID-a7343314106a",
+          "serial_imei": "EVID-a7343314106a",
+          "category_id": 1,
+          "issue_category_id": "1",
+          "center_id": 1,
+          "store_id": "STORE_01",
+          "issue_desc": "Synthetic device test issue",
+          "issue_description": "Synthetic device test issue",
+          "priority": "TRUNG_BINH",
+          "status": "MOI",
+          "is_warranty": false,
+          "warranty_verified": false,
+          "received_at": "2026-11-09T10:43:02.980Z",
+          "due_date": "2026-11-12T10:43:02.980Z",
+          "closed_at": null,
+          "created_at": "2026-11-09T10:43:02.980Z",
+          "updated_at": "2026-11-09T10:43:02.980Z"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/tickets?limit=1",
+      "request": null,
+      "status": 200,
+      "response": {
+        "success": true,
+        "data": [
+          {
+            "id": "TKT-8801",
+            "ticket_id": 8801,
+            "ticket_code": "BH-008801/2026",
+            "customer_id": 51282,
+            "customer_name": "Synthetic Evidence Customer",
+            "customer_phone": "0920982963",
+            "customer_address": "",
+            "product_id": 1,
+            "product_name": "Evidence Device",
+            "serial_no": "EVID-a7343314106a",
+            "serial_imei": "EVID-a7343314106a",
+            "category_id": 1,
+            "issue_category_id": "1",
+            "center_id": 1,
+            "store_id": "STORE_01",
+            "issue_desc": "Synthetic device test issue",
+            "issue_description": "Synthetic device test issue",
+            "priority": "TRUNG_BINH",
+            "status": "MOI",
+            "is_warranty": false,
+            "warranty_verified": false,
+            "received_at": "2026-11-09T10:43:02.980Z",
+            "due_date": "2026-11-12T10:43:02.980Z",
+            "closed_at": null,
+            "created_at": "2026-11-09T10:43:02.980Z",
+            "updated_at": "2026-11-09T10:43:02.980Z"
+          }
+        ],
+        "total": 7801,
+        "summary": {
+          "total": 7801,
+          "new": 1,
+          "processing": 1162,
+          "urgent": 1162
+        },
+        "page": 1,
+        "limit": 1,
+        "totalPages": 7801,
+        "offset": 0
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/tickets/TKT-8801",
+      "request": null,
+      "status": 200,
+      "response": {
+        "success": true,
+        "data": {
+          "id": "TKT-8801",
+          "ticket_id": 8801,
+          "ticket_code": "BH-008801/2026",
+          "customer_id": 51282,
+          "customer_name": "Synthetic Evidence Customer",
+          "customer_phone": "0920982963",
+          "customer_address": "",
+          "product_id": 1,
+          "product_name": "Evidence Device",
+          "serial_no": "EVID-a7343314106a",
+          "serial_imei": "EVID-a7343314106a",
+          "category_id": 1,
+          "issue_category_id": "1",
+          "center_id": 1,
+          "store_id": "STORE_01",
+          "issue_desc": "Synthetic device test issue",
+          "issue_description": "Synthetic device test issue",
+          "priority": "TRUNG_BINH",
+          "status": "MOI",
+          "is_warranty": false,
+          "warranty_verified": false,
+          "received_at": "2026-11-09T10:43:02.980Z",
+          "due_date": "2026-11-12T10:43:02.980Z",
+          "closed_at": null,
+          "created_at": "2026-11-09T10:43:02.980Z",
+          "updated_at": "2026-11-09T10:43:02.980Z",
+          "status_history": [
+            {
+              "log_id": 1,
+              "id": 1,
+              "ticket_id": "TKT-8801",
+              "from_status": null,
+              "old_status": null,
+              "to_status": "MOI",
+              "new_status": "MOI",
+              "changed_by": "evidence_a7343314106a",
+              "updated_by": "evidence_a7343314106a",
+              "note": "Khởi tạo phiếu tiếp nhận bảo hành mới tại quầy",
+              "changed_at": "2026-11-09T10:43:02.980Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/TKT-8801/classify",
+      "request": {
+        "issue_category_id": "1",
+        "priority": "CAO"
+      },
+      "status": 200,
+      "response": {
+        "success": true,
+        "message": "Phân loại sự cố phiếu bảo hành thành công.",
+        "data": {
+          "id": "TKT-8801",
+          "ticket_id": 8801,
+          "ticket_code": "BH-008801/2026",
+          "customer_id": 51282,
+          "customer_name": "Synthetic Evidence Customer",
+          "customer_phone": "0920982963",
+          "customer_address": "",
+          "product_id": 1,
+          "product_name": "Evidence Device",
+          "serial_no": "EVID-a7343314106a",
+          "serial_imei": "EVID-a7343314106a",
+          "category_id": 1,
+          "issue_category_id": "1",
+          "center_id": 1,
+          "store_id": "STORE_01",
+          "issue_desc": "Synthetic device test issue",
+          "issue_description": "Synthetic device test issue",
+          "priority": "CAO",
+          "status": "MOI",
+          "is_warranty": false,
+          "warranty_verified": false,
+          "received_at": "2026-11-09T10:43:02.980Z",
+          "due_date": "2026-11-10T10:43:02.980Z",
+          "closed_at": null,
+          "created_at": "2026-11-09T10:43:02.980Z",
+          "updated_at": "2026-11-09T10:43:03.002Z"
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/TKT-8801/service-consent",
+      "request": {
+        "note": "Synthetic customer consents"
+      },
+      "status": 200,
+      "response": {
+        "success": true,
+        "data": {
+          "id": "TKT-8801",
+          "ticket_id": 8801,
+          "ticket_code": "BH-008801/2026",
+          "customer_id": 51282,
+          "customer_name": "Synthetic Evidence Customer",
+          "customer_phone": "0920982963",
+          "customer_address": "",
+          "product_id": 1,
+          "product_name": "Evidence Device",
+          "serial_no": "EVID-a7343314106a",
+          "serial_imei": "EVID-a7343314106a",
+          "category_id": 1,
+          "issue_category_id": "1",
+          "center_id": 1,
+          "store_id": "STORE_01",
+          "issue_desc": "Synthetic device test issue",
+          "issue_description": "Synthetic device test issue",
+          "priority": "CAO",
+          "status": "MOI",
+          "is_warranty": false,
+          "warranty_verified": false,
+          "received_at": "2026-11-09T10:43:02.980Z",
+          "due_date": "2026-11-10T10:43:02.980Z",
+          "closed_at": null,
+          "created_at": "2026-11-09T10:43:02.980Z",
+          "updated_at": "2026-11-09T10:43:03.008Z",
+          "service_consent": true,
+          "service_consent_by": "evidence_a7343314106a",
+          "service_consent_at": "2026-11-09T10:43:03.008Z"
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/TKT-8801/warranty-exception",
+      "request": {
+        "note": "Synthetic manager approval"
+      },
+      "status": 200,
+      "response": {
+        "success": true,
+        "data": {
+          "id": "TKT-8801",
+          "ticket_id": 8801,
+          "ticket_code": "BH-008801/2026",
+          "customer_id": 51282,
+          "customer_name": "Synthetic Evidence Customer",
+          "customer_phone": "0920982963",
+          "customer_address": "",
+          "product_id": 1,
+          "product_name": "Evidence Device",
+          "serial_no": "EVID-a7343314106a",
+          "serial_imei": "EVID-a7343314106a",
+          "category_id": 1,
+          "issue_category_id": "1",
+          "center_id": 1,
+          "store_id": "STORE_01",
+          "issue_desc": "Synthetic device test issue",
+          "issue_description": "Synthetic device test issue",
+          "priority": "CAO",
+          "status": "MOI",
+          "is_warranty": false,
+          "warranty_verified": false,
+          "received_at": "2026-11-09T10:43:02.980Z",
+          "due_date": "2026-11-10T10:43:02.980Z",
+          "closed_at": null,
+          "created_at": "2026-11-09T10:43:02.980Z",
+          "updated_at": "2026-11-09T10:43:03.014Z",
+          "service_consent": true,
+          "service_consent_by": "evidence_a7343314106a",
+          "service_consent_at": "2026-11-09T10:43:03.008Z",
+          "warranty_exception_approved": true
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/TKT-8801/status",
+      "request": {
+        "status": "DA_PHAN_CONG",
+        "updated_by": "evidence_a7343314106a"
+      },
+      "status": 200,
+      "response": {
+        "success": true,
+        "message": "Cập nhật trạng thái phiếu thành công.",
+        "data": {
+          "id": "TKT-8801",
+          "ticket_id": 8801,
+          "ticket_code": "BH-008801/2026",
+          "customer_id": 51282,
+          "customer_name": "Synthetic Evidence Customer",
+          "customer_phone": "0920982963",
+          "customer_address": "",
+          "product_id": 1,
+          "product_name": "Evidence Device",
+          "serial_no": "EVID-a7343314106a",
+          "serial_imei": "EVID-a7343314106a",
+          "category_id": 1,
+          "issue_category_id": "1",
+          "center_id": 1,
+          "store_id": "STORE_01",
+          "issue_desc": "Synthetic device test issue",
+          "issue_description": "Synthetic device test issue",
+          "priority": "CAO",
+          "status": "DA_PHAN_CONG",
+          "is_warranty": false,
+          "warranty_verified": false,
+          "received_at": "2026-11-09T10:43:02.980Z",
+          "due_date": "2026-11-10T10:43:02.980Z",
+          "closed_at": null,
+          "created_at": "2026-11-09T10:43:02.980Z",
+          "updated_at": "2026-11-09T10:43:03.021Z",
+          "service_consent": true,
+          "service_consent_by": "evidence_a7343314106a",
+          "service_consent_at": "2026-11-09T10:43:03.008Z",
+          "warranty_exception_approved": true
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/TKT-8801/status",
+      "request": {
+        "status": "DANG_XU_LY",
+        "updated_by": "evidence_a7343314106a"
+      },
+      "status": 200,
+      "response": {
+        "success": true,
+        "message": "Cập nhật trạng thái phiếu thành công.",
+        "data": {
+          "id": "TKT-8801",
+          "ticket_id": 8801,
+          "ticket_code": "BH-008801/2026",
+          "customer_id": 51282,
+          "customer_name": "Synthetic Evidence Customer",
+          "customer_phone": "0920982963",
+          "customer_address": "",
+          "product_id": 1,
+          "product_name": "Evidence Device",
+          "serial_no": "EVID-a7343314106a",
+          "serial_imei": "EVID-a7343314106a",
+          "category_id": 1,
+          "issue_category_id": "1",
+          "center_id": 1,
+          "store_id": "STORE_01",
+          "issue_desc": "Synthetic device test issue",
+          "issue_description": "Synthetic device test issue",
+          "priority": "CAO",
+          "status": "DANG_XU_LY",
+          "is_warranty": false,
+          "warranty_verified": false,
+          "received_at": "2026-11-09T10:43:02.980Z",
+          "due_date": "2026-11-10T10:43:02.980Z",
+          "closed_at": null,
+          "created_at": "2026-11-09T10:43:02.980Z",
+          "updated_at": "2026-11-09T10:43:03.028Z",
+          "service_consent": true,
+          "service_consent_by": "evidence_a7343314106a",
+          "service_consent_at": "2026-11-09T10:43:03.008Z",
+          "warranty_exception_approved": true
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/TKT-8801/status",
+      "request": {
+        "status": "HOAN_TAT",
+        "updated_by": "evidence_a7343314106a"
+      },
+      "status": 200,
+      "response": {
+        "success": true,
+        "message": "Cập nhật trạng thái phiếu thành công.",
+        "data": {
+          "id": "TKT-8801",
+          "ticket_id": 8801,
+          "ticket_code": "BH-008801/2026",
+          "customer_id": 51282,
+          "customer_name": "Synthetic Evidence Customer",
+          "customer_phone": "0920982963",
+          "customer_address": "",
+          "product_id": 1,
+          "product_name": "Evidence Device",
+          "serial_no": "EVID-a7343314106a",
+          "serial_imei": "EVID-a7343314106a",
+          "category_id": 1,
+          "issue_category_id": "1",
+          "center_id": 1,
+          "store_id": "STORE_01",
+          "issue_desc": "Synthetic device test issue",
+          "issue_description": "Synthetic device test issue",
+          "priority": "CAO",
+          "status": "HOAN_TAT",
+          "is_warranty": false,
+          "warranty_verified": false,
+          "received_at": "2026-11-09T10:43:02.980Z",
+          "due_date": "2026-11-10T10:43:02.980Z",
+          "closed_at": "2026-11-09T10:43:03.033Z",
+          "created_at": "2026-11-09T10:43:02.980Z",
+          "updated_at": "2026-11-09T10:43:03.033Z",
+          "service_consent": true,
+          "service_consent_by": "evidence_a7343314106a",
+          "service_consent_at": "2026-11-09T10:43:03.008Z",
+          "warranty_exception_approved": true
+        }
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/api/tickets/TKT-8801/handover-photo",
+      "request": {
+        "binary": "image/png",
+        "bytes": 68
+      },
+      "status": 200,
+      "response": {
+        "success": true,
+        "message": "Đã lưu ảnh minh chứng bàn giao."
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/tickets/TKT-8801/handover-photo",
+      "request": null,
+      "status": 200,
+      "response": {
+        "bytes": 68,
+        "contentType": "image/png"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "request": null,
+      "status": 204,
+      "response": {
+        "bytes": 0,
+        "contentType": ""
+      }
+    }
+  ]
+}

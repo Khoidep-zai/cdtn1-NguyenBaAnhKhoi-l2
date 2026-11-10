@@ -1,0 +1,21 @@
+Command: rg -n -e innerHTML|dangerouslySetInnerHTML|v-html src
+Matches: 19
+src\frontend\components\dataState.js:21:    container.innerHTML = `
+src\frontend\components\dataState.js:43:      container.innerHTML = `
+src\frontend\components\dataState.js:66:      container.innerHTML = `
+src\frontend\components\dataState.js:88:      container.innerHTML = `
+src\frontend\components\dataState.js:124:    container.innerHTML = `
+src\frontend\app.js:146:    roleTagEl.innerHTML = `<span class="role-dot"></span><span>${escapeHtml(roleLabel)}</span>`;
+src\frontend\app.js:546:  body.innerHTML = '<tr><td colspan="6">Đang tải tài khoản…</td></tr>';
+src\frontend\app.js:549:    body.innerHTML = users.map((user) => {
+src\frontend\app.js:562:    body.innerHTML = `<tr><td colspan="6">${escapeHtml(error.message || 'Không thể tải danh sách tài khoản.')}</td></tr>`;
+src\frontend\app.js:689:    tbody.innerHTML = `
+src\frontend\app.js:814:      tbody.innerHTML = `
+src\frontend\app.js:879:  tbody.innerHTML = html;
+src\frontend\app.js:903:    info.innerHTML = `Hiển thị <strong>${start.toLocaleString()} - ${end.toLocaleString()}</strong> trong tổng số <strong>${total.toLocaleString()}</strong> phiếu bảo hành chuẩn hóa`;
+src\frontend\app.js:1068:    listEl.innerHTML = `
+src\frontend\app.js:1107:  listEl.innerHTML = html;
+src\frontend\app.js:1327:            alertText.innerHTML = `✔ Khách hàng hợp lệ: ${escapeHtml(cust.full_name)}. Vui lòng chọn dòng máy và nhập serial tiếp nhận.`;
+src\frontend\app.js:1681:        selectEl.innerHTML = `<option value="">(Phiếu đã đóng - không thể chuyển tiếp)</option>`;
+src\frontend\app.js:1685:        selectEl.innerHTML = nextOptions.map(opt => `<option value="${opt.val}"${opt.disabled ? ' disabled' : ''}>${opt.label}</option>`).join('');
+src\frontend\app.js:1692:      timeline.innerHTML = ticket.status_history.map(item => `

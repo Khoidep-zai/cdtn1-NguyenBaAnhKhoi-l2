@@ -1,10 +1,10 @@
 <!--
 Sync Impact Report:
-- Version change: 1.0.0 -> 1.1.0
+- Version change: 1.1.0 -> 1.2.0
 - Ratification Date: 2026-10-15
-- Last Amended: 2026-11-05
+- Last Amended: 2026-11-09
 - Added sections:
-  1. Section VII: Tiêu Chuẩn Nghiệm Thu & Đóng Gói Bài Tập 3 (Buổi 14 Workshop & BT3 Invariants)
+  1. Section VII: Bổ sung yêu cầu đóng gói và bảo mật Buổi 15 cho track SE
   2. Bổ sung quy định 6 thành phần bắt buộc (TP1..TP6) và Phép thử máy trắng (White-box verification)
   3. Bổ sung quy định bắt buộc minh chứng ảnh chụp thực tế tại `docs/screenshots/`
 - Deferred Items: None. All placeholders fully resolved.
@@ -80,6 +80,7 @@ Mọi dòng code phát sinh MUST tôn trọng đầy đủ các quy tắc nghi�
   4. `TP4` - Gói đóng gói chạy được bằng $\le 2$ lệnh (`cp .env.example .env` && `docker compose up -d --build`).
   5. `TP5` - Deployment Guide tiếng Anh 5 mục + Checklist bảo mật 7 mục có minh chứng thực tế.
   6. `TP6` - API Documentation tiếng Anh (mọi endpoint đủ 7 mục, có request/response JSON thật).
+- **Buổi 15 — đóng gói và bảo mật track SE:** Dịch vụ và cơ sở dữ liệu MUST có kiểm tra sẵn sàng; khởi tạo dữ liệu mẫu MUST tự động và có thể chạy lại an toàn. Cơ sở dữ liệu không công bố cổng ra ngoài khi không cần. `.env.example` MUST liệt kê cấu hình mẫu chạy được; secret thực tế không được lưu trong mã, image, log hoặc lịch sử công khai. Checklist bảo mật MUST ghi trạng thái trung thực cùng minh chứng thực tế. JWT MUST xác minh thuật toán rõ ràng; CORS có thông tin xác thực MUST giới hạn nguồn tin cậy; hướng dẫn triển khai MUST nêu cách sử dụng HTTPS khi triển khai thật.
 - **Phép Thử Máy Trắng (Clean Machine Test):** Giảng viên clone thư mục trống chạy $\le 2$ lệnh là hệ thống lên healthy, không cần hỏi sinh viên.
 - **Minh chứng ảnh chụp thực tế:** Mọi test case và minh chứng chạy hệ thống MUST có ảnh chụp lưu tại `docs/screenshots/` (ví dụ `TC-01.png`..`TC-12.png`).
 - **Cập nhật Nhật ký Thay đổi Thiết kế:** Mọi phản hồi từ Giảng viên ở BT2 MUST được phản hồi và ghi nhận quyết định xử lý vào `docs/thay-doi-thiet-ke.md` theo cấu trúc 4 dòng.
@@ -138,4 +139,4 @@ Mọi yêu cầu thêm mới, sửa đổi tính năng hay điều chỉnh quy t
     - **MINOR (1.X.0):** Khi bổ sung quy tắc nghiệp vụ mới hoặc chuẩn hóa thêm tiêu chuẩn kiểm thử (như v1.1.0 cho Buổi 14 & BT3).
     - **PATCH (1.0.X):** Khi chỉnh sửa câu chữ, làm rõ giải thích hoặc cập nhật đường dẫn tài liệu.
 
-**Version**: 1.1.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-11-05
+**Version**: 1.2.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-11-09

@@ -1,0 +1,141 @@
+ Image cdtn1-buoi15-verify-1110-migrate Building 
+ Image cdtn1-buoi15-verify-1110-api Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.09kB done
+#1 DONE 0.0s
+
+#2 [migrate internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.81kB 0.0s done
+#2 DONE 0.1s
+
+#3 [api internal] load metadata for docker.io/library/node:20-alpine
+#3 DONE 1.2s
+
+#4 [api internal] load .dockerignore
+#4 transferring context: 535B 0.0s done
+#4 DONE 0.1s
+
+#5 [api internal] load build context
+#5 transferring context: 48.68kB 0.2s done
+#5 DONE 0.2s
+
+#6 [migrate deps 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#6 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 0.2s done
+#6 DONE 0.2s
+
+#7 [api deps 2/4] WORKDIR /app
+#7 CACHED
+
+#8 [api runtime  3/10] RUN addgroup -S app && adduser -S app -G app
+#8 CACHED
+
+#9 [api deps 3/4] COPY package.json package-lock.json ./
+#9 CACHED
+
+#10 [api deps 4/4] RUN npm ci --omit=dev
+#10 CACHED
+
+#11 [api runtime  4/10] COPY --from=deps /app/node_modules ./node_modules
+#11 CACHED
+
+#12 [api runtime  5/10] COPY src ./src
+#12 ...
+
+#8 [migrate runtime  3/10] RUN addgroup -S app && adduser -S app -G app
+#8 CACHED
+
+#9 [migrate deps 3/4] COPY package.json package-lock.json ./
+#9 CACHED
+
+#10 [migrate deps 4/4] RUN npm ci --omit=dev
+#10 CACHED
+
+#7 [migrate deps 2/4] WORKDIR /app
+#7 CACHED
+
+#11 [migrate runtime  4/10] COPY --from=deps /app/node_modules ./node_modules
+#11 CACHED
+
+#12 [migrate runtime  5/10] COPY src ./src
+#12 DONE 0.5s
+
+#12 [migrate runtime  5/10] COPY src ./src
+#12 DONE 0.5s
+
+#13 [migrate runtime  6/10] COPY data/sample ./data/sample
+#13 DONE 0.4s
+
+#13 [migrate runtime  6/10] COPY data/sample ./data/sample
+#13 DONE 0.4s
+
+#14 [api runtime  7/10] COPY dataset ./dataset
+#14 DONE 0.4s
+
+#14 [migrate runtime  7/10] COPY dataset ./dataset
+#14 DONE 0.4s
+
+#15 [api runtime  8/10] COPY tests ./tests
+#15 DONE 0.3s
+
+#15 [api runtime  8/10] COPY tests ./tests
+#15 DONE 0.3s
+
+#16 [migrate runtime  9/10] COPY scripts ./scripts
+#16 DONE 0.3s
+
+#16 [migrate runtime  9/10] COPY scripts ./scripts
+#16 DONE 0.3s
+
+#17 [api runtime 10/10] COPY package.json ./
+#17 DONE 0.3s
+
+#17 [migrate runtime 10/10] COPY package.json ./
+#17 DONE 0.3s
+
+#18 [migrate] exporting to image
+#18 exporting layers
+#18 exporting layers 2.9s done
+#18 exporting manifest sha256:11772a18340160447a3079e9d7c8bc91d77c5fe9173cc67a60bf920b7d515154 0.1s done
+#18 exporting config sha256:30f775f43d111c3913b2dda1dd4638a01895e221578f448ec2be648475627dbd
+#18 exporting config sha256:30f775f43d111c3913b2dda1dd4638a01895e221578f448ec2be648475627dbd 0.2s done
+#18 exporting attestation manifest sha256:daf86d33a18ccf73c26d1af464773d128ef4f3f6cc840a391a9f12f9a58de9f4
+#18 exporting attestation manifest sha256:daf86d33a18ccf73c26d1af464773d128ef4f3f6cc840a391a9f12f9a58de9f4 0.2s done
+#18 exporting manifest list sha256:0800ee7b47ae74e582850632b2a18b31a54789f933a49931f67f1a400ed4aa48
+#18 exporting manifest list sha256:0800ee7b47ae74e582850632b2a18b31a54789f933a49931f67f1a400ed4aa48 0.1s done
+#18 naming to docker.io/library/cdtn1-buoi15-verify-1110-migrate:latest 0.0s done
+#18 unpacking to docker.io/library/cdtn1-buoi15-verify-1110-migrate:latest
+#18 unpacking to docker.io/library/cdtn1-buoi15-verify-1110-migrate:latest 1.5s done
+#18 DONE 5.3s
+
+#19 [api] exporting to image
+#19 exporting layers 2.9s done
+#19 exporting manifest sha256:92f72d9bbca25a12f7cb8b656ea356bc4c621d6d853b8870112d792ec848bc16 0.1s done
+#19 exporting config sha256:aedd04f2aa72030f9ea0d21cbc1c258f4934fd6b01f8c4165416f3e30c8b401e 0.1s done
+#19 exporting attestation manifest sha256:13e23af5e1fd5c2d9734941600d26a2bd939885204ab783df0b17b247deefe05 0.2s done
+#19 exporting manifest list sha256:5b8654ccd201cdfee8f6353c80222311b7e9ba06bd0a89b25a2e4739d4197ad3 0.1s done
+#19 naming to docker.io/library/cdtn1-buoi15-verify-1110-api:latest 0.0s done
+#19 unpacking to docker.io/library/cdtn1-buoi15-verify-1110-api:latest 1.4s done
+#19 DONE 5.2s
+
+#20 [api] resolving provenance for metadata file
+#20 DONE 0.1s
+
+#21 [migrate] resolving provenance for metadata file
+#21 DONE 0.2s
+ Image cdtn1-buoi15-verify-1110-migrate Built 
+ Image cdtn1-buoi15-verify-1110-api Built 
+ Container cdtn1-buoi15-verify-1110-postgres-1 Running 
+ Container cdtn1-buoi15-verify-1110-migrate-1 Recreate 
+ Container cdtn1-buoi15-verify-1110-migrate-1 Recreated 
+ Container cdtn1-buoi15-verify-1110-api-1 Recreate 
+ Container cdtn1-buoi15-verify-1110-api-1 Recreated 
+ Container cdtn1-buoi15-verify-1110-postgres-1 Waiting 
+ Container cdtn1-buoi15-verify-1110-postgres-1 Healthy 
+ Container cdtn1-buoi15-verify-1110-migrate-1 Starting 
+ Container cdtn1-buoi15-verify-1110-migrate-1 Started 
+ Container cdtn1-buoi15-verify-1110-postgres-1 Waiting 
+ Container cdtn1-buoi15-verify-1110-migrate-1 Waiting 
+ Container cdtn1-buoi15-verify-1110-postgres-1 Healthy 
+ Container cdtn1-buoi15-verify-1110-migrate-1 Exited 
+ Container cdtn1-buoi15-verify-1110-api-1 Starting 
+ Container cdtn1-buoi15-verify-1110-api-1 Started 

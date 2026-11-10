@@ -12,7 +12,7 @@ class CatalogController {
         data: categories,
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return res.status(500).json({ success: false, message: 'Lỗi máy chủ nội bộ' });
     }
   }
 
@@ -27,7 +27,7 @@ class CatalogController {
         data: centers,
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return res.status(500).json({ success: false, message: 'Lỗi máy chủ nội bộ' });
     }
   }
 
@@ -62,7 +62,7 @@ class CatalogController {
         data: prods.slice(0, maxLimit),
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return res.status(500).json({ success: false, message: 'Lỗi máy chủ nội bộ' });
     }
   }
 }

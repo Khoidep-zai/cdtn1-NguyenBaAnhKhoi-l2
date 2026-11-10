@@ -12,18 +12,18 @@ const pool = new Pool({
   connectionTimeoutMillis: 5000,
 });
 
-pool.on('error', (err) => {
-  console.error('[PostgreSQL Error] Lỗi kết nối CSDL bất ngờ:', err.message);
+pool.on('error', () => {
+  console.error('[PostgreSQL Error] Lỗi kết nối CSDL bất ngờ.');
 });
 
 /**
  * Kiểm tra kết nối tới cơ sở dữ liệu PostgreSQL
  */
 async function testConnection() {
+  let client;
   try {
-    const client = await pool.connect();
+    client = await pool.connect();
     const res = await client.query('SELECT version(), current_database(), current_user');
-    client.release();
     return {
       connected: true,
       database: res.rows[0].current_database,
@@ -33,8 +33,10 @@ async function testConnection() {
   } catch (err) {
     return {
       connected: false,
-      error: err.message,
+      error: 'Database unavailable',
     };
+  } finally {
+    if (client) client.release();
   }
 }
 

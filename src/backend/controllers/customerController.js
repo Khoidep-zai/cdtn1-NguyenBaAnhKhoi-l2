@@ -50,7 +50,7 @@ class CustomerController {
         },
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return res.status(500).json({ success: false, message: 'Lỗi máy chủ nội bộ' });
     }
   }
 
@@ -98,7 +98,7 @@ class CustomerController {
         data: newCustomer,
       });
     } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
+      return res.status(500).json({ success: false, message: 'Lỗi máy chủ nội bộ' });
     }
   }
 }

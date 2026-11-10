@@ -23,7 +23,7 @@ const TRUONG_CHE = [
 function che(gia_tri) {
   if (gia_tri === null || typeof gia_tri !== 'object') return gia_tri;
   if (gia_tri instanceof Error) {
-    return { loai: gia_tri.name, thong_diep: gia_tri.message, stack: gia_tri.stack };
+    return { loai: gia_tri.name };
   }
   const ra = Array.isArray(gia_tri) ? [] : {};
   for (const [k, v] of Object.entries(gia_tri)) {
@@ -61,7 +61,7 @@ function ganRequestId(req, res, next) {
     logger.info('Yêu cầu hoàn tất', {
       requestId: req.requestId,
       phuong_thuc: req.method,
-      duong_dan: req.originalUrl,
+      duong_dan: req.originalUrl.split('?')[0],
       ma_trang_thai: res.statusCode,
       thoi_gian_ms: Date.now() - t0,
     })

@@ -23,7 +23,7 @@ function handleControllerError(res, error) {
     });
   }
   const status = error.statusCode || 500;
-  return res.status(status).json({ success: false, message: error.message });
+  return res.status(status).json({ success: false, message: status >= 500 ? 'Lỗi máy chủ nội bộ' : error.message });
 }
 
 class TicketController {

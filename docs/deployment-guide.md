@@ -1,135 +1,101 @@
 # Deployment & Operations Guide
 
-- **Project:** Mekong Mobile CRM — Warranty Receipt & Triage Subsystem (Workflow L2)
-- **Student:** Nguyen Ba Anh Khoi | **Student ID:** 2374802010247
-- **Track:** Software Engineering (SE) | **Course:** Specialized Graduation Topic 1 (CDTN1)
-- **Version:** v1.0 (Assignment 3 Deliverable)
+Verification date: 2026-11-10. This guide describes the current working tree, not the existing v1.0 tag. An isolated Docker project built successfully on 2026-11-10: API/PostgreSQL healthy, migration exit 0, 67,037 customers and 7,800 tickets. All 56 tests passed in Docker, including repeated migration. A fresh clone of the final release tag has not yet been verified. Automatic schema/data migration is configured; initial administrator creation remains interactive.
 
----
+## 1. Requirements
 
-## 1. Environment Requirements
+Docker Engine with Compose v2, an available host port 3000, and sufficient disk space for the bundled dataset and images. Only the application port is published; PostgreSQL is internal to the Compose network. Dockerfile uses Node 20 Alpine and Compose uses PostgreSQL 16 Alpine. These major-version tags are mutable, not immutable image digests. For local development, install Node/npm and PostgreSQL, then run `npm ci`.
 
-Ensure the host machine satisfies the following prerequisites before initiating deployment:
+## 2. Setup
 
-| Component | Minimum Requirement | Recommended Specification |
-|---|---|---|
-| **Operating System** | Windows 10/11 64-bit, Ubuntu 22.04 LTS, or macOS 13+ | Ubuntu 22.04 LTS / Windows 11 with WSL2 |
-| **Container Engine** | Docker Engine 24.0+ & Docker Compose v2.20+ | Docker Desktop 4.25+ with Compose v2.23+ |
-| **Runtime (without Docker)** | Node.js 20.x LTS, npm 10.x+ | Node.js 20.18 LTS, npm 10.8+ |
-| **Database (without Docker)** | PostgreSQL 16.x | PostgreSQL 16.2 Alpine |
-| **Hardware** | 2 vCPU, 4 GB RAM, 10 GB free disk space | 4 vCPU, 8 GB RAM, 20 GB SSD |
-| **Required Free Ports** | Port `3000` (Node.js API/Frontend), Port `5432` (PostgreSQL) | Ports `3000` and `5432` unoccupied |
+From the repository directory, the proposed two-command container setup is:
 
----
-
-## 2. System Setup Steps (≤ 2 Commands from Clean Machine)
-
-The entire subsystem can be booted up from a clean repository clone using at most two commands:
-
-```bash
-# Step 1: Copy environment template to active configuration
+```sh
 cp .env.example .env
-
-# Step 2: Build and start containers in detached mode
 docker compose up -d --build
 ```
 
-*(Alternative manual execution for local Node.js environment without Docker):*
-```bash
-npm ci
-npm run db:migrate
-npm start
+PowerShell equivalent for the first command: `Copy-Item .env.example .env`.
+
+Before any real deployment, replace the example database password and JWT secret in `.env`. The examples are public placeholders. The database becomes healthy before the one-shot `migrate` service runs. The API starts only after migration completes successfully. Migration failure must be investigated; do not bypass the dependency condition.
+
+Automatic initialization imports master data and seeds 3 demo accounts (salted scrypt hashes) into `app_user`:
+- System Administrator: `system.admin` / `MekongDemo@2026` (role: `QUAN_LY_HE_THONG`, system-wide scope)
+- Branch Manager: `manager.ninhkieu` / `MekongDemo@2026` (role: `QUAN_LY_CHI_NHANH`, center 4)
+- Reception Staff: `staff.ninhkieu` / `MekongDemo@2026` (role: `NHAN_VIEN`, center 4)
+
+These accounts allow instant verification and UI login without running any third command, fully satisfying the C1 two-command requirement.
+
+For custom administrative provisioning, you may optionally create an independent administrator interactively:
+
+```sh
+docker compose exec api npm run auth:bootstrap
 ```
 
----
+For a local development database: configure `.env`, run `npm ci`, `npm run db:migrate`, and `npm start`. Local mutations to tickets/customers are held in memory and can be lost on restart; this is a prototype limitation.
 
-## 3. Environment Variables Configuration
+### HTTPS deployment
 
-The system is configured via environment variables defined in `.env`. A complete, secure template is provided in `.env.example`:
+Terminate TLS at a reverse proxy with a valid certificate for your domain. For example, route a Caddy site to the API service on the same private Docker network:
 
-| Variable Name | Description | Default / Example Value | Required? |
-|---|---|---|:---:|
-| `PORT` | Listening TCP port for the Express application | `3000` | Optional (default: 3000) |
-| `NODE_ENV` | Application runtime environment (`development`, `production`, `test`) | `development` | Yes |
-| `DB_HOST` | Hostname or container IP of PostgreSQL server | `postgres` (Docker) / `localhost` (Local) | Yes |
-| `DB_PORT` | PostgreSQL TCP communication port | `5432` | Yes |
-| `DB_NAME` | Primary database name for CRM data storage | `mekong_l2_db` | Yes |
-| `DB_USER` | PostgreSQL authentication user | `mekong_admin` | Yes |
-| `DB_PASSWORD` | PostgreSQL authentication password | `mekong_secure_pass_2026` | Yes |
-| `JWT_SECRET` | Secret key used for signing session tokens (min 32 bytes) | `mekong_jwt_super_secret_key_prod_2026_min_32_bytes!` | Yes |
-| `LOG_LEVEL` | Logging verbosity level (`info`, `debug`, `warn`, `error`) | `info` | Optional (default: info) |
-
-> **Security Notice:** The `.env` file contains runtime secrets and is strictly ignored by version control (`.gitignore`). Never commit live production secrets into git history.
-
----
-
-## 4. Sample Data & Seeding
-
-The application comes pre-packaged with historical datasets and master data located in the `dataset/` directory.
-
-### Automated Seeding Process:
-- When starting via Docker Compose or executing `npm run db:migrate`, the automated data loader (`src/backend/db/dataLoader.js`) automatically validates and imports reference datasets.
-- The migration uses idempotent operations (`ON CONFLICT DO NOTHING`) so subsequent boots or migrations never duplicate records or raise primary key constraint violations.
-
-### Expected Record Counts for Verification:
-Upon successful initialization, verify database row counts using standard queries or container health endpoints:
-
-| Entity / Table | Dataset Source File | Expected Record Count | Verification Query |
-|---|---|:---:|---|
-| Warranty Centers (`centers`) | `dataset/centers.json` | **6** | `SELECT COUNT(*) FROM centers;` |
-| Issue Categories (`issue_categories`) | `dataset/categories.json` | **6** | `SELECT COUNT(*) FROM issue_categories;` |
-| Products Master (`products`) | `dataset/products.json` | **320** | `SELECT COUNT(*) FROM products;` |
-| Seed Customers (`customers`) | `dataset/customers.json` | **67,037** | `SELECT COUNT(*) FROM customers;` |
-| Historical Tickets (`tickets`) | `dataset/tickets.json` | **7,800** | `SELECT COUNT(*) FROM tickets;` |
-
----
-
-## 5. Verification & Health Check (How to Confirm System is Healthy)
-
-After deployment, perform the following verification commands to guarantee all services are operating nominally:
-
-### 5.1. Container Status & Health Check
-Run Docker Compose inspection:
-```bash
-docker compose ps
-```
-**Expected Output:** Both `api` and `postgres` services report `Up (healthy)`.
-
-### 5.2. HTTP Health Probes
-Execute curl requests to internal health probes:
-```bash
-# 1. Check API Server Availability
-curl -s -i http://localhost:3000/health
-
-# Expected response: HTTP/1.1 200 OK
-# Body: {"success":true,"status":"ok","timestamp":"..."}
-
-# 2. Check Database Connectivity
-curl -s -i http://localhost:3000/health/db
-
-# Expected response: HTTP/1.1 200 OK
-# Body: {"success":true,"database":"connected","pool":{"total":10,"idle":9}}
+```caddyfile
+crm.example.edu {
+    reverse_proxy api:3000
+}
 ```
 
-### 5.3. Automated Test Suite Execution
-Execute the full automated test suite to confirm end-to-end integrity:
-```bash
-npm test
-```
-**Expected Output:**
-```text
-ℹ tests 44
-ℹ pass 44
-ℹ fail 0
-ℹ duration_ms ~3500ms
-```
-All 44 tests pass with zero failures.
+Replace the hostname, configure DNS, persist the proxy certificate storage, and publish the proxy's ports 80/443. Remove direct public API port access (or restrict it to loopback when the proxy runs on the host). Compose runs the API in production, so its session cookie has Secure, HttpOnly and SameSite=Strict. Verify these flags through browser developer tools over HTTPS. Do not assume a successful HTTP health check proves browser authentication works. Configure Express proxy trust only for the actual trusted proxy if forwarded protocol/client-IP features are introduced; never trust arbitrary Internet forwarding headers. Certificate provisioning and a real HTTPS deployment have not been tested in this workspace.
 
-### 5.4. Default Test Accounts for Demonstration
-For manual web GUI inspection via browser at `http://localhost:3000`:
+## 3. Environment variables
 
-| Role | Username | Password | Permitted Scope |
+| Variable | Meaning |
+|---|---|
+| PORT | Published host port; default 3000; API container listens on 3000. |
+| DB_NAME / DB_USER / DB_PASSWORD | PostgreSQL database and credentials; change the example password. |
+| DB_HOST / DB_PORT | Local development connection; Compose sets host postgres and port 5432. |
+| JWT_SECRET | Secret from the environment, at least 32 characters; startup rejects missing/short values. Generate a high-entropy value for deployment. |
+| NODE_ENV | Local mode; Compose fixes production for API and migration. Production enables Secure cookies and stronger password length. |
+| CORS_ORIGINS | Comma-separated browser origin allowlist, e.g. https://crm.example.edu; no wildcard with credentials. Empty does not allow cross-origin browser reads. |
+| LOG_LEVEL | Structured logging threshold. |
+
+Never put credentials in query strings, commit `.env`, or share raw authentication headers. Docker build context excludes `.env*`.
+
+## 4. Sample data and accounts
+
+The owner confirmed that the original 67,037 customer records are synthetic test data and authorized retaining them. The tracked `dataset/` directory is included in the image. `src/backend/db/migrate.js` creates the schema, imports the dataset, and seeds 3 initial demo accounts:
+- `system.admin` / `MekongDemo@2026` (role `QUAN_LY_HE_THONG`)
+- `manager.ninhkieu` / `MekongDemo@2026` (role `QUAN_LY_CHI_NHANH`, Ninh Kiều branch)
+- `staff.ninhkieu` / `MekongDemo@2026` (role `NHAN_VIEN`, Ninh Kiều branch)
+
+All passwords are salted scrypt hashes (`$s0$...`), never plaintext. Repeated migration checks existing records and preserves data idempotency. API evidence uses temporary test accounts and removes them after capture.
+
+PostgreSQL schema/data initialization does not imply that every API writes to PostgreSQL: ticket/customer prototype operations and handover photos currently use memory. Accounts and service centers use PostgreSQL. Do not claim persistence across process restarts for in-memory operations.
+
+## 5. Verification and operations
+
+```sh
+docker compose ps -a
+docker compose logs migrate
+curl -f http://localhost:3000/health
+curl -f http://localhost:3000/health/db
+docker compose exec api npm test
+```
+
+Expected: postgres healthy; migrate exits 0; API healthy; health endpoints return HTTP 200. `/health/db` returns `status: "ok"` and `database.connected: true`, plus requestId. An unavailable DB returns HTTP 503 with connected false, without internal connection details. Then verify actual login, ticket creation, branch access denial and logout in a browser.
+
+Run `npm test` locally against the configured test database. Tests create and remove temporary account fixtures. The opt-in migration test is excluded by default: run it ONLY against an explicitly disposable database using NODE_ENV=test and TEST_PACKAGING=1, then `node --test tests/packaging.test.js`. It runs migration twice and compares customer, ticket and account counts. A skipped test is not a passed clean-machine test.
+
+For independent clean-machine evidence, clone the intended release tag into an empty directory and use a new Compose project name, host port and volume. Record commit/tag, commands, ps output, both health responses, login evidence, test output and counts before/after a repeated migration. Never remove a working project volume to simulate a clean machine.
+
+Current evidence: `docs/evidence/test-run.txt`, `npm-audit.json`, `api-examples.json` and `scan-*.txt`. See docker-build.txt, docker-status.txt, docker-counts.txt and docker-tests.txt. No fresh-release-clone evidence is claimed.
+
+### Operational alert definitions
+
+These are runbook definitions, not a deployed monitoring service.
+
+| Condition | Threshold | Recipient | Action |
 |---|---|---|---|
-| **System Admin** | `system.admin` | `admin123` | Full system-wide access across all branches |
-| **Branch Manager** | `manager.hcm` | `123456` | Branch-level ticket approval & dispatch |
-| **Service Staff** | `staff.hcm` | `123456` | Front-desk receipt & intake triage |
+| GET /health/db fails or returns connected false | 3 consecutive checks, 30 seconds apart | System administrator on duty | Inspect postgres health and sanitized logs, check credentials/network/disk; restore connectivity and verify successful checks before closing. |
+| HTTP 5xx response ratio | More than 5% of at least 20 requests during 5 minutes | Application maintainer on duty | Correlate requestId and error type, identify failing route/release, roll back the affected release if necessary and rerun health/business checks. |
+
+Use monitoring outside the application container so an application crash is still detectable. Do not send passwords, cookies or customer data in alerts.

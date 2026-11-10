@@ -6,6 +6,12 @@
  * 3. ERROR: Lỗi kết nối / lỗi nghiệp vụ (có thông điệp cụ thể + nút thử lại)
  */
 
+function escapeStateText(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[character]));
+}
+
 const dataState = {
   /**
    * Trạng thái đang tải dữ liệu
@@ -17,7 +23,7 @@ const dataState = {
         <td colspan="9" style="text-align: center; padding: 36px; color: var(--text-muted);">
           <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
             <span class="pulse-indicator"></span>
-            <span style="font-size: 13.5px; font-weight: 500;">${message}</span>
+            <span style="font-size: 13.5px; font-weight: 500;">${escapeStateText(message)}</span>
           </div>
         </td>
       </tr>
@@ -121,10 +127,10 @@ const dataState = {
           <div style="max-width: 460px; margin: 0 auto; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--radius-md); padding: 22px;">
             <div style="font-size: 28px; margin-bottom: 8px;">⚠️</div>
             <div style="font-size: 14.5px; font-weight: 700; color: #F87171; margin-bottom: 6px;">
-              Đã xảy ra lỗi khi tải dữ liệu [${code}]
+              Đã xảy ra lỗi khi tải dữ liệu [${escapeStateText(code)}]
             </div>
             <div style="font-size: 13px; color: #CBD5E1; margin-bottom: 16px;">
-              ${msg}
+              ${escapeStateText(msg)}
             </div>
             <button type="button" class="btn btn-secondary" id="btnRetryDataState" style="padding: 6px 16px; font-size: 12.5px; border-color: rgba(239, 68, 68, 0.4);">
               🔄 Thử lại

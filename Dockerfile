@@ -27,6 +27,9 @@ COPY --from=deps /app/node_modules ./node_modules
 # Sao chép mã nguồn ứng dụng và dữ liệu mẫu cần thiết
 COPY src ./src
 COPY data/sample ./data/sample
+COPY dataset ./dataset
+COPY tests ./tests
+COPY scripts ./scripts
 COPY package.json ./
 
 # Chuyển quyền thực thi sang user app

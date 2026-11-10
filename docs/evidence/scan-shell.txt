@@ -1,0 +1,2 @@
+Command: rg -n -e exec\(|execSync|spawn\(|os\.system|shell=True src
+Matches: 0

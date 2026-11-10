@@ -292,6 +292,30 @@ async function migrate() {
       console.log(`ℹ Bảng ticket đã có ${ticketRes.rows[0].count} bản ghi.`);
     }
 
+    // 7. Nạp tài khoản mẫu demo (app_user) phục vụ kiểm thử hai lệnh (Tiêu chí C1)
+    const userRes = await pool.query('SELECT COUNT(*) FROM app_user');
+    if (parseInt(userRes.rows[0].count, 10) === 0) {
+      const { hashPassword } = require('../services/authService');
+      const demoAccounts = [
+        { username: 'system.admin', fullName: 'Quản lý hệ thống Mekong', role: 'QUAN_LY_HE_THONG', centerId: null },
+        { username: 'manager.ninhkieu', fullName: 'Quản lý chi nhánh Ninh Kiều', role: 'QUAN_LY_CHI_NHANH', centerId: 4 },
+        { username: 'staff.ninhkieu', fullName: 'Nhân viên tiếp nhận Ninh Kiều', role: 'NHAN_VIEN', centerId: 4 },
+      ];
+      const demoPassword = 'MekongDemo@2026';
+      for (const acc of demoAccounts) {
+        const passwordHash = await hashPassword(demoPassword);
+        await pool.query(
+          `INSERT INTO app_user (username, password_hash, full_name, role, center_id)
+           VALUES ($1, $2, $3, $4, $5)
+           ON CONFLICT (username) DO NOTHING`,
+          [acc.username, passwordHash, acc.fullName, acc.role, acc.centerId]
+        );
+      }
+      console.log('✔ Đã nạp 3 tài khoản demo mẫu (system.admin, manager.ninhkieu, staff.ninhkieu) vào bảng app_user.');
+    } else {
+      console.log(`ℹ Bảng app_user đã có ${userRes.rows[0].count} bản ghi.`);
+    }
+
     console.log('✅ Migration và nạp dữ liệu PostgreSQL 18 hoàn tất 100%! Có thể dùng pgAdmin 4 truy vấn ngay.');
   } catch (err) {
     console.error('❌ Lỗi trong quá trình migration:', err);

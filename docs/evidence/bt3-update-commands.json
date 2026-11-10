@@ -1,0 +1,128 @@
+[
+  {
+    "props": {
+      "text": "Local setup: npm ci; npm run db:migrate; npm run auth:bootstrap; npm start. Ticket/customer mutations and handover photos are currently held in memory and can be lost on restart."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=4CF7FF47]"
+  },
+  {
+    "props": {
+      "text": "Hình 7.1: Minh chứng lịch sử — không dùng thay cho kết quả kiểm thử ngày 10/11/2026"
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=37F351B0]"
+  },
+  {
+    "props": {
+      "text": "Hình 7.3: Minh chứng lịch sử — quy trình hiện tại bổ sung bước tạo quản trị tương tác"
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=6B4C398A]"
+  },
+  {
+    "props": {
+      "text": "• API probe: GET /health returns HTTP 200 and {\"status\":\"ok\"}."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=7BE29D12]"
+  },
+  {
+    "props": {
+      "text": "Bộ kiểm thử local hiện có 56 test: 55 PASS, 0 FAIL, 1 SKIP. Minh chứng mới tại docs/evidence/test-run.txt. Ma trận 12 ca bên dưới là nhóm nghiệm thu nghiệp vụ; số lượng không đồng nghĩa tổng số test tự động."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=0C278A34]"
+  },
+  {
+    "props": {
+      "text": "Runtime: Express Controllers → Services → Repository. Ticket/customer prototype state and photos are in memory; accounts and service centers use PostgreSQL. Session cookie: HS256, HttpOnly, SameSite=Strict, Secure in production. The complete current reference documents 23 method/path pairs in docs/api-reference.md with 25 captured HTTP responses in docs/evidence/api-examples.json."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=0819CF46]"
+  },
+  {
+    "props": {
+      "text": "• Kết quả local ngày 10/11/2026: 55 PASS, 0 FAIL, 1 SKIP trong 75,32 giây. Test migration được chạy riêng trong Docker; xem docs/evidence/docker-tests.txt. Không suy ra độ ổn định flaky từ một lần chạy."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=20BED98D]"
+  },
+  {
+    "props": {
+      "text": "The two commands below build the services and import the synthetic dataset. The first administrator is then created interactively using docker compose exec api npm run auth:bootstrap. The owner explicitly chose this additional step on 10 November 2026."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=662D097B]"
+  },
+  {
+    "props": {
+      "text": "• Initial administrator: docker compose exec api npm run auth:bootstrap. Choose your own username and password (12–128 characters). No fixed demo credentials. Bootstrap refuses to overwrite an existing system administrator."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=793F9AC9]"
+  },
+  {
+    "props": {
+      "text": "Đánh giá bảo mật giới hạn ở các phép kiểm có minh chứng; không tuyên bố an toàn 100%. Xem docs/checklist-bao-mat.md và docs/evidence/. Lịch sử 51 commit không có .env hoặc mẫu khóa phổ biến; vẫn cần rà soát mật khẩu tùy ý trước phát hành PUBLIC."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=53EDCB32]"
+  },
+  {
+    "props": {
+      "text": "• Automated tests: npm test. Local evidence: 55 pass, 0 fail, 1 skipped migration test. Docker verification and repeated migration: docs/evidence/docker-tests.txt."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=7A25050C]"
+  },
+  {
+    "props": {
+      "text": "Hình 7.1: Kết quả kiểm thử của phiên bản trước; kết quả mới xem docs/evidence/test-run.txt"
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=79D9E397]"
+  },
+  {
+    "props": {
+      "text": "• Database probe: GET /health/db returns HTTP 200, status ok, database.connected true and requestId; HTTP 503 on failure, without database name or connection error."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=3FB0BBE5]"
+  },
+  {
+    "props": {
+      "text": "Các ảnh bên dưới thuộc lần kiểm chứng trước, không thay thế bằng chứng của working tree ngày 10/11/2026. Kết quả mới: docs/evidence/test-run.txt, docker-status.txt, docker-counts.txt và docker-tests.txt. Chưa xác nhận clone lại từ tag v1.0 có đầy đủ thay đổi mới."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=49993F91]"
+  },
+  {
+    "props": {
+      "text": "Configuration is supplied through .env. PostgreSQL must be healthy before the one-shot migration service runs; API startup waits for successful migration completion. Original synthetic dataset retained: 67,037 customers and 7,800 tickets."
+    },
+    "command": "set",
+    "path": "/body/p[@paraId=32D4D213]"
+  },
+  {
+    "props": {
+      "text": "CHƯA LÀM"
+    },
+    "command": "set",
+    "path": "/body/tbl[4]/tr[2]/tc[3]"
+  },
+  {
+    "props": {
+      "text": "Quét 51 commit: không có lịch sử .env hoặc mẫu khóa phổ biến. Chưa đủ để xác nhận mọi mật khẩu tùy ý. evidence/secret-history-scan.json."
+    },
+    "command": "set",
+    "path": "/body/tbl[4]/tr[2]/tc[4]"
+  },
+  {
+    "props": {
+      "text": "npm ci dùng package-lock.json. npm audit: 0 lỗ hổng, evidence/npm-audit.json. Chưa quét OS của image hoặc ghim digest."
+    },
+    "command": "set",
+    "path": "/body/tbl[4]/tr[8]/tc[4]"
+  }
+]

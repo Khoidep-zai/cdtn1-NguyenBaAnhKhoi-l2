@@ -50,4 +50,10 @@ const config = {
   ],
 };
 
-module.exports = config;
+function validateStartup() {
+  if (!config.jwtSecret || [...config.jwtSecret].length < 32) {
+    throw new Error('JWT_SECRET must contain at least 32 characters.');
+  }
+}
+
+module.exports = Object.assign(config, { validateStartup });

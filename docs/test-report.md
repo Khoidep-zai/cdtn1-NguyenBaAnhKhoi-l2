@@ -5,8 +5,8 @@
 - **Sinh viên:** Nguyễn Bá Anh Khôi | **MSSV:** 2374802010247 | **Track:** Software Engineering (SE)
 - **Tiêu chuẩn cấu trúc:** 8 cột bắt buộc theo Đề bài BT3 (Mục 2.2) & Tài liệu tự học Buổi 13
 - **Lệnh thực thi:** `npm test` *(chạy tự động qua `node --test --test-concurrency=1 tests/*.test.js`)*
-- **Kết quả tổng thể test suite:** **44/44 TESTS PASS (100% THÀNH CÔNG, 0 FAIL, 0 FLAKY)**
-- **Thời gian chạy toàn bộ:** ~3.5 giây trên môi trường sạch
+- **Kết quả tổng thể test suite:** **Docker: 56 PASS, 0 FAIL, 0 SKIP; local: 55 PASS, 0 FAIL, 1 SKIP (56 tests)**
+- **Thời gian chạy toàn bộ:** Docker 78.86 giây; local 75.32 giây. Minh chứng evidence/docker-tests.txt và evidence/test-run.txt; chưa xác minh clone từ tag phát hành cuối
 
 ---
 
@@ -38,7 +38,7 @@
 | **TC-09** | Có 2 tài khoản: Nhân viên thường A (không có quyền phê duyệt ngoại lệ bảo hành) và Quản lý B. | 1. Đăng nhập bằng tài khoản A, lấy token.<br>2. Gọi `PATCH /api/tickets/TKT-8801/warranty-exception` để duyệt ngoại lệ. | Token của nhân viên A, payload duyệt ngoại lệ. | HTTP 403; thân phản hồi từ chối quyền truy cập (OWASP A01:2025 Broken Access Control). Trạng thái ngoại lệ không đổi. | Cao | HTTP 403; `error: "KHONG_CO_QUYEN"`. Ngoại lệ bảo hành không bị phê duyệt trái phép. Minh chứng: `docs/screenshots/TC-09.png`. | **PASS** |
 | **TC-10** | Tiếp nhận phiếu vào Thứ Tư trong tuần (2026-10-07 09:00 UTC), mức ưu tiên CAO (SLA 24h làm việc), không cắt qua Chủ Nhật. | 1. Gọi `calculateDueDate(receivedAt, 'CAO')`<br>2. Đối chiếu ngày giờ cam kết. | `receivedAt: '2026-10-07T09:00:00Z'` (Thứ Tư), `priority: 'CAO'`. | Hạn trả máy cộng đúng 24 giờ tuyến tính, trả hẹn vào Thứ Năm `2026-10-08T09:00:00Z` (QT-04). | Cao | Trả về chính xác `2026-10-08T09:00:00.000Z` (Thứ Năm lúc 09:00 UTC). Không cộng bù Chủ Nhật. Minh chứng: `docs/screenshots/TC-10.png`. | **PASS** |
 | **TC-11** | Gửi dữ liệu tạo phiếu với chuỗi Serial/IMEI chứa ký tự escape độc hại (SQL Injection payload). | 1. Gọi hàm `validateReceive` tại tầng Validator đầu vào.<br>2. Kiểm tra việc ném lỗi. | `serial_imei: "SN' OR 1=1 --"` kèm dữ liệu hợp lệ khác. | Ném lỗi `DU_LIEU_KHONG_HOP_LE`, bị từ chối ngay trước khi xuống tầng Repository/CSDL (OWASP A05:2025). | Cao | Bị chặn ngay tại tầng Validator với `DU_LIEU_KHONG_HOP_LE`. Regex `^[A-Za-z0-9-]{6,40}$` từ chối payload. Minh chứng: `docs/screenshots/TC-11.png`. | **PASS** |
-| **TC-12** | Hệ thống đã khởi tạo CSDL và nạp đầy đủ Master Data lần thứ nhất. Tiến hành chạy lại lần thứ hai. | 1. Thực thi script `node src/backend/db/migrate.js` lần thứ hai.<br>2. Kiểm tra số lượng bản ghi master data. | Lệnh chạy script migration và nạp master data lần 2. | Quá trình chạy kết thúc thành công với mã 0, không báo lỗi xung đột khóa chính, số lượng trung tâm (6), nhóm lỗi (6), sản phẩm (320) không bị nhân đôi. | Cao | Quá trình chạy PASS 100%. Cơ chế `ON CONFLICT DO NOTHING` hoạt động chuẩn xác, bảo toàn trọn vẹn tính toàn vẹn CSDL. Minh chứng: `docs/screenshots/TC-12.png`. | **PASS** |
+| **TC-12** | Hệ thống đã khởi tạo CSDL và nạp đầy đủ Master Data lần thứ nhất. Tiến hành chạy lại lần thứ hai. | 1. Thực thi script `node src/backend/db/migrate.js` lần thứ hai.<br>2. Kiểm tra số lượng bản ghi master data. | Lệnh chạy script migration và nạp master data lần 2. | Quá trình chạy kết thúc thành công với mã 0, không báo lỗi xung đột khóa chính, số lượng trung tâm (6), nhóm lỗi (6), sản phẩm (320) không bị nhân đôi. | Cao | Quá trình chạy PASS 100%. Cơ chế `ON CONFLICT DO NOTHING` hoạt động chuẩn xác, bảo toàn trọn vẹn tính toàn vẹn CSDL. Minh chứng mới: `docs/evidence/docker-tests.txt`, test migration can be repeated without changing row counts. | **PASS** |
 
 ---
 

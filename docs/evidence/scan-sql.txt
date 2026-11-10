@@ -1,0 +1,2 @@
+Command: rg -n -e (SELECT|INSERT|UPDATE|DELETE).*(\+ *[a-zA-Z_]|\$\{) src
+Matches: 0

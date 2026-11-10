@@ -1,0 +1,11 @@
+✔ startup rejects missing JWT_SECRET before listening (511.5347ms)
+✔ startup rejects short JWT_SECRET before listening (478.3255ms)
+✔ startup rejects short unicode JWT_SECRET before listening (507.9745ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2149.7785
