@@ -1,0 +1,30 @@
+[build]
+  publish = "src/frontend"
+  functions = "netlify/functions"
+
+[functions]
+  included_files = ["dataset/**"]
+
+# Rewrite /api/* to the serverless Express function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/api/:splat"
+  status = 200
+
+# Rewrite /health to the serverless Express function
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/api/health"
+  status = 200
+
+# Rewrite /health/* to the serverless Express function
+[[redirects]]
+  from = "/health/*"
+  to = "/.netlify/functions/api/health/:splat"
+  status = 200
+
+# SPA fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
