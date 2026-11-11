@@ -55,7 +55,16 @@ function readCsv(filePath, maxRows = Infinity) {
 
 class DataLoader {
   constructor() {
-    this.datasetDir = path.resolve(__dirname, '../../../dataset');
+    const candidates = [
+      path.resolve(__dirname, '../../../dataset'),
+      path.resolve(process.cwd(), 'dataset'),
+      path.resolve(__dirname, '../../dataset'),
+      path.resolve(__dirname, '../dataset'),
+      path.resolve(__dirname, 'dataset'),
+      path.join('/var/task', 'dataset'),
+      path.resolve(__dirname, '../../../../dataset')
+    ];
+    this.datasetDir = candidates.find(d => fs.existsSync(d) && fs.existsSync(path.join(d, 'tickets_history.csv'))) || candidates[0];
     this.serviceCenters = [];
     this.issueCategories = [];
     this.products = [];

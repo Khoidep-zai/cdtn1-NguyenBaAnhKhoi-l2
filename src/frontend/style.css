@@ -2299,3 +2299,29 @@ body[data-theme="light"] #screen-detail #detailDueDate { color: #B91C1C !importa
   }
 }
 
+/* ==========================================================================
+   TẮT / ẨN HOÀN TOÀN LOGO VÀ WIDGET "POWERED BY NETLIFY" / NETLIFY DRAWER
+   ========================================================================== */
+#netlify-drawer-container,
+[data-netlify-drawer],
+[data-netlify-feedback],
+.netlify-badge,
+iframe[src*="netlify"],
+div[class*="netlify-drawer"],
+button[class*="netlify-feedback"],
+div[class*="NetlifyDrawer"],
+.netlify-feedback-button,
+#netlify-feedback {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+}
+
