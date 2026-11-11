@@ -10,3 +10,4 @@ try {
 const app = require('../../src/backend/index');
 
 module.exports.handler = serverless(app);
+

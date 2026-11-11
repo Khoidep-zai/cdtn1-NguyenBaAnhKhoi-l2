@@ -7,10 +7,19 @@ const attempts = new Map();
 function limitLoginAttempts(req, res, next) {
   const now = Date.now();
   const key = req.ip || req.socket.remoteAddress || 'unknown';
+  req.clearLoginAttempts = () => attempts.delete(key);
+
+  const isLocalDev = process.env.NODE_ENV !== 'production' && (key === '::1' || key === '127.0.0.1' || key === '::ffff:127.0.0.1' || key === 'unknown');
+  const maxAttempts = isLocalDev ? 50 : 10;
+
   const current = attempts.get(key);
-  if (!current || now - current.startedAt >= 15 * 60 * 1000) attempts.set(key, { startedAt: now, count: 1 });
-  else if (current.count >= 10) return res.status(429).json({ error: 'LOGIN_RATE_LIMIT', message: 'Quá nhiều lần đăng nhập. Vui lòng thử lại sau 15 phút.' });
-  else current.count++;
+  if (!current || now - current.startedAt >= 15 * 60 * 1000) {
+    attempts.set(key, { startedAt: now, count: 1 });
+  } else if (current.count >= maxAttempts) {
+    return res.status(429).json({ error: 'LOGIN_RATE_LIMIT', message: 'Quá nhiều lần đăng nhập. Vui lòng thử lại sau 15 phút.' });
+  } else {
+    current.count++;
+  }
   next();
 }
 

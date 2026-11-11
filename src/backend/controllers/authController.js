@@ -28,6 +28,7 @@ async function login(req, res, next) {
       return res.status(401).json({ error: 'INVALID_CREDENTIALS', message: 'Tên đăng nhập hoặc mật khẩu không đúng.' });
     }
     setSessionCookie(res, signSession(user.user_id));
+    if (typeof req.clearLoginAttempts === 'function') req.clearLoginAttempts();
     return res.json({ data: publicUser(user) });
   } catch (error) { next(error); }
 }

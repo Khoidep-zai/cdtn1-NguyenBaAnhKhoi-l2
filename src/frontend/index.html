@@ -566,7 +566,18 @@
       <div class="user-form-grid">
         <label>Tên đăng nhập<input id="newUserUsername" required minlength="3" maxlength="80" autocomplete="off"></label>
         <label>Họ và tên<input id="newUserName" required minlength="2" maxlength="120"></label>
-        <label>Mật khẩu tạm<input id="newUserPassword" required maxlength="128" autocomplete="new-password" aria-describedby="newUserPasswordHint"><small id="newUserPasswordHint">Tối thiểu 6 ký tự ở môi trường dev; 12 ký tự ở production.</small></label>
+        <label>Mật khẩu tạm
+          <div class="input-wrapper" style="margin-top: 4px;">
+            <input type="password" id="newUserPassword" class="has-toggle" required maxlength="128" autocomplete="new-password" aria-describedby="newUserPasswordHint" style="padding-left: 14px;">
+            <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('newUserPassword', this)" title="Hiện mật khẩu" aria-label="Hiện mật khẩu">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+          <small id="newUserPasswordHint">Tối thiểu 6 ký tự ở môi trường dev; 12 ký tự ở production.</small>
+        </label>
         <label>Số điện thoại<input id="newUserPhone" type="tel" maxlength="20"></label>
         <label id="newUserRoleField">Vai trò<select id="newUserRole"><option value="NHAN_VIEN">Nhân viên tiếp nhận</option><option value="QUAN_LY_CHI_NHANH">Quản lý chi nhánh</option><option value="QUAN_LY_HE_THONG">Quản lý hệ thống</option></select></label>
         <label id="newUserCenterField">Chi nhánh<select id="newUserCenter"><option value="1">TTBH Quận 10</option><option value="2">TTBH Quận Tân Bình</option><option value="3">TTBH TP. Thủ Đức</option><option value="4">TTBH Ninh Kiều</option><option value="5">TTBH Cái Răng</option><option value="6">TTBH Cầu Giấy</option></select></label>
@@ -588,8 +599,6 @@
       <p>Phân hệ Quản lý & Tiếp nhận Bảo hành Mekong Mobile</p>
     </div>
 
-    <p class="demo-login-note">Đăng nhập được xác thực bởi máy chủ. Tài khoản quản lý hệ thống đầu tiên được tạo bằng lệnh bootstrap trong terminal.</p>
-
     <form id="loginForm" onsubmit="handleManualLogin(event)">
       <div class="form-group" style="margin-bottom: 14px;">
         <label for="loginUsernameInput" style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Tên đăng nhập</label>
@@ -603,7 +612,13 @@
         <label for="loginPasswordInput" style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Mật khẩu</label>
         <div class="input-wrapper">
           <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          <input type="password" id="loginPasswordInput" autocomplete="current-password" placeholder="Nhập mật khẩu" required>
+          <input type="password" id="loginPasswordInput" class="has-toggle" autocomplete="current-password" placeholder="Nhập mật khẩu" required>
+          <button type="button" class="btn-toggle-password" id="toggleLoginPasswordBtn" onclick="togglePasswordVisibility('loginPasswordInput', this)" title="Hiện mật khẩu" aria-label="Hiện mật khẩu">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
         </div>
       </div>
 

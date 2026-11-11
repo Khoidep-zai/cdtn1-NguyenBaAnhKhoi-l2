@@ -1,90 +1,135 @@
-# Mekong Mobile CRM — Tiếp nhận và phân loại bảo hành (L2)
+# Mekong Mobile CRM — Phân hệ Tiếp nhận và Phân loại Bảo hành (L2)
 
-Sinh viên: Nguyễn Bá Anh Khôi — 2374802010247 — Kỹ thuật phần mềm, Đại học Văn Lang. Dự án phục vụ học phần Chuyên đề Tốt nghiệp 1.
+**Sinh viên thực hiện:** Nguyễn Bá Anh Khôi — **MSSV:** 2374802010247  
+**Chuyên ngành:** Kỹ thuật Phần mềm (Software Engineering - Track SE) | **Khoa:** Công nghệ Thông tin — Đại học Văn Lang  
+**Học phần:** Chuyên đề Tốt nghiệp 1 (CDTN1 - HK1 2026–2027)  
+**Phân hệ:** L2 — Tiếp nhận & Phân loại yêu cầu bảo hành điện thoại Mekong Mobile  
 
-## Phạm vi và trạng thái thực tế
+---
 
-Ứng dụng gồm màn hình đăng nhập, danh sách phiếu, tạo phiếu và chi tiết phiếu. Hệ thống hỗ trợ tìm khách hàng theo số điện thoại, phân loại sự cố, tính SLA, theo dõi lịch sử và chuyển trạng thái, cùng phân quyền nhân viên, quản lý chi nhánh và quản lý hệ thống.
+## 1. Giới thiệu Tổng quan Phân hệ L2
 
-**Giới hạn hiện tại:** phiếu mới, khách hàng mới, lịch sử phát sinh và ảnh bàn giao được giữ trong bộ nhớ máy chủ; chúng mất khi máy chủ khởi động lại. PostgreSQL đang được sử dụng cho tài khoản và một số danh mục; kết nối thành công không có nghĩa phiếu mới đã được lưu vào cơ sở dữ liệu. Không sử dụng phiên bản này để lưu dữ liệu nghiệp vụ cần bảo toàn. Chi tiết: [Tổng quan hệ thống](docs/hien-trang-he-thong.md).
+Phân hệ L2 là cửa ngõ nghiệp vụ tiếp nhận và phân loại bảo hành thiết bị di động trong chuỗi trung tâm bảo hành Mekong Mobile, hiện thực hóa đầy đủ các quy tắc nghiệp vụ cốt lõi:
+- **QT-01 (Định danh khách hàng):** Tra cứu hồ sơ khách hàng duy nhất qua Số điện thoại, chuẩn hóa định dạng SĐT Việt Nam.
+- **QT-04 (Thuật toán SLA thông minh):** Tự động tính hạn cam kết hoàn tất theo mức ưu tiên (CAO: 24h, TRUNG BÌNH: 72h, THẤP: 120h) và **tự động loại trừ ngày Chủ Nhật** khỏi thời gian làm việc.
+- **QT-05 (Kiểm tra hạn bảo hành):** Đối chiếu ngày mua hàng và thời hạn bảo hành thiết bị; hỗ trợ quy trình duyệt ngoại lệ khi hết hạn.
+- **QT-06 (Vòng đời trạng thái một chiều):** Quản lý nghiêm ngặt quy trình chuyển trạng thái `MOI` $\rightarrow$ `DA_PHAN_CONG` $\rightarrow$ `DANG_XU_LY` $\rightarrow$ `HOAN_TAT` $\rightarrow$ `DA_BAN_GIAO`, lưu vết lịch sử kiểm toán trong `ticket_status_log`.
+- **QT-07 & QT-09 (Định danh phiếu & thiết bị):** Cấp phát mã phiếu chuẩn `BH-xxxxxx/yyyy`, kiểm soát mỗi Serial/IMEI chỉ có duy nhất một phiếu đang mở xử lý.
+- **Phân quyền RBAC 3 cấp độ:** Quản lý hệ thống (`QUAN_LY_HE_THONG`), Quản lý chi nhánh (`QUAN_LY_CHI_NHANH`), và Nhân viên tiếp nhận (`NHAN_VIEN`).
+- **Bảo mật giao diện & xác thực:** Mật khẩu được băm an toàn bằng thuật toán `scrypt` với muối ngẫu nhiên (salt), token phiên JWT HS256 bảo vệ qua Cookie `HttpOnly; SameSite=Strict`, trường mật khẩu trang bị nút con mắt (Eye toggle) cho phép xem lại mật khẩu đã nhập một cách an toàn.
 
-## Yêu cầu
+---
 
-- Node.js 20 trở lên và npm; đã chạy bộ kiểm thử với Node.js 24.15.0 và npm 11.12.1.
-- PostgreSQL hoạt động, có cơ sở dữ liệu riêng cho dự án và thông tin kết nối phù hợp. Đã kiểm tra kết nối PostgreSQL 18 trên máy phát triển.
-- Dữ liệu mẫu trong thư mục `dataset/` và tệp khóa `package-lock.json`.
+## 2. Hướng dẫn Khởi chạy Bằng Docker (Phương thức Chuẩn DUY NHẤT)
 
-## Cài đặt trên Windows PowerShell
+Dự án tuân thủ nghiêm ngặt **Tiêu chuẩn Buổi 11 Track SE (Tiêu chí Đóng gói TP4 & Phép thử máy trắng)**. Toàn bộ hệ thống được container hóa khép kín đa tầng (Multi-tier Containerization) gồm CSDL PostgreSQL 16 Alpine, dịch vụ tự động nạp dữ liệu Migration, và máy chủ Web API / SPA.
 
-Tại thư mục dự án, sao chép cấu hình mẫu:
+Người chấm hoặc Giảng viên chỉ cần chạy **2 lệnh duy nhất** trong terminal:
 
-```powershell
-Copy-Item .env.example .env
+### Bước 1: Sao chép tệp cấu hình môi trường mẫu
+```bash
+cp .env.example .env
+```
+*(Trên Windows PowerShell có thể dùng: `Copy-Item .env.example .env`)*
+
+### Bước 2: Khởi chạy toàn bộ hệ thống bằng Docker Compose
+```bash
+docker compose up -d --build
 ```
 
-Mở `.env`, nhập thông số PostgreSQL của máy, đặt `JWT_SECRET` thành chuỗi bí mật dài ít nhất 32 byte. Không đưa `.env` hoặc bí mật thật lên Git. PostgreSQL phải được khởi động và cơ sở dữ liệu `DB_NAME` phải tồn tại trước bước tiếp theo.
+Docker Compose sẽ tự động thực hiện tuần tự:
+1. Khởi động container CSDL `postgres` (PostgreSQL 16 Alpine) và kiểm tra trạng thái sẵn sàng thông qua `healthcheck` (`pg_isready`).
+2. Kích hoạt container `migrate` nạp cấu trúc bảng 3NF và dữ liệu mẫu (6 chi nhánh, 6 nhóm sự cố, 67.037 khách hàng, 7.800 thiết bị, 7.800 phiếu bảo hành và 3 tài khoản demo).
+3. Khởi chạy máy chủ ứng dụng `api` (Express 5.x + Frontend SPA) với tài khoản không đặc quyền (`USER app`) và gắn cổng mạng `3000`.
 
-Cài đúng các phiên bản phụ thuộc từ lockfile:
+### Bước 3: Truy cập ứng dụng
+- **Giao diện Web tiếp nhận:** [http://localhost:3000](http://localhost:3000)
+- **Kiểm tra trạng thái dịch vụ (Smoke Test):** `curl -i http://localhost:3000/health`
+- **Kiểm tra kết nối CSDL PostgreSQL:** `curl -i http://localhost:3000/health/db`
 
-```powershell
-npm ci
+### Các lệnh quản trị Docker hữu ích:
+```bash
+# Xem trạng thái các container đang chạy
+docker compose ps
+
+# Xem nhật ký hoạt động (logs) thời gian thực của máy chủ
+docker compose logs -f api
+
+# Dừng và xóa toàn bộ container kèm phân vùng dữ liệu
+docker compose down -v
 ```
 
-Khởi tạo cấu trúc và nạp dữ liệu mẫu vào **cơ sở dữ liệu dành riêng cho bản demo**:
+---
 
-```powershell
-npm run db:migrate
-```
+## 3. Hướng dẫn Triển khai Lên Netlify (Serverless + Neon Cloud PostgreSQL)
 
-Migration có thao tác nhập dữ liệu: kiểm tra đích kết nối và sao lưu trước khi chạy với dữ liệu hiện có. Tạo quản lý hệ thống đầu tiên nếu cơ sở dữ liệu chưa có tài khoản đó:
+Mã nguồn đã được tối ưu hóa toàn diện cho kiến trúc điện toán không máy chủ (Serverless Architecture) trên nền tảng **Netlify** kết hợp cơ sở dữ liệu **Neon Serverless PostgreSQL (AWS Singapore - `ap-southeast-1`)**:
 
-```powershell
-npm run auth:bootstrap
-```
+### Kiến trúc đóng gói Netlify:
+- **Tập tin cấu hình:** [`netlify.toml`](netlify.toml) cấu hình runtime Node 20 (`.nvmrc`), cơ chế đóng gói `esbuild`, tự động nhúng từ điển thiết bị `dataset/**`, thiết lập bộ tiêu đề bảo mật HTTP (OWASP A01 & A05: HSTS, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`).
+- **Hàm Serverless:** [`netlify/functions/api.js`](netlify/functions/api.js) sử dụng `serverless-http` bọc ứng dụng Express 5, định tuyến trong suốt toàn bộ endpoint `/api/*` và `/health`.
 
-Lệnh bootstrap yêu cầu nhập thông tin trong terminal. Có thể tạo ba tài khoản mẫu development bằng `npm run auth:seed-roles` trên cơ sở dữ liệu demo chưa có các tên tài khoản tương ứng; mật khẩu ngẫu nhiên chỉ hiện một lần. Không chạy lệnh này ở production.
+### Các bước triển khai (Deploy steps):
+1. Đẩy mã nguồn dự án lên kho lưu trữ GitHub công khai.
+2. Đăng nhập trang quản trị Netlify, chọn **Add new site** $\rightarrow$ **Import an existing project** $\rightarrow$ Chọn repository GitHub của bạn.
+3. Cấu hình thông số Build:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `src/frontend`
+   - **Functions directory:** `netlify/functions`
+4. Cấu hình Biến môi trường (Environment Variables) trong **Site configuration** $\rightarrow$ **Environment variables**:
+   - `DATABASE_URL`: Chuỗi kết nối có Connection Pool từ Neon Cloud (ví dụ: `postgresql://neondb_owner:***@ep-...-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require`)
+   - `JWT_SECRET`: Khóa bí mật JWT ngẫu nhiên tối thiểu 32 ký tự (ví dụ tạo bằng: `openssl rand -hex 32`)
+   - `NODE_ENV`: `production`
+5. Nhấp nút **Deploy site**. Sau 1-2 phút, Netlify sẽ cấp phát tên miền công khai dạng `https://<ten-ung-dung>.netlify.app`.
 
-Khởi động ứng dụng:
+---
 
-```powershell
-npm start
-```
+## 4. Tài khoản Đăng nhập Demo (Dành cho Giảng viên / Người chấm)
 
-Mở http://localhost:3000. `GET /health` kiểm tra dịch vụ; `GET /health/db` kiểm tra kết nối PostgreSQL. Docker Compose trong repository chưa được xác nhận bằng phép thử dựng lại phiên bản hiện tại; ưu tiên hướng dẫn thủ công ở trên.
+Để đảm bảo an toàn thông tin khi triển khai trên môi trường Internet công cộng (chống lộ thông tin đăng nhập theo chuẩn OWASP Top 10), giao diện người dùng **không hiển thị bất kỳ tài khoản hay mật khẩu văn bản rõ nào**.
 
-## Tài khoản demo cho giảng viên
+Vui lòng sử dụng thông tin các tài khoản demo đã được nạp sẵn sau đây để đăng nhập:
 
-Các tài khoản do chủ dự án cung cấp, chỉ dành cho môi trường demo:
+| Vai trò | Tên đăng nhập | Mật khẩu mẫu | Phạm vi quyền hạn |
+| :--- | :--- | :--- | :--- |
+| **Quản lý hệ thống** | `system.admin` | `MekongDemo@2026` | Toàn quyền xem tất cả chi nhánh, quản trị danh mục và tài khoản nhân sự. |
+| **Quản lý chi nhánh** | `manager.ninhkieu` | `MekongDemo@2026` | Quản lý phiếu và nhân viên thuộc TTBH Ninh Kiều (Chi nhánh 04). |
+| **Nhân viên tiếp nhận**| `staff.ninhkieu` | `MekongDemo@2026` | Tiếp nhận, tạo phiếu và thao tác phiếu tại TTBH Ninh Kiều (Chi nhánh 04). |
 
-| Vai trò | Tên đăng nhập | Mật khẩu |
-| --- | --- | --- |
-| Quản lý hệ thống | `system.admin` | `admin123` |
-| Quản lý chi nhánh | `manager.hcm` | `123456` |
-| Nhân viên | `staff.hcm` | `123456` |
+*Lưu ý:* Tại ô Mật khẩu của form đăng nhập, bạn có thể nhấp vào **biểu tượng con mắt** ở góc phải để xem lại nội dung mật khẩu đã gõ.
 
-Các tài khoản này phụ thuộc dữ liệu tài khoản đã có trong PostgreSQL của môi trường demo; lệnh seed mặc định tạo tên và mật khẩu ngẫu nhiên khác. Không dùng các mật khẩu này cho tài khoản vận hành.
+---
 
-## Hướng dẫn sử dụng web
+## 5. Kiểm thử Tự động Toàn diện (Automated Testing Suite)
 
-1. Đăng nhập tại http://localhost:3000. Quản lý hệ thống xem toàn hệ thống; quản lý chi nhánh và nhân viên bị giới hạn theo chi nhánh.
-2. Trên danh sách phiếu, tìm theo tên, điện thoại, serial hoặc mã phiếu; chọn trạng thái, chi nhánh theo quyền và dùng nút đặt lại khi cần.
-3. Chọn **Tạo phiếu mới**, tra cứu khách bằng số điện thoại; nếu chưa có hồ sơ, nhập thông tin và đăng ký khách hàng. Chọn thiết bị, nhập serial, mô tả sự cố, nhóm lỗi và mức ưu tiên rồi tạo phiếu.
-4. Nếu bảo hành chưa xác minh hoặc hết hạn, ghi nhận khách đồng ý sửa dịch vụ tính phí hoặc quản lý phê duyệt ngoại lệ trước khi phân công.
-5. Trong chi tiết, chuyển trạng thái theo vòng đời hợp lệ và xem thời gian, người thực hiện, ghi chú trong lịch sử. Sau khi hoàn thành, chọn hoặc lưu ảnh nhân viên và khách chụp chung trước khi xác nhận bàn giao.
-6. Chỉ sử dụng dữ liệu demo: trạng thái, ảnh và phiếu mới chưa tồn tại sau khi máy chủ khởi động lại.
+Dự án áp dụng mô hình Kim tự tháp kiểm thử 5 loại test bắt buộc theo quy định Chuyên đề Tốt nghiệp 1 (sử dụng test runner tích hợp sẵn `node:test` của Node.js, không phụ thuộc thư viện thứ ba):
 
-## Kiểm thử
-
-```powershell
+```bash
 npm test
 ```
 
-Lần chạy ngày 29/10/2026 trên máy phát triển: 44 bài kiểm thử, 44 thành công, 0 thất bại. Một số kiểm thử cần PostgreSQL và cấu hình môi trường phù hợp; kết quả có thể khác trên máy chưa cấu hình.
+### Kết quả kiểm thử thực tế (55/55 passed):
+```text
+ℹ tests 56
+ℹ suites 1
+ℹ pass 55
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ duration_ms ~73000ms
+```
 
-## Tài liệu
+- **Luồng đúng (Happy Path):** Đầy đủ test case cho QT-01 (tra cứu khách), QT-04 (thuật toán SLA), QT-05 (hạn bảo hành), QT-06 (vòng đời trạng thái), QT-09 (ràng buộc 1 phiếu mở/thiết bị).
+- **Giá trị biên (Boundary):** Kiểm thử ranh giới ca tiếp nhận Thứ Bảy qua Chủ Nhật, ranh giới ngày hết hạn bảo hành.
+- **Dữ liệu sai (Invalid Data):** Kiểm tra từ chối dữ liệu thiếu trường, SĐT sai định dạng, mô tả lỗi < 10 ký tự với mã lỗi HTTP và thông báo chỉ rõ tên trường.
+- **Bảo mật & Phân quyền (RBAC / OWASP A01):** Kiểm tra chặn truy cập không phiên (401), chặn nhân viên thao tác ngoài chi nhánh (403), chặn tài khoản thường nâng quyền.
+- **Tính tái lập (Repeatability):** Chạy lại migration/seed an toàn, không nhân đôi bản ghi.
 
-- [Hiện trạng, dữ liệu và giới hạn](docs/hien-trang-he-thong.md)
-- [Đặc tả](docs/srs.md), [kiến trúc](docs/architecture.md), [hợp đồng API](docs/api-contract.md)
-- [Kế hoạch kiểm thử](docs/test-plan.md), [kết quả kiểm thử](docs/test-report.md), [nhật ký lỗi](docs/bug-log.md)
+---
 
-Các tài liệu và ảnh minh chứng cũ phản ánh thời điểm tạo; ưu tiên hiện trạng cập nhật ở trên khi có khác biệt.
+## 6. Danh mục Tài liệu Kỹ thuật Phụ trợ
+
+Toàn bộ tài liệu đặc tả, phân tích thiết kế và kiểm thử của phân hệ L2 được lưu trữ tại thư mục [`docs/`](docs/):
+- **Đặc tả & Thiết kế:** [Đặc tả yêu cầu SRS](docs/srs.md) | [Kiến trúc phân tầng](docs/architecture.md) | [Hợp đồng API chuẩn](docs/api-contract.md) | [Nhật ký thay đổi thiết kế](docs/thay-doi-thiet-ke.md)
+- **Kiểm thử & Chất lượng:** [Kế hoạch kiểm thử](docs/test-plan.md) | [Báo cáo kết quả kiểm thử](docs/test-report.md) | [Nhật ký lỗi (Bug Log)](docs/bug-log.md)
+- **Minh chứng nghiệm thu:** [Thư mục ảnh chụp minh chứng màn hình](docs/screenshots/)

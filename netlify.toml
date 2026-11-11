@@ -1,9 +1,15 @@
 [build]
+  command = "npm run build"
   publish = "src/frontend"
   functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
 [functions]
   included_files = ["dataset/**"]
+  node_bundler = "esbuild"
 
 # Rewrite /api/* to the serverless Express function
 [[redirects]]
@@ -23,8 +29,18 @@
   to = "/.netlify/functions/api/health/:splat"
   status = 200
 
-# SPA fallback
+# SPA fallback for frontend client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Security Headers (OWASP & Buoi 15 CDTN1)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
