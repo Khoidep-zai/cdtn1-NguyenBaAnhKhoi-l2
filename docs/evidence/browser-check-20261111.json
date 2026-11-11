@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-11T09:36:23.063Z",
+  "results": [
+    {
+      "check": "Sai mật khẩu bị từ chối",
+      "pass": true
+    },
+    {
+      "check": "Đăng nhập tài khoản tạm hợp lệ",
+      "pass": true
+    },
+    {
+      "check": "Danh sách dữ liệu mẫu hiển thị",
+      "pass": true
+    },
+    {
+      "check": "Xem chi tiết phiếu",
+      "pass": true
+    },
+    {
+      "check": "Mở màn hình tạo phiếu",
+      "pass": true
+    },
+    {
+      "check": "Mở quản lý tài khoản",
+      "pass": true
+    },
+    {
+      "check": "Đăng xuất và trở về màn hình đăng nhập",
+      "pass": true
+    }
+  ]
+}

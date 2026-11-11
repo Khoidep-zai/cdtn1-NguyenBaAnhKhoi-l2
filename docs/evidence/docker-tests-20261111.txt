@@ -1,0 +1,378 @@
+
+> cdtn1-nguyenbaanhkhoi-l2@1.0.0 test
+> node --test --test-concurrency=1 tests/*.test.js
+
+TAP version 13
+# ◇ injected env (0) from .env
+# [DataLoader] Đã nạp thành công: 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67037 khách hàng, 7800 phiếu bảo hành.
+# {"thoi_diem":"2026-11-11T09:35:13.293Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"7459fb5b-04fe-4ae5-8a50-d56b7c076907","phuong_thuc":"GET","duong_dan":"/api/tickets","ma_trang_thai":401,"thoi_gian_ms":17}
+# {"thoi_diem":"2026-11-11T09:35:13.445Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"faad76a1-836f-4358-a761-fdabd6da6c05","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":401,"thoi_gian_ms":84}
+# {"thoi_diem":"2026-11-11T09:35:13.525Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"b9898d82-39bf-483f-b60e-19021c91948e","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":200,"thoi_gian_ms":71}
+# {"thoi_diem":"2026-11-11T09:35:13.540Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"f8952743-6f94-49a8-bfd0-1405229c8e07","phuong_thuc":"GET","duong_dan":"/api/auth/me","ma_trang_thai":200,"thoi_gian_ms":8}
+# Subtest: Auth API: session, profile, and branch-scoped account permissions
+    # Subtest: Rejects unauthenticated access and verifies password login
+    ok 1 - Rejects unauthenticated access and verifies password login
+      ---
+      duration_ms: 313.4287
+      ...
+# {"thoi_diem":"2026-11-11T09:35:13.633Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"8a35c2a5-13a6-4885-8ae9-b61e9b159128","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":200,"thoi_gian_ms":71}
+# {"thoi_diem":"2026-11-11T09:35:13.645Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"a1d61842-4853-4027-9d09-311bb7cb71ba","phuong_thuc":"GET","duong_dan":"/api/auth/users","ma_trang_thai":200,"thoi_gian_ms":8}
+# {"thoi_diem":"2026-11-11T09:35:13.744Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"97f302f6-ca54-4804-b919-7d28e326a45c","phuong_thuc":"POST","duong_dan":"/api/auth/users","ma_trang_thai":201,"thoi_gian_ms":88}
+# {"thoi_diem":"2026-11-11T09:35:13.826Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"e41e3813-acb0-42e4-8f2c-0236833a0819","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":200,"thoi_gian_ms":75}
+# {"thoi_diem":"2026-11-11T09:35:13.842Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"1700d3e7-4104-4984-8e17-cc8cd165a1f5","phuong_thuc":"POST","duong_dan":"/api/tickets","ma_trang_thai":201,"thoi_gian_ms":10}
+# {"thoi_diem":"2026-11-11T09:35:13.859Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"0842dd08-15dc-4d6b-8825-2159b687719f","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/warranty-exception","ma_trang_thai":403,"thoi_gian_ms":5}
+# {"thoi_diem":"2026-11-11T09:35:13.941Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"322871dc-d782-4235-b6b6-d325789760ee","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":200,"thoi_gian_ms":67}
+# {"thoi_diem":"2026-11-11T09:35:13.950Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"0bf26667-1af2-4b6a-aac1-6b296c73ea78","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/warranty-exception","ma_trang_thai":403,"thoi_gian_ms":5}
+# {"thoi_diem":"2026-11-11T09:35:13.962Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"2ac2d78f-53c6-4adf-a70d-71368f5422bd","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/warranty-exception","ma_trang_thai":200,"thoi_gian_ms":4}
+# {"thoi_diem":"2026-11-11T09:35:13.974Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"c945cb04-f5cb-4771-a7ad-cc958077dda6","phuong_thuc":"PUT","duong_dan":"/api/tickets/TKT-8801/handover-photo","ma_trang_thai":409,"thoi_gian_ms":5}
+# {"thoi_diem":"2026-11-11T09:35:13.990Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"54b57a96-52a2-4205-970b-be310f092746","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/status","ma_trang_thai":200,"thoi_gian_ms":5}
+# {"thoi_diem":"2026-11-11T09:35:14.004Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"420d92d8-92f5-4203-a028-c2ce356a1111","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/status","ma_trang_thai":200,"thoi_gian_ms":8}
+# {"thoi_diem":"2026-11-11T09:35:14.013Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"c25df7ae-b502-44c5-b5e1-b81157d05273","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/status","ma_trang_thai":200,"thoi_gian_ms":4}
+# {"thoi_diem":"2026-11-11T09:35:14.038Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"8b7fff42-48c1-4f23-8c23-4263f4403e21","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/status","ma_trang_thai":409,"thoi_gian_ms":9}
+# {"thoi_diem":"2026-11-11T09:35:14.046Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"28489e2c-df9a-4e74-b54d-6c0a50254dab","phuong_thuc":"PUT","duong_dan":"/api/tickets/TKT-8801/handover-photo","ma_trang_thai":403,"thoi_gian_ms":3}
+# {"thoi_diem":"2026-11-11T09:35:14.058Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"4ae58924-4c04-46c3-8b2b-9bf75dc1c0f7","phuong_thuc":"PUT","duong_dan":"/api/tickets/TKT-8801/handover-photo","ma_trang_thai":415,"thoi_gian_ms":4}
+# {"thoi_diem":"2026-11-11T09:35:14.067Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"e1d2b304-3fe7-4d34-b5e2-b8c98dbc6a60","phuong_thuc":"PUT","duong_dan":"/api/tickets/TKT-8801/handover-photo","ma_trang_thai":200,"thoi_gian_ms":5}
+# {"thoi_diem":"2026-11-11T09:35:14.075Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"2303acd9-37d0-475a-b691-f2979f2adb9f","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/status","ma_trang_thai":200,"thoi_gian_ms":2}
+# {"thoi_diem":"2026-11-11T09:35:14.081Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"43bbbc62-f2e1-4233-885e-7a5cfa8c939d","phuong_thuc":"PUT","duong_dan":"/api/tickets/TKT-8801/handover-photo","ma_trang_thai":200,"thoi_gian_ms":3}
+# {"thoi_diem":"2026-11-11T09:35:14.171Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"66c208bb-fae1-4a64-9f06-46f91b66a0fc","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":200,"thoi_gian_ms":86}
+# {"thoi_diem":"2026-11-11T09:35:14.178Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"f989b126-f710-4d46-a7ec-445482b9c59c","phuong_thuc":"PUT","duong_dan":"/api/tickets/TKT-8801/handover-photo","ma_trang_thai":200,"thoi_gian_ms":4}
+# {"thoi_diem":"2026-11-11T09:35:14.195Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"40d4685c-0c08-44b2-ae57-dc2e1882ea2f","phuong_thuc":"GET","duong_dan":"/api/tickets/TKT-8801/handover-photo","ma_trang_thai":200,"thoi_gian_ms":15}
+# {"thoi_diem":"2026-11-11T09:35:14.204Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"617aa382-4451-4465-89ed-3d098382895d","phuong_thuc":"GET","duong_dan":"/api/tickets/TKT-8801/handover-photo","ma_trang_thai":403,"thoi_gian_ms":3}
+# {"thoi_diem":"2026-11-11T09:35:14.211Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"3ccac562-ae10-4daa-896d-897a885399b6","phuong_thuc":"GET","duong_dan":"/api/tickets/TKT-8801/handover-photo","ma_trang_thai":401,"thoi_gian_ms":4}
+# {"thoi_diem":"2026-11-11T09:35:14.227Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"53acc8a7-28af-457b-873c-6d24a1e969ee","phuong_thuc":"POST","duong_dan":"/api/tickets","ma_trang_thai":403,"thoi_gian_ms":9}
+# {"thoi_diem":"2026-11-11T09:35:14.255Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"ac5a9c72-fd5e-4e96-a29d-689cc6ff0e40","phuong_thuc":"PATCH","duong_dan":"/api/auth/users/17","ma_trang_thai":403,"thoi_gian_ms":15}
+    # Subtest: Branch manager sees only branch staff and cannot escalate their role or scope
+    ok 2 - Branch manager sees only branch staff and cannot escalate their role or scope
+      ---
+      duration_ms: 705.677
+      ...
+# {"thoi_diem":"2026-11-11T09:35:14.380Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"0bc7139b-f827-4d9e-b32d-3f7fe91bf628","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":200,"thoi_gian_ms":111}
+# {"thoi_diem":"2026-11-11T09:35:14.394Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"9501aa52-95ee-4ea0-93e1-175a08ad1126","phuong_thuc":"PATCH","duong_dan":"/api/auth/profile","ma_trang_thai":200,"thoi_gian_ms":10}
+# {"thoi_diem":"2026-11-11T09:35:14.472Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"afb58a27-7d4b-4c3c-870e-e2201e68c204","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":200,"thoi_gian_ms":70}
+# {"thoi_diem":"2026-11-11T09:35:14.479Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"30f4165e-10b2-4bb8-adf1-466627383d49","phuong_thuc":"GET","duong_dan":"/api/auth/users","ma_trang_thai":200,"thoi_gian_ms":5}
+# {"thoi_diem":"2026-11-11T09:35:14.545Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"8dcb10e1-b37c-47de-9b8f-07cb6ba10ef6","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":200,"thoi_gian_ms":62}
+# {"thoi_diem":"2026-11-11T09:35:14.551Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"2a7933f8-f9de-4b09-97f5-d22bac96c704","phuong_thuc":"GET","duong_dan":"/api/auth/users","ma_trang_thai":403,"thoi_gian_ms":4}
+    # Subtest: Profile update is self-service and system manager can administer accounts
+    ok 3 - Profile update is self-service and system manager can administer accounts
+      ---
+      duration_ms: 295.75
+      ...
+    1..3
+ok 1 - Auth API: session, profile, and branch-scoped account permissions
+  ---
+  duration_ms: 1483.2916
+  ...
+# ◇ injected env (0) from .env
+# Subtest: hashPassword stores a salted scrypt digest and verifies only the matching password
+ok 2 - hashPassword stores a salted scrypt digest and verifies only the matching password
+  ---
+  duration_ms: 305.0736
+  ...
+# Subtest: password requirements reject weak or oversized secrets
+ok 3 - password requirements reject weak or oversized secrets
+  ---
+  duration_ms: 1.9358
+  ...
+# Subtest: non-production policy accepts the six-character branch account password
+ok 4 - non-production policy accepts the six-character branch account password
+  ---
+  duration_ms: 128.6125
+  ...
+# Subtest: signed session is valid until expiry and rejects tampering
+ok 5 - signed session is valid until expiry and rejects tampering
+  ---
+  duration_ms: 3.3859
+  ...
+# Subtest: public user omits private authentication data and exposes role scope
+ok 6 - public user omits private authentication data and exposes role scope
+  ---
+  duration_ms: 0.649
+  ...
+# Subtest: CORS allows configured origins and credentials
+ok 7 - CORS allows configured origins and credentials
+  ---
+  duration_ms: 3.1529
+  ...
+# Subtest: CORS denies untrusted origins and handles allowed preflight
+ok 8 - CORS denies untrusted origins and handles allowed preflight
+  ---
+  duration_ms: 0.5771
+  ...
+# Subtest: data state treats server errors and loading messages as text
+ok 9 - data state treats server errors and loading messages as text
+  ---
+  duration_ms: 8.4173
+  ...
+# [DataLoader] Đã nạp thành công: 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67037 khách hàng, 7800 phiếu bảo hành.
+# ◇ injected env (0) from .env
+# Subtest: unexpected ticket failures do not reveal internal error details
+ok 10 - unexpected ticket failures do not reveal internal error details
+  ---
+  duration_ms: 2.3434
+  ...
+# Subtest: unexpected catalog failures do not reveal internal error details
+ok 11 - unexpected catalog failures do not reveal internal error details
+  ---
+  duration_ms: 0.4908
+  ...
+# ◇ injected env (0) from .env
+# [DataLoader] Đã nạp thành công: 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67037 khách hàng, 7800 phiếu bảo hành.
+# {"thoi_diem":"2026-11-11T09:35:48.350Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"b4e5405a-219c-4bba-a919-855417c7548b","phuong_thuc":"GET","duong_dan":"/health/db","ma_trang_thai":503,"thoi_gian_ms":25}
+# Subtest: failed health probe exposes no database error details
+ok 12 - failed health probe exposes no database error details
+  ---
+  duration_ms: 132.7254
+  ...
+# Subtest: redacts sensitive fields and does not disclose error messages or stacks
+ok 13 - redacts sensitive fields and does not disclose error messages or stacks
+  ---
+  duration_ms: 5.0478
+  ...
+# Subtest: request logs omit query strings
+ok 14 - request logs omit query strings
+  ---
+  duration_ms: 2.8771
+  ...
+# Subtest: migration can be repeated without changing row counts
+ok 15 - migration can be repeated without changing row counts
+  ---
+  duration_ms: 849.4026
+  ...
+# ◇ injected env (0) from .env
+# [DataLoader] Đã nạp thành công: 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67037 khách hàng, 7800 phiếu bảo hành.
+# {"thoi_diem":"2026-11-11T09:35:53.013Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"823c6a07-d143-4ef2-8015-afd2b182ce00","phuong_thuc":"GET","duong_dan":"/health","ma_trang_thai":200,"thoi_gian_ms":18}
+# Subtest: GET /health endpoint smoke test
+ok 16 - GET /health endpoint smoke test
+  ---
+  duration_ms: 146.6328
+  ...
+# {"thoi_diem":"2026-11-11T09:35:53.160Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"f192aa63-b111-42b3-af2d-7d00fccc2f3f","phuong_thuc":"GET","duong_dan":"/health/db","ma_trang_thai":200,"thoi_gian_ms":71}
+# Subtest: GET /health/db endpoint checks PostgreSQL connection
+ok 17 - GET /health/db endpoint checks PostgreSQL connection
+  ---
+  duration_ms: 101.552
+  ...
+# Subtest: startup rejects missing JWT_SECRET before listening
+ok 18 - startup rejects missing JWT_SECRET before listening
+  ---
+  duration_ms: 118.5856
+  ...
+# Subtest: startup rejects short JWT_SECRET before listening
+ok 19 - startup rejects short JWT_SECRET before listening
+  ---
+  duration_ms: 109.1813
+  ...
+# Subtest: startup rejects short unicode JWT_SECRET before listening
+ok 20 - startup rejects short unicode JWT_SECRET before listening
+  ---
+  duration_ms: 123.2318
+  ...
+# Subtest: Hợp đồng dữ liệu ranh giới Ticket (Buổi 9 SE - D1 & D3)
+    # Subtest: CT-01 [Hình dạng]: Đối tượng chuẩn hóa phải có đầy đủ trường và due_date chuẩn ISO 8601
+    ok 1 - CT-01 [Hình dạng]: Đối tượng chuẩn hóa phải có đầy đủ trường và due_date chuẩn ISO 8601
+      ---
+      duration_ms: 4.2265
+      ...
+    # Subtest: CT-02 [Ý nghĩa & Bảo mật]: Số điện thoại phải được che theo quy tắc QT-15, KTV = null khi chưa phân công
+    ok 2 - CT-02 [Ý nghĩa & Bảo mật]: Số điện thoại phải được che theo quy tắc QT-15, KTV = null khi chưa phân công
+      ---
+      duration_ms: 0.3978
+      ...
+    # Subtest: CT-03 [Xác thực hợp đồng]: validateTicketContract phát hiện thiếu trường bắt buộc
+    ok 3 - CT-03 [Xác thực hợp đồng]: validateTicketContract phát hiện thiếu trường bắt buộc
+      ---
+      duration_ms: 0.7391
+      ...
+    # Subtest: CT-04 [Hành vi khi sai]: Phiếu rỗng thì ném lỗi KHONG_TIM_THAY_PHIEU theo đúng hợp đồng
+    ok 4 - CT-04 [Hành vi khi sai]: Phiếu rỗng thì ném lỗi KHONG_TIM_THAY_PHIEU theo đúng hợp đồng
+      ---
+      duration_ms: 1.0844
+      ...
+    # Subtest: CT-05 [Hồi quy - BUG-004]: toTicketView trả về tenKhach="(không rõ)" khi khách hàng thiếu tên
+    ok 5 - CT-05 [Hồi quy - BUG-004]: toTicketView trả về tenKhach="(không rõ)" khi khách hàng thiếu tên
+      ---
+      duration_ms: 0.3219
+      ...
+    1..5
+ok 21 - Hợp đồng dữ liệu ranh giới Ticket (Buổi 9 SE - D1 & D3)
+  ---
+  duration_ms: 10.202
+  type: 'suite'
+  ...
+# ◇ injected env (0) from .env
+# Subtest: PostgreSQL: ràng buộc Serial và một phiếu đang mở trên mỗi thiết bị
+ok 22 - PostgreSQL: ràng buộc Serial và một phiếu đang mở trên mỗi thiết bị
+  ---
+  duration_ms: 110.2412
+  ...
+# ◇ injected env (0) from .env
+# [DataLoader] Đã nạp thành công: 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67037 khách hàng, 7800 phiếu bảo hành.
+# Subtest: Unit Test: TicketService - Lớp nghiệp vụ cốt lõi (Buổi 7)
+    # Subtest: TC-01 [Luồng đúng]: Tiếp nhận thiết bị còn hạn bảo hành thì tạo được phiếu hợp lệ
+    ok 1 - TC-01 [Luồng đúng]: Tiếp nhận thiết bị còn hạn bảo hành thì tạo được phiếu hợp lệ
+      ---
+      duration_ms: 8.5725
+      ...
+    # Subtest: TC-02 [Giá trị biên]: Ngày cuối cùng còn bảo hành và ngày kế tiếp thì hết hạn (QT-05)
+    ok 2 - TC-02 [Giá trị biên]: Ngày cuối cùng còn bảo hành và ngày kế tiếp thì hết hạn (QT-05)
+      ---
+      duration_ms: 0.9799
+      ...
+    # Subtest: TC-02b [Giá trị biên SLA]: Biên chuyển tiếp ca làm việc qua Chủ Nhật (QT-04)
+    ok 3 - TC-02b [Giá trị biên SLA]: Biên chuyển tiếp ca làm việc qua Chủ Nhật (QT-04)
+      ---
+      duration_ms: 1.0283
+      ...
+    # Subtest: QT-04: Dùng giờ Việt Nam và giữ chính xác phút qua Chủ Nhật
+    ok 4 - QT-04: Dùng giờ Việt Nam và giữ chính xác phút qua Chủ Nhật
+      ---
+      duration_ms: 0.9403
+      ...
+    # Subtest: TC-03 [Dữ liệu sai]: Serial đã có phiếu đang mở thì bị từ chối với PHIEU_DANG_MO (QT-09)
+    ok 5 - TC-03 [Dữ liệu sai]: Serial đã có phiếu đang mở thì bị từ chối với PHIEU_DANG_MO (QT-09)
+      ---
+      duration_ms: 20.1554
+      ...
+    # Subtest: TC-03b [Quy tắc vi phạm]: Vòng đời trạng thái một chiều không cho phép quay ngược (QT-06)
+    ok 6 - TC-03b [Quy tắc vi phạm]: Vòng đời trạng thái một chiều không cho phép quay ngược (QT-06)
+      ---
+      duration_ms: 1.9631
+      ...
+    # Subtest: QT-05: Chặn phân công cho đến khi ngoại lệ được phê duyệt
+    ok 7 - QT-05: Chặn phân công cho đến khi ngoại lệ được phê duyệt
+      ---
+      duration_ms: 5.6139
+      ...
+    # Subtest: QT-05: Khách đồng ý sửa dịch vụ cho phép phân công và có nhật ký
+    ok 8 - QT-05: Khách đồng ý sửa dịch vụ cho phép phân công và có nhật ký
+      ---
+      duration_ms: 3.8457
+      ...
+    # Subtest: QT-06: Hoàn thành rồi bàn giao; không cho nhảy bước hoặc quay ngược
+    ok 9 - QT-06: Hoàn thành rồi bàn giao; không cho nhảy bước hoặc quay ngược
+      ---
+      duration_ms: 15.8953
+      ...
+    # Subtest: Danh sách tìm tên không dấu và thống kê theo chi nhánh, không theo trang
+    ok 10 - Danh sách tìm tên không dấu và thống kê theo chi nhánh, không theo trang
+      ---
+      duration_ms: 67.279
+      ...
+    # Subtest: TC-04 [Hồi quy - BUG-004]: Tạo phiếu thành công khi khách hàng thiếu họ tên (dùng mặc định "(không rõ)")
+    ok 11 - TC-04 [Hồi quy - BUG-004]: Tạo phiếu thành công khi khách hàng thiếu họ tên (dùng mặc định "(không rõ)")
+      ---
+      duration_ms: 2.6735
+      ...
+    1..11
+ok 23 - Unit Test: TicketService - Lớp nghiệp vụ cốt lõi (Buổi 7)
+  ---
+  duration_ms: 136.1191
+  ...
+# ◇ injected env (0) from .env
+# [DataLoader] Đã nạp thành công: 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm, 67037 khách hàng, 7800 phiếu bảo hành.
+# {"thoi_diem":"2026-11-11T09:35:57.551Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"85a974b1-a5df-439e-a066-59d857ea0ab1","phuong_thuc":"POST","duong_dan":"/api/auth/login","ma_trang_thai":200,"thoi_gian_ms":70}
+# {"thoi_diem":"2026-11-11T09:35:57.589Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"73b7d7d7-4936-4edf-85cd-89fbf75d1441","phuong_thuc":"POST","duong_dan":"/api/tickets","ma_trang_thai":400,"thoi_gian_ms":8}
+# Subtest: Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L2)
+    # Subtest: US6: Kiểm tra validation dữ liệu bắt buộc (NOT NULL / Phone format)
+    ok 1 - US6: Kiểm tra validation dữ liệu bắt buộc (NOT NULL / Phone format)
+      ---
+      duration_ms: 30.5038
+      ...
+# {"thoi_diem":"2026-11-11T09:35:57.615Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"5ae8f83b-dcbe-4b17-9e2a-3519e636f061","phuong_thuc":"POST","duong_dan":"/api/tickets","ma_trang_thai":404,"thoi_gian_ms":4}
+# {"thoi_diem":"2026-11-11T09:35:57.627Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"f4cffae6-7a22-40d3-a5c7-d8bba3b5fbe8","phuong_thuc":"POST","duong_dan":"/api/tickets","ma_trang_thai":400,"thoi_gian_ms":6}
+    # Subtest: Không tiếp nhận khách chưa đăng ký hoặc mô tả dưới 10 ký tự
+    ok 2 - Không tiếp nhận khách chưa đăng ký hoặc mô tả dưới 10 ký tự
+      ---
+      duration_ms: 28.6841
+      ...
+# {"thoi_diem":"2026-11-11T09:35:57.644Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"9749237e-49c5-4e14-9853-1699f0c6234f","phuong_thuc":"POST","duong_dan":"/api/tickets","ma_trang_thai":201,"thoi_gian_ms":10}
+    # Subtest: US1: Tạo phiếu bảo hành mới thành công
+    ok 3 - US1: Tạo phiếu bảo hành mới thành công
+      ---
+      duration_ms: 19.6061
+      ...
+# {"thoi_diem":"2026-11-11T09:35:57.667Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"8d2e24ae-6535-411f-8f30-af6cbc81afab","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/status","ma_trang_thai":409,"thoi_gian_ms":6}
+# {"thoi_diem":"2026-11-11T09:35:57.679Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"044fc233-7e49-4c31-a50e-4e5b5ae24267","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/warranty-exception","ma_trang_thai":200,"thoi_gian_ms":2}
+# {"thoi_diem":"2026-11-11T09:35:57.687Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"10dbecb9-9974-4329-9e47-3153f43ea747","phuong_thuc":"PATCH","duong_dan":"/api/tickets/TKT-8801/status","ma_trang_thai":200,"thoi_gian_ms":3}
+# {"thoi_diem":"2026-11-11T09:35:57.703Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"8f2dc1a4-f54a-4461-9846-69d7e12e47a5","phuong_thuc":"GET","duong_dan":"/api/tickets/TKT-8801","ma_trang_thai":200,"thoi_gian_ms":7}
+    # Subtest: US4 & US7: Cập nhật trạng thái phiếu và tra cứu lịch sử
+    ok 4 - US4 & US7: Cập nhật trạng thái phiếu và tra cứu lịch sử
+      ---
+      duration_ms: 60.0851
+      ...
+# {"thoi_diem":"2026-11-11T09:35:57.728Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"e4a6c635-2c30-4f39-a7c5-4d5f7150cc49","phuong_thuc":"GET","duong_dan":"/api/tickets","ma_trang_thai":200,"thoi_gian_ms":13}
+    # Subtest: US5: Lọc danh sách phiếu theo trung tâm/cửa hàng và trạng thái
+    ok 5 - US5: Lọc danh sách phiếu theo trung tâm/cửa hàng và trạng thái
+      ---
+      duration_ms: 22.2152
+      ...
+# {"thoi_diem":"2026-11-11T09:35:57.744Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"287e37b7-a200-4742-8ed9-ea6b425a4a4b","phuong_thuc":"GET","duong_dan":"/api/tickets","ma_trang_thai":200,"thoi_gian_ms":8}
+# {"thoi_diem":"2026-11-11T09:35:57.793Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"c11d3305-8a0d-4e01-ad1a-d50222175702","phuong_thuc":"GET","duong_dan":"/api/tickets","ma_trang_thai":200,"thoi_gian_ms":43}
+    # Subtest: Danh sách giữ tổng phân trang và thống kê độc lập với từ khóa
+    ok 6 - Danh sách giữ tổng phân trang và thống kê độc lập với từ khóa
+      ---
+      duration_ms: 65.7669
+      ...
+# {"thoi_diem":"2026-11-11T09:35:57.808Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"dfd8517e-39fe-4423-889d-f003b3e8bbf3","phuong_thuc":"GET","duong_dan":"/api/customers","ma_trang_thai":200,"thoi_gian_ms":6}
+    # Subtest: FR1 / US1: Tra cứu hồ sơ khách hàng theo SĐT (QT-01)
+    ok 7 - FR1 / US1: Tra cứu hồ sơ khách hàng theo SĐT (QT-01)
+      ---
+      duration_ms: 13.5645
+      ...
+    # Subtest: QT-04: Thuật toán tính hạn SLA tự động bỏ qua ngày Chủ Nhật
+    ok 8 - QT-04: Thuật toán tính hạn SLA tự động bỏ qua ngày Chủ Nhật
+      ---
+      duration_ms: 1.0826
+      ...
+# {"thoi_diem":"2026-11-11T09:35:57.829Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"6c3f3c64-ee3f-4233-bb0d-145229db26a2","phuong_thuc":"GET","duong_dan":"/api/categories","ma_trang_thai":200,"thoi_gian_ms":6}
+# {"thoi_diem":"2026-11-11T09:35:57.846Z","muc":"info","thong_diep":"Yêu cầu hoàn tất","requestId":"198883da-359c-4421-b58f-b985640251d8","phuong_thuc":"GET","duong_dan":"/api/centers","ma_trang_thai":200,"thoi_gian_ms":9}
+    # Subtest: Master Data: Trả về đầy đủ trung tâm từ PostgreSQL và 6 nhóm sự cố từ Dataset
+    ok 9 - Master Data: Trả về đầy đủ trung tâm từ PostgreSQL và 6 nhóm sự cố từ Dataset
+      ---
+      duration_ms: 35.3488
+      ...
+    1..9
+ok 24 - Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L2)
+  ---
+  duration_ms: 610.9095
+  ...
+# ◇ injected env (0) from .env
+# Subtest: TV-01: Dữ liệu hợp lệ thì trả về đối tượng đã chuẩn hóa
+ok 25 - TV-01: Dữ liệu hợp lệ thì trả về đối tượng đã chuẩn hóa
+  ---
+  duration_ms: 3.9752
+  ...
+# Subtest: TV-02: Thiếu trường bắt buộc thì ném lỗi NÊU RÕ tên trường
+ok 26 - TV-02: Thiếu trường bắt buộc thì ném lỗi NÊU RÕ tên trường
+  ---
+  duration_ms: 0.9723
+  ...
+# Subtest: TV-03: Serial có ký tự lạ (SQL injection payload) thì bị từ chối
+ok 27 - TV-03: Serial có ký tự lạ (SQL injection payload) thì bị từ chối
+  ---
+  duration_ms: 2.5106
+  ...
+# Subtest: TV-04: Ngày bán sai định dạng thì bị từ chối
+ok 28 - TV-04: Ngày bán sai định dạng thì bị từ chối
+  ---
+  duration_ms: 0.7716
+  ...
+# Subtest: TV-05: Trạng thái ngoài tập cho phép thì bị từ chối
+ok 29 - TV-05: Trạng thái ngoài tập cho phép thì bị từ chối
+  ---
+  duration_ms: 0.7852
+  ...
+1..29
+# tests 56
+# suites 1
+# pass 56
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 77345.1936
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

@@ -1,0 +1,197 @@
+[/body/p[@paraId=182180A0]]   
+[/body/p[@paraId=58503FB2]] 
+[/body/p[@paraId=19A86F63]] 
+[/body/p[@paraId=6DC5F158]]   
+[/body/p[@paraId=5DC8A8A4]] 
+[/body/p[@paraId=75FA762A]] 
+[/body/p[@paraId=24941A40]] 
+[/body/p[@paraId=60BFDFCA]] 
+[/body/p[@paraId=3BF940B8]] 
+[/body/p[@paraId=6434A1BE]] 
+[/body/p[@paraId=522DDA20]] 
+[/body/p[@paraId=4415F13D]] 
+[/body/p[@paraId=18D4956B]] 
+[/body/p[@paraId=2E74DEB2]] 
+[/body/p[@paraId=54902EAD]] 
+[/body/p[@paraId=3A5B7EC9]] 
+[/body/p[@paraId=631BB9FD]] 
+[/body/p[@paraId=39BAF800]] 
+[/body/p[@paraId=54C8F0B7]] 
+[/body/p[@paraId=3BC778B8]] 
+[/body/p[@paraId=6E6EF552]] 
+[/body/p[@paraId=31C639C2]] 
+[/body/p[@paraId=1CA2A1C5]] 
+[/body/p[@paraId=2624B153]] 
+[/body/p[@paraId=68B37DD0]] 
+[/body/sdt[1]/p[@paraId=48EE8B66]] [sdt] MỤC LỤC
+[/body/sdt[1]/p[@paraId=0266A50B]] [sdt] DANH MỤC HÌNH ẢNH	II
+[/body/sdt[1]/p[@paraId=36D65A6F]] [sdt] CHƯƠNG 1: MỤC 1 – KẾ HOẠCH KIỂM THỬ RÚT GỌN (TEST PLAN)	III
+[/body/sdt[1]/p[@paraId=58581A15]] [sdt] 1.1 Phạm vi kiểm thử (Scope) và Phần chủ ý không kiểm	III
+[/body/sdt[1]/p[@paraId=46ED8C98]] [sdt] CHƯƠNG 2: MỤC 2 – BÁO CÁO KẾT QUẢ KIỂM THỬ (TEST REPORT)	IV
+[/body/sdt[1]/p[@paraId=22376B74]] [sdt] 2.3 Đánh giá chất lượng kiểm thử và  Kiểm tra tác dụng phụ (Side-effects)	V
+[/body/sdt[1]/p[@paraId=4321F883]] [sdt] CHƯƠNG 3: MỤC 3 – NHẬT KÝ GỠ LỖI và  XỬ LÝ SỰ CỐ (BUG LOG)	VI
+[/body/sdt[1]/p[@paraId=09479C59]] [sdt] 3.1 Tiêu chí phân loại lỗi khách quan theo độ nghiêm trọng và  Chi tiết 4 lỗi đã khắc phục	VI
+[/body/sdt[1]/p[@paraId=1B45C53F]] [sdt] CHƯƠNG 4: MỤC 4 – HƯỚNG DẪN TRIỂN KHAI và  VẬN HÀNH (DEPLOYMENT GUIDE)	VII
+[/body/sdt[1]/p[@paraId=5EACBD3A]] [sdt] 4.1 Environment Requirements và  Setup Steps (<= 2 Commands)	VII
+[/body/sdt[1]/p[@paraId=23E454E1]] [sdt] CHƯƠNG 5: MỤC 5 – BẢNG KIỂM TRA BẢO MẬT và  TỰ ĐÁNH GIÁ (SECURITY CHECKLIST)	VIII
+[/body/sdt[1]/p[@paraId=09990A6B]] [sdt] 5.1 Bảng tự đánh giá 7 mục bảo mật bắt buộc (Bài tập 3)	VIII
+[/body/sdt[1]/p[@paraId=4F3153B5]] [sdt] CHƯƠNG 6: MỤC 6 – TÀI LIỆU KỸ THUẬT CHUYÊN NGÀNH (API SPECIFICATION)	IX
+[/body/sdt[1]/p[@paraId=3265205F]] [sdt] 6.1 Architecture, Authentication Contract và  Detailed API Endpoints	IX
+[/body/sdt[1]/p[@paraId=6C979947]] [sdt] CHƯƠNG 7: MỤC 7 – MINH CHỨNG THỰC TẾ (EVIDENCE ARTIFACTS)	XI
+[/body/sdt[1]/p[@paraId=0EE01E8D]] [sdt] 7.1 Minh chứng thực tế: Kết quả kiểm thử tự động, Health Probes và  Phép thử máy trắng	XI
+[/body/sdt[1]/p[@paraId=4700AE1C]] [sdt] CHƯƠNG 8: PHỤ LỤC – BẢNG KHAI BÁO SỬ DỤNG CÔNG CỤ AI (BẮT BUỘC)	XII
+[/body/sdt[1]/p[@paraId=00244C6E]] [sdt] Cam kết liêm chính học thuật của sinh viên	XII
+[/body/sdt[1]/p[@paraId=0B94CCCA]] [sdt] 
+[/body/p[@paraId=66811708]] 
+[/body/p[@paraId=015D7839]] DANH MỤC HÌNH ẢNH
+[/body/p[@paraId=79D9E397]] Hình 7.1: Kết quả kiểm thử của phiên bản trước; kết quả mới xem docs/evidence/test-run.txt
+[/body/p[@paraId=36FD2399]] Hình 7.2: Kết quả kiểm tra sức khỏe hệ thống (Health probes /health và /health/db đạt 200 OK)
+[/body/p[@paraId=284B80D2]] Hình 7.3: Kết quả thực hiện phép thử máy trắng (Clean-box reproduction test) bằng Docker Compose
+[/body/p[@paraId=7399C2C4]] 
+[/body/p[@paraId=6CD1C82B]] MỤC 1 – KẾ HOẠCH KIỂM THỬ RÚT GỌN 
+[/body/p[@paraId=46F91A46]] 1.1 Phạm vi kiểm thử (Scope) và Phần chủ ý không kiểm
+[/body/p[@paraId=5D71C49F]] Kế hoạch kiểm thử phân hệ L2 (Tiếp nhận và phân loại bảo hành - Mekong Mobile CRM) tập trung bảo đảm độ tin cậy của quy tắc nghiệp vụ cốt lõi, toàn vẹn dữ liệu và an toàn thông tin theo chuẩn SE Track.
+[/body/p[@paraId=7090F5C1]] • Phần kiểm thử kỹ (In-Scope): Tập trung kiểm thử chức năng nghiệp vụ then chốt: Tra cứu lịch sử bảo hành theo số điện thoại (QT-01); Tính hạn cam kết SLA tự động trừ ngày Chủ Nhật (QT-04); Xác thực điều kiện bảo hành miễn phí và xử lý giá trị biên 23:59:59 cuối ngày hết hạn (QT-05); Cưỡng chế chuyển trạng thái vòng đời một chiều không đảo ngược (QT-06); Ngăn chặn trùng lặp thiết bị đang mở phiếu bảo hành (QT-09); Toàn vẹn tham chiếu CSDL và phân quyền RBAC/OWASP Top 10:2025.
+[/body/p[@paraId=0430DFD5]] • Phần chủ ý không kiểm (Out-of-Scope): Chủ ý không kiểm thử trong phạm vi phân hệ L2: Cổng thanh toán trực tuyến bên thứ ba (VNPay, MoMo) thuộc phạm vi phân hệ Kế toán/Thu ngân L4; Quy trình sửa chữa vật lý và bóc tách linh kiện của Kỹ thuật viên thuộc phân hệ L3; Quét tải chịu lỗi phân tán trên 10.000 req/s (thuộc phạm vi chuyển giao L6).
+[/body/p[@paraId=6207A573]] 1.2 Loại test và số lượng mỗi tầng (Testing Pyramid)
+[/body/p[@paraId=5A631A06]] Tuân thủ mô hình Kim tự tháp kiểm thử chuẩn, phân bổ số lượng hợp lý, tránh bẫy hình nón ngược:
+[/body/p[@paraId=26EA2B94]] • Tầng 1 - Unit Test (17 test cases): Tập trung kiểm thử logic nghiệp vụ thuần túy, cô lập CSDL và mạng bằng Repository giả lập (Mock/Stub), tiêm phụ thuộc (Dependency Injection) và đồng hồ thời gian cố định. Bao gồm 17 test assertions trong ticket.service.test.js và ticket.validator.test.js (đạt tỷ lệ 60%).
+[/body/p[@paraId=0096869D]] • Tầng 2 - Integration Test (16 test cases): Kiểm thử tương tác trực tiếp với PostgreSQL 16 thật, xác thực transaction, rollback khi lỗi và ràng buộc toàn vẹn DDL schema.sql. Bao gồm 16 test assertions trong ticket.integrity.pg.test.js và auth.integration.test.js (đạt tỷ lệ 25%).
+[/body/p[@paraId=29B6F134]] • Tầng 3 - System / API Test (11 test cases): Kiểm thử luồng HTTP hoàn chỉnh qua Express router, cookie JWT, middleware kiểm soát truy cập và mã phản hồi HTTP (200, 201, 400, 401, 403, 404, 409). Bao gồm 11 test assertions trong ticket.test.js và ticket.contract.test.js (đạt tỷ lệ 15%).
+[/body/p[@paraId=6A502C42]] 1.3 Tiêu chí thành công đo được và  Môi trường dữ liệu thử
+[/body/p[@paraId=20BED98D]] • Kết quả local ngày 10/11/2026: 55 PASS, 0 FAIL, 1 SKIP trong 75,32 giây. Test migration được chạy riêng trong Docker; xem docs/evidence/docker-tests.txt. Không suy ra độ ổn định flaky từ một lần chạy.
+[/body/p[@paraId=54ACB1DD]] • Môi trường và  Dữ liệu thử: Node.js 20 LTS, Express 5, PostgreSQL 16 Alpine, Docker Compose v2. Dữ liệu thử chuẩn gồm 6 trung tâm, 6 nhóm lỗi, 320 sản phẩm, 67.037 khách hàng, 7.800 phiếu từ dataset/. Cơ chế resetDb() tự dọn dẹp trước mỗi ca test. Lệnh chạy: npm test.
+[/body/p[@paraId=00305B9B]] 
+[/body/p[@paraId=5A37077F]] MỤC 2 – BÁO CÁO KẾT QUẢ KIỂM THỬ 
+[/body/p[@paraId=0C278A34]] Bộ kiểm thử local hiện có 56 test: 55 PASS, 0 FAIL, 1 SKIP. Minh chứng mới tại docs/evidence/test-run.txt. Ma trận 12 ca bên dưới là nhóm nghiệm thu nghiệp vụ; số lượng không đồng nghĩa tổng số test tự động.
+[/body/tbl[1]] [Table: 14 rows]
+[/body/p[@paraId=40E2DE05]] 
+[/body/p[@paraId=5A6C4533]] 2.3 Đánh giá chất lượng kiểm thử và  Kiểm tra tác dụng phụ (Side-effects)
+[/body/p[@paraId=06A79823]] Mọi ca kiểm thử từ chối nghiệp vụ (Negative tests: TC-05, TC-06, TC-08, TC-09, TC-11) đều kiểm tra tác dụng phụ: không làm phát sinh bản ghi hỏng, không nhân đôi dữ liệu và không làm suy suyển trạng thái phiếu trong CSDL. Toàn bộ test case hoàn toàn xác định (deterministic), sẵn sàng chạy lại ngẫu nhiên tại chỗ khi giảng viên kiểm tra.
+[/body/p[@paraId=66842BB0]] 
+[/body/p[@paraId=778CE8E2]] MỤC 3 – NHẬT KÝ GỠ LỖI VÀ XỬ LÝ SỰ CỐ 
+[/body/p[@paraId=73CF2028]] 3.1 Tiêu chí phân loại lỗi khách quan theo độ nghiêm trọng và  Chi tiết 5 lỗi đã khắc phục
+[/body/p[@paraId=6C119AAF]] Áp dụng cây quyết định khách quan: (1) Mất khả năng phục vụ / sai lệch dữ liệu / hổng bảo mật -> CRITICAL (phải sửa 100%); (2) Chức năng chính sai nhưng có giải pháp thay thế tạm -> MAJOR (phải sửa); (3) Trải nghiệm giao diện -> MINOR. Năm lỗi dưới đây được phát hiện trong quá trình kiểm thử và đã xử lý dứt điểm:
+[/body/p[@paraId=7A682B06]] BUG-001 — Vi phạm kiểm soát chuyển trạng thái vòng đời một chiều (QT-06)
+[/body/p[@paraId=09478456]] • 1. Mã và  Mức độ: BUG-001 · CRITICAL — Dữ liệu trạng thái phiếu bị sai lệch, phá vỡ tính toàn vẹn vòng đời một chiều.
+[/body/p[@paraId=17AC9429]] • 2. Phát hiện bởi: Test case TC-08 trong tests/ticket.service.test.js (kiểm thử vi phạm quy tắc QT-06).
+[/body/p[@paraId=52BCB638]] • 3. Triệu chứng: API cho phép cập nhật lùi trạng thái của phiếu (phiếu đang DANG_XU_LY bị lùi về MOI).
+[/body/p[@paraId=2CA76D91]] • 4. Cách tái lập: Gửi PATCH /api/tickets/TKT-8801/status với {"status": "MOI"} khi phiếu đã DANG_XU_LY — lỗi 5/5 lần (HTTP 200).
+[/body/p[@paraId=2E232ABE]] • 5. Nguyên nhân: TicketService ban đầu cập nhật trực tiếp trường status mà không thông qua ma trận kiểm tra VALID_TRANSITIONS.
+[/body/p[@paraId=162B976A]] • 6. Cách sửa: Khai báo VALID_TRANSITIONS trong ticketService.js; trạng thái đích không hợp lệ thì ném AppError('TRANG_THAI_KHONG_HOP_LE', 409).
+[/body/p[@paraId=215C6F90]] • 7. Link commit và  Xác nhận: Commit 18dc1dc (https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/18dc1dc) · Test TC-08 trả về HTTP 409 -> PASS 100%.
+[/body/p[@paraId=7230A7AC]] BUG-002 — Lệch hạn bảo hành tại điểm biên cuối ngày (QT-05)
+[/body/p[@paraId=4F9D72CF]] • 1. Mã và  Mức độ: BUG-002 · MAJOR — Tính toán sai quyền lợi bảo hành chính hãng của khách hàng tại ngày hết hạn cuối cùng.
+[/body/p[@paraId=664A5CD1]] • 2. Phát hiện bởi: Test case TC-02 trong tests/ticket.service.test.js (kiểm thử giá trị biên của điều kiện bảo hành QT-05).
+[/body/p[@paraId=4DD7B429]] • 3. Triệu chứng: Máy mua 01/03/2026 hạn 12T bị từ chối bảo hành miễn phí khi khách mang máy đến quầy vào buổi chiều ngày 01/03/2027.
+[/body/p[@paraId=67277ADC]] • 4. Cách tái lập: Gọi isUnderWarranty('2026-03-01', 12, new Date('2027-03-01T15:00:00Z')) — trả về false dù ngày 01/03/2027 vẫn còn hạn.
+[/body/p[@paraId=70A12E53]] • 5. Nguyên nhân: Đối tượng Date khi cộng tháng bảo hành mang mốc giờ mặc định là 00:00:00; sau 0h sáng ngày hết hạn đều bị xem là quá hạn.
+[/body/p[@paraId=727B0F46]] • 6. Cách sửa: Trong ticketService.js, thiết lập mốc hết hạn đến tích tắc cuối ngày: expiry.setUTCHours(23, 59, 59, 999) trước khi so sánh.
+[/body/p[@paraId=7605EAA2]] • 7. Link commit và  Xác nhận: Commit 5282b6e (https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/5282b6e) · Test TC-02 với mốc 23:59:59.999 trả về true -> PASS 100%.
+[/body/p[@paraId=5C0752F1]] BUG-003 — Thuật toán tính hạn SLA bỏ sót ngày nghỉ Chủ Nhật (QT-04)
+[/body/p[@paraId=2005DEC4]] • 1. Mã và  Mức độ: BUG-003 · MAJOR — Cam kết thời hạn xử lý SLA không thực tế do tính cả ngày trung tâm đóng cửa nghỉ lễ.
+[/body/p[@paraId=1C3FB84F]] • 2. Phát hiện bởi: Test case TC-03 trong tests/ticket.service.test.js (kiểm thử biên ca làm việc qua ngày cuối tuần).
+[/body/p[@paraId=538E5D87]] • 3. Triệu chứng: Khách gửi máy sáng Thứ Bảy (10:00) với mức ưu tiên CAO (SLA 24h), hạn hẹn trả bị ấn định vào sáng Chủ Nhật 10:00.
+[/body/p[@paraId=17A6F20A]] • 4. Cách tái lập: Gọi calculateDueDate(new Date('2026-10-03T10:00:00Z'), 'CAO') — kết quả ban đầu trả về 2026-10-04T10:00:00Z (Chủ Nhật).
+[/body/p[@paraId=7AA035FB]] • 5. Nguyên nhân: Hàm tính hạn cũ chỉ đơn thuần cộng 24h vào timestamp hiện tại mà không kiểm tra thứ trong tuần (getDay() === 0).
+[/body/p[@paraId=6F43E1E8]] • 6. Cách sửa: Triển khai thuật toán bước nhảy từng giờ trong calculateDueDate: nếu mốc giờ rơi vào Chủ Nhật thì tự động cộng dồn thêm 24h.
+[/body/p[@paraId=1A3E67B6]] • 7. Link commit và  Xác nhận: Commit 422ee1d (https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/422ee1d) · Test TC-03 trả về Thứ Hai 05/10 11:00 UTC -> PASS 100%.
+[/body/p[@paraId=671D7048]] BUG-004 — Tạo phiếu thất bại với khách hàng thiếu họ tên từ dữ liệu lịch sử
+[/body/p[@paraId=6F6958B7]] • 1. Mã và  Mức độ: BUG-004 · MAJOR — Luồng tiếp nhận bị gián đoạn đối với tập khách hàng nhập từ dataset cũ thiếu trường thông tin.
+[/body/p[@paraId=377D4729]] • 2. Phát hiện bởi: Test case TC-07 trong tests/ticket.contract.test.js (kiểm thử dữ liệu khách hàng từ dataset lịch sử).
+[/body/p[@paraId=5C1FD246]] • 3. Triệu chứng: Gửi POST /api/tickets với mã khách hàng có full_name = null khiến API ném lỗi HTTP 500, không tạo được phiếu.
+[/body/p[@paraId=4BD2B43A]] • 4. Cách tái lập: Gửi request tạo phiếu với customerId: 1024 (bản ghi khách hàng trong dataset có full_name bị null) — lỗi sập 500 xuất hiện 5/5 lần.
+[/body/p[@paraId=6D58E504]] • 5. Nguyên nhân: Hàm toTicketView và TicketService.createTicket gọi khach.full_name.trim() khi full_name = null, gây TypeError sập ứng dụng.
+[/body/p[@paraId=0656C364]] • 6. Cách sửa: Cập nhật toTicketView và TicketService.createTicket áp dụng toán tử null-coalescing: (khach.full_name ?? '').trim() || '(không rõ)'; bảo đảm customer_name luôn hợp lệ.
+[/body/p[@paraId=49928D66]] • 7. Link commit và  Xác nhận: Commit 2dedc9e (https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/2dedc9e) · Test CT-05 và TC-04 tạo phiếu thành công với tên (không rõ), trả HTTP 201 -> PASS 100%.
+[/body/p[@paraId=3FE3518D]] BUG-005 — Lỗ hổng cho phép nhập ký tự lạ SQL Injection Payload trong số Serial
+[/body/p[@paraId=0EBC5D20]] • 1. Mã và  Mức độ: BUG-005 · MINOR — Lỗ hổng tiềm ẩn tại tầng kiểm tra dữ liệu đầu vào (Input Validation / OWASP A05:2025).
+[/body/p[@paraId=6B4D525D]] • 2. Phát hiện bởi: Test case TV-03 trong tests/ticket.validator.test.js (kiểm thử kiểm tra định dạng và sanitize đầu vào).
+[/body/p[@paraId=105DAD67]] • 3. Triệu chứng: Chuỗi serial chứa các ký tự escape và injection payload dạng SN' OR 1=1 -- vượt qua được tầng validate nếu chỉ kiểm tra độ dài chuỗi đơn thuần.
+[/body/p[@paraId=74D20661]] • 4. Cách tái lập: Gửi payload có serial_imei: "SN' OR 1=1 --" vào hàm validateReceive — hàm không ném lỗi mà trả về đối tượng hợp lệ.
+[/body/p[@paraId=384BBFC2]] • 5. Nguyên nhân: Biểu thức chính quy (Regex) kiểm tra chuỗi serial ban đầu quá lỏng lẻo, chưa giới hạn chặt chẽ tập ký tự cho phép.
+[/body/p[@paraId=4D084D84]] • 6. Cách sửa: Cập nhật biểu thức chính quy trong src/backend/validators/ticketValidator.js thành ^[A-Za-z0-9-]{6,40}$, từ chối ngay lập tức mọi chuỗi chứa ký tự đặc biệt hoặc khoảng trắng lạ.
+[/body/p[@paraId=5292AB33]] • 7. Link commit và  Xác nhận: Commit 67a106c (https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/67a106c) · Test TV-03 ném đúng DU_LIEU_KHONG_HOP_LE -> PASS 100%.
+[/body/p[@paraId=16475321]] 
+[/body/p[@paraId=494CE0FE]] MỤC 4 – HƯỚNG DẪN TRIỂN KHAI và  VẬN HÀNH 
+[/body/p[@paraId=25605F78]] Note: Written in English per Assignment 3 regulations (Section 2.5) to guarantee reproducible deployment for external assessors.
+[/body/p[@paraId=7D3B4759]] 4.1 Environment Requirements và  Setup Steps (<= 2 Commands)
+[/body/p[@paraId=662D097B]] The two commands below build the services and import the synthetic dataset. The first administrator is then created interactively using docker compose exec api npm run auth:bootstrap. The owner explicitly chose this additional step on 10 November 2026.
+[/body/p[@paraId=68D1A01A]] # Step 1: Copy environment template to active configurationcp .env.example .env# Step 2: Build and start multi-container services in detached modedocker compose up -d --build
+[/body/p[@paraId=4CF7FF47]] Local setup: npm ci; npm run db:migrate; npm run auth:bootstrap; npm start. Ticket/customer mutations and handover photos are currently held in memory and can be lost on restart.
+[/body/tbl[2]] [Table: 5 rows]
+[/body/p[@paraId=3C447CDD]] 
+[/body/p[@paraId=2A7703AD]] 4.2 Environment Variables, Automated Seeding và  Health Probes
+[/body/p[@paraId=32D4D213]] Configuration is supplied through .env. PostgreSQL must be healthy before the one-shot migration service runs; API startup waits for successful migration completion. Original synthetic dataset retained: 67,037 customers and 7,800 tickets.
+[/body/tbl[3]] [Table: 7 rows]
+[/body/p[@paraId=32D06D9E]] 
+[/body/p[@paraId=010A1C0C]] • 1. Container Health: docker compose ps — both api and postgres report Up (healthy).
+[/body/p[@paraId=7BE29D12]] • API probe: GET /health returns HTTP 200 and {"status":"ok"}.
+[/body/p[@paraId=3FB0BBE5]] • Database probe: GET /health/db returns HTTP 200, status ok, database.connected true and requestId; HTTP 503 on failure, without database name or connection error.
+[/body/p[@paraId=7A25050C]] • Automated tests in isolated Docker: 56 PASS, 0 FAIL, 0 SKIP, 78.86 seconds, including repeated migration. Evidence: docs/evidence/docker-tests.txt. Local: 55 pass, 1 skip.
+[/body/p[@paraId=793F9AC9]] • Initial administrator: docker compose exec api npm run auth:bootstrap. Choose your own username and password (12–128 characters). No fixed demo credentials. Bootstrap refuses to overwrite an existing system administrator.
+[/body/p[@paraId=182213EC]] 
+[/body/p[@paraId=6E6304CC]] MỤC 5 – BẢNG KIỂM TRA BẢO MẬT và  TỰ ĐÁNH GIÁ 
+[/body/p[@paraId=67BBEB8F]] 5.1 Bảng tự đánh giá 7 mục bảo mật bắt buộc (Bài tập 3)
+[/body/tbl[4]] [Table: 8 rows]
+[/body/p[@paraId=717F6233]] 
+[/body/p[@paraId=3EE7294D]] 5.2 Đối chiếu và tự kiểm 5 mục ưu tiên OWASP Top 10:2025
+[/body/tbl[5]] [Table: 6 rows]
+[/body/p[@paraId=42C9D499]] 
+[/body/p[@paraId=53EDCB32]] Đánh giá bảo mật giới hạn ở các phép kiểm có minh chứng; không tuyên bố an toàn 100%. Xem docs/checklist-bao-mat.md và docs/evidence/. Lịch sử 51 commit không có .env hoặc mẫu khóa phổ biến; vẫn cần rà soát mật khẩu tùy ý trước phát hành PUBLIC.
+[/body/p[@paraId=6499204B]] 
+[/body/p[@paraId=6178C2FF]] MỤC 6 – TÀI LIỆU KỸ THUẬT CHUYÊN NGÀNH 
+[/body/p[@paraId=70DDA419]] Note: Written in English per Assignment 3 regulations (Section 2.6 - Software Engineering Track [SE]), detailing active endpoints with real request/response payloads.
+[/body/p[@paraId=01ED4FC4]] 6.1 Architecture, Authentication Contract và  Detailed API Endpoints
+[/body/p[@paraId=0819CF46]] Runtime: Express Controllers → Services → Repository. Ticket/customer prototype state and photos are in memory; accounts and service centers use PostgreSQL. Session cookie: HS256, HttpOnly, SameSite=Strict, Secure in production. The complete current reference documents 23 method/path pairs in docs/api-reference.md with 25 captured HTTP responses in docs/evidence/api-examples.json.
+[/body/p[@paraId=61316554]] Endpoint 1: POST /api/tickets — Create Warranty Ticket
+[/body/p[@paraId=3F09417D]] • 1. Route: POST /api/tickets
+[/body/p[@paraId=61223E3C]] • 2. Purpose: Device intake, verifies warranty eligibility (QT-05), assigns SLA due date excluding Sundays (QT-04), prevents open duplicates (QT-09), and logs initial status.
+[/body/p[@paraId=79BA7E3A]] • 3. Auth và  Roles: Authenticated cookie mekong_session. Roles: NHAN_VIEN, QUAN_LY_CHI_NHANH, QUAN_LY_HE_THONG.
+[/body/p[@paraId=02896FA2]] • 4. Request Body: Body: customer_phone (10 digits), customer_name, serial_imei (6-40 chars), center_id (1-6), category_id (1-6), priority (CAO/TRUNG_BINH/THAP), issue_desc (>=10 chars).
+[/body/p[@paraId=6D8C575E]] {  "customer_phone": "0901234567", "customer_name": "Nguyen Van A", "serial_imei": "SN-10293",  "center_id": 1, "category_id": 2, "priority": "CAO",  "issue_desc": "Man hinh bi soc ngang sau khi cap nhat phan mem, cam ung cham loan"}
+[/body/p[@paraId=3C008FDC]] • 5. Success Response: HTTP 201 Created — returns ticket_code (BH-xxxxxx/yyyy), calculated due_date, status 'MOI'.
+[/body/p[@paraId=7C9BCC40]] {  "success": true, "message": "Tạo phiếu bảo hành thành công",  "data": { "ticket_id": 1001, "ticket_code": "BH-000001/2026", "status": "MOI", "priority": "CAO", "is_warranty": true, "due_date": "2026-11-03T09:00:00.000Z" }}
+[/body/p[@paraId=7FF7B193]] • 6. Error Codes: 400 Bad Request (missing fields / invalid phone / desc < 10 chars); 401 Unauthorized; 409 Conflict (error: 'PHIEU_DANG_MO' if serial has unresolved open ticket).
+[/body/p[@paraId=5C645E32]] • 7. Edge Cases: Serial inputs containing SQL injection characters are strictly rejected by the validator before DB queries.
+[/body/p[@paraId=117E7F81]] Endpoint 2: GET /api/customers — Customer Profile và  Warranty History Lookup
+[/body/p[@paraId=3CEE3B73]] • 1. Route: GET /api/customers?phone={phone}
+[/body/p[@paraId=1A6B7E7A]] • 2. Purpose: Looks up customer records by phone (QT-01), returning normalized profile and previous warranty tickets.
+[/body/p[@paraId=28DFBDAD]] • 3. Auth và  Roles: Authenticated cookie mekong_session. Roles: All service staff and managers.
+[/body/p[@paraId=2A7C67E5]] • 4. Parameters: Query param phone (10 digits or international +84 format).
+[/body/p[@paraId=01AA9210]] • 5. Success Response: HTTP 200 OK — returns customer details, normalized phone, and past ticket list.
+[/body/p[@paraId=07B22970]] {  "success": true,  "data": { "customer_id": 1, "full_name": "Nguyen Van A", "phone": "0901234567", "total_tickets": 2 }}
+[/body/p[@paraId=58EC54F3]] • 6. Error Codes: 400 Bad Request (invalid phone); 401 Unauthorized; 404 Not Found (phone not registered).
+[/body/p[@paraId=7D83E600]] • 7. Edge Cases: Backed by B-Tree idx_customer_phone guaranteeing O(log N) latency (< 5ms over 67,037 records).
+[/body/p[@paraId=481B88F5]] Endpoint 3: PATCH /api/tickets/{id}/status — Update Ticket Lifecycle Status
+[/body/p[@paraId=6361FBB0]] • 1. Route: PATCH /api/tickets/{id}/status
+[/body/p[@paraId=4101833A]] • 2. Purpose: Advances warranty ticket to next valid lifecycle state (QT-06) and appends an audit log entry.
+[/body/p[@paraId=72141E4F]] • 3. Auth và  Body: Authenticated cookie with branch authorization. Body: status (string), note (optional).
+[/body/p[@paraId=08DBBF87]] {  "status": "DA_TIEP_NHAN", "note": "Da ban giao ky thuat vien kiem tra phan cung"}
+[/body/p[@paraId=714F5736]] • 4. Response: HTTP 200 OK — returns updated ticket entity and refreshed status_history timeline.
+[/body/p[@paraId=0BD1A32A]] • 5. Error Codes: 400 Bad Request; 401 Unauthorized; 403 Forbidden; 404 Not Found; 409 Conflict (invalid transition).
+[/body/p[@paraId=046D2F25]] • 6. Edge Cases: Strictly enforces one-way state machine. Regressing state (e.g. DANG_XU_LY -> MOI) throws HTTP 409.
+[/body/p[@paraId=4AC27067]] 
+[/body/p[@paraId=6BB64A59]] 6.4 HTTP Error Code Mapping Table
+[/body/tbl[6]] [Table: 10 rows]
+[/body/p[@paraId=18ADEE03]] 
+[/body/p[@paraId=63909F69]] 
+[/body/p[@paraId=3E40736F]] MỤC 7 – MINH CHỨNG THỰC TẾ 
+[/body/p[@paraId=49993F91]] Các ảnh bên dưới thuộc lần kiểm chứng trước, không thay thế bằng chứng của working tree ngày 10/11/2026. Kết quả mới: docs/evidence/test-run.txt, docker-status.txt, docker-counts.txt và docker-tests.txt. Chưa xác nhận clone lại từ tag v1.0 có đầy đủ thay đổi mới.
+[/body/p[@paraId=17287A24]] 7.1 Minh chứng thực tế: Kết quả kiểm thử tự động, Health Probes và  Phép thử máy trắng
+[/body/p[@paraId=06E2701A]] 
+[/body/p[@paraId=37F351B0]] Hình 7.1: Minh chứng lịch sử — không dùng thay cho kết quả kiểm thử ngày 10/11/2026
+[/body/p[@paraId=0C91A847]] 
+[/body/p[@paraId=4AF16F61]] Hình 7.2: Kết quả kiểm tra sức khỏe hệ thống (/health và /health/db đạt HTTP 200 OK)
+[/body/p[@paraId=2B4AAFEF]] 
+[/body/p[@paraId=6B4C398A]] Hình 7.3: Minh chứng lịch sử — quy trình hiện tại bổ sung bước tạo quản trị tương tác
+[/body/p[@paraId=66485B8A]] 
+[/body/p[@paraId=00ECB971]] PHỤ LỤC – BẢNG KHAI BÁO SỬ DỤNG CÔNG CỤ AI 
+[/body/p[@paraId=1492E4A4]] Căn cứ theo Chính sách liêm chính học thuật của học phần Chuyên đề tốt nghiệp 1 (Khoa CNTT – ĐH Văn Lang), sinh viên công khai và chịu trách nhiệm hoàn toàn về việc sử dụng công cụ AI trong Giai đoạn 3 (Bài tập 3):
+[/body/tbl[7]] [Table: 5 rows]
+[/body/p[@paraId=55932989]] 
+[/body/p[@paraId=09AD602A]] Cam kết liêm chính học thuật của sinh viên
+[/body/p[@paraId=5B4ED43E]] • Tính trung thực: Toàn bộ 12 test case trong Test Report đều do em tự chạy và ghi nhận kết quả thực tế; toàn bộ lỗi trong Bug Log đều do em tự tìm hiểu nguyên nhân và tự viết mã sửa lỗi.
+[/body/p[@paraId=7A313612]] • Khả năng giải trình: Em hiểu rõ từng dòng lệnh trong Deployment Guide, từng tham số trong file cấu hình và mọi endpoint trong tài liệu API bàn giao. Sẵn sàng trả lời và thực thi lại tại chỗ khi Giảng viên yêu cầu vấn đáp ở buổi 16 và buổi 18.
+[/body/p[@paraId=4CF451CA]] • Bảo đảm nguyên bản: Mã nguồn và báo cáo được phát triển trên chính hệ sinh thái mã nguồn của Bài tập 1 và Bài tập 2, không sao chép từ bất kỳ đồ án của nhóm hoặc cá nhân khác.
+[/body/p[@paraId=53F298F5]] TP. Hồ Chí Minh, ngày 02 tháng 11 năm 2026Sinh viên thực hiệnNguyễn Bá Anh KhôiMSSV: 2374802010247
