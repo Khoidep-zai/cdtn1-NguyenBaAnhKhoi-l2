@@ -14,5 +14,15 @@ data/raw/
 *.csv.gz
 *.zip
 .codegraph/
-.agent/
 .neon
+
+# ==============================================================================
+# KHÔNG ĐẨY LÊN GITHUB ĐỂ BẢO VỆ DỮ LIỆU VÀ TÀI NGUYÊN NỘI BỘ
+# ==============================================================================
+.agent/
+agent/
+src/.agent/
+.agents/
+agents/
+.specify/
+skills-lock.json
