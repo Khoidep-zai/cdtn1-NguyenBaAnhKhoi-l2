@@ -123,4 +123,13 @@ Hệ thống: Mekong Mobile CRM — Luồng L2: Tiếp nhận và phân loại y
 - **Lý do:** Đảm bảo bản bàn giao có thể kiểm chứng độc lập và tránh công bố bí mật; giữ quyền theo chi nhánh hiện hành.
 - **Ảnh hưởng:** `.specify/memory/constitution.md` và các tài liệu, cấu hình, kiểm thử liên quan sẽ được đối chiếu theo đặc tả Buổi 15.
 
+---
+
+### TD-13 Lưu trữ dữ liệu phiếu bảo hành, khách hàng và ảnh bàn giao bền vững trên PostgreSQL (Buổi 16, ngày 12/11/2026)
+- **Phản hồi của GV:** Cần khắc phục hạn chế lưu trữ tạm trên bộ nhớ (In-memory store) của bản prototype trước; bảo đảm dữ liệu phiếu bảo hành và hồ sơ khách hàng không bị mất mát khi máy chủ hoặc container khởi động lại.
+- **Quyết định:** SỬA
+- **Lý do:** Đáp ứng tiêu chí chất lượng kỹ thuật cấp doanh nghiệp của Track SE (C1, C8), nâng cấp hệ thống đạt tính bền vững (Persistence) thực sự trên cơ sở dữ liệu PostgreSQL 16 3NF, đồng bộ hóa 100% giữa API và CSDL.
+- **Ảnh hưởng:** Bổ sung `pgTicketRepository.js`, `pgCustomerRepository.js`, `pgHandoverPhotoStore.js`, `pgTicketService.js`; tích hợp vào migration `ticket-persistence.sql`; bổ sung test suite `tests/ticket.persistence.test.js` kiểm chứng tính toàn vẹn (PASS); cập nhật `docs/ticket-persistence-fix.md`.
+
+
 
