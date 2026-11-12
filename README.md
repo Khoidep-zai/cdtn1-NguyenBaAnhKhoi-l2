@@ -25,7 +25,7 @@ Phân hệ L2 là cửa ngõ nghiệp vụ tiếp nhận và phân loại bảo 
 - **QT-01 (Định danh khách hàng):** Tra cứu hồ sơ khách hàng duy nhất qua Số điện thoại, chuẩn hóa định dạng SĐT Việt Nam (10 chữ số).
 - **QT-04 (Thuật toán SLA thông minh):** Tự động tính hạn cam kết hoàn tất theo mức ưu tiên (CAO: 24h, TRUNG BÌNH: 72h, THẤP: 120h) và **tự động loại trừ ngày Chủ Nhật** khỏi thời gian làm việc của trung tâm.
 - **QT-05 (Kiểm tra hạn bảo hành):** Đối chiếu ngày mua hàng và thời hạn bảo hành thiết bị đến tích tắc cuối cùng `23:59:59.999Z` của ngày cuối cùng; hỗ trợ quy trình duyệt ngoại lệ khi hết hạn.
-- **QT-06 (Vòng đời trạng thái một chiều):** Quản lý nghiêm ngặt quy trình chuyển trạng thái `MOI` $\rightarrow$ `DA_TIEP_NHAN` $\rightarrow$ `DANG_XU_LY` $\rightarrow$ `CHO_LINH_KIEN` $\rightarrow$ `HOAN_TAT` $\rightarrow$ `DA_BAN_GIAO`, lưu vết lịch sử kiểm toán trong bảng `ticket_status_logs`.
+- **QT-06 (Vòng đời trạng thái một chiều):** Quản lý nghiêm ngặt quy trình chuyển trạng thái `MOI` $\rightarrow$ `DA_PHAN_CONG` $\rightarrow$ `DANG_XU_LY` $\rightarrow$ `CHO_LINH_KIEN` $\rightarrow$ `HOAN_TAT` $\rightarrow$ `DA_BAN_GIAO`, lưu vết lịch sử kiểm toán trong bảng `ticket_status_logs`.
 - **QT-07 & QT-09 (Định danh phiếu & thiết bị):** Cấp phát mã phiếu chuẩn `BH-xxxxxx/yyyy`, kiểm soát mỗi Serial/IMEI chỉ có duy nhất một phiếu đang mở xử lý trong toàn hệ thống.
 - **Phân quyền RBAC 3 cấp độ:** Quản lý hệ thống (`QUAN_LY_HE_THONG`), Quản lý chi nhánh (`QUAN_LY_CHI_NHANH`), và Nhân viên tiếp nhận (`NHAN_VIEN`).
 - **Lưu trữ dữ liệu bền vững (Persistence):** Toàn bộ dữ liệu khách hàng, phiếu bảo hành và ảnh bàn giao được lưu trữ trực tiếp, an toàn vào cơ sở dữ liệu PostgreSQL 16 / Neon Cloud (không bị mất mát khi khởi động lại máy chủ).
@@ -137,7 +137,7 @@ Sau khi đăng nhập thành công vào hệ thống (tại [https://cdtn1.netli
 
 ### Bước 5: Cập nhật vòng đời trạng thái một chiều (QT-06)
 - Trong màn hình Chi tiết phiếu bảo hành, nhân viên cập nhật trạng thái xử lý theo đúng tiến trình:
-  `MOI` $\rightarrow$ `DA_TIEP_NHAN` $\rightarrow$ `DANG_XU_LY` $\rightarrow$ `CHO_LINH_KIEN` $\rightarrow$ `HOAN_TAT`.
+  `MOI` $\rightarrow$ `DA_PHAN_CONG` $\rightarrow$ `DANG_XU_LY` $\rightarrow$ `CHO_LINH_KIEN` $\rightarrow$ `HOAN_TAT`.
 - Hệ thống kiểm soát ma trận `VALID_TRANSITIONS`: Tuyệt đối ngăn chặn cập nhật quay ngược trạng thái (ví dụ từ `DANG_XU_LY` lùi về `MOI`).
 - Mỗi lần chuyển trạng thái, hệ thống tự động ghi nhận một bản ghi kiểm toán vào lịch sử dòng thời gian (Timeline) gồm: trạng thái trước, trạng thái sau, người thực hiện, thời điểm và ghi chú.
 
@@ -164,7 +164,7 @@ npm test
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 2
-ℹ duration_ms ~100000ms
+ℹ duration_ms ~83872ms (~84s)
 ```
 
 - **Luồng đúng (Happy Path):** Đầy đủ test case cho QT-01 (tra cứu khách), QT-04 (thuật toán SLA), QT-05 (hạn bảo hành), QT-06 (vòng đời trạng thái), QT-09 (ràng buộc 1 phiếu mở/thiết bị).

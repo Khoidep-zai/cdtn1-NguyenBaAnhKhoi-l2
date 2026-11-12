@@ -15,7 +15,7 @@
 
 | Tên công cụ | Mục đích sử dụng | Vị trí áp dụng trong bài | Phương pháp kiểm chứng lại của sinh viên |
 | :--- | :--- | :--- | :--- |
-| **Gemini (Antigravity Assistant)** | Hỗ trợ phân tích đề bài BT3 và Workshop Buổi 14; rà soát thiết kế kim tự tháp kiểm thử 5 loại; gợi ý các ca kiểm thử biên (SLA qua Chủ Nhật, hạn bảo hành mốc 23:59:59.999Z); hỗ trợ cấu trúc Bug Log 7 dòng chuẩn. | `docs/test-plan.md`, `docs/test-report.md`, `docs/bug-log.md`, `tests/*.test.js`. | Tự tay kiểm tra từng điều kiện biên bằng tính toán tay; trực tiếp chạy lệnh `npm test` xác nhận 44/44 test assertions PASS; kiểm chứng từng link commit trên repo GitHub public. |
+| **Gemini (Antigravity Assistant)** | Hỗ trợ phân tích đề bài BT3 và Workshop Buổi 16; rà soát thiết kế kim tự tháp kiểm thử 5 loại; kiểm tra rà soát Bug Log 7 dòng chuẩn đối chiếu commit thật; hỗ trợ đồng bộ dữ liệu kỹ thuật và tài liệu báo cáo. | `docs/test-plan.md`, `docs/test-report.md`, `docs/bug-log.md`, `docs/deployment-guide.md`, `tests/*.test.js`. | Tự tay kiểm tra từng điều kiện biên bằng tính toán tay; trực tiếp chạy lệnh `npm test` xác nhận 55/55 tests pass (tổng 57 tests); kiểm chứng từng link commit trên repo GitHub public. |
 | **Claude / Spec-Kit Tools** | Hỗ trợ phân tích mã nguồn theo quy trình Spec-Driven Development; rà soát sự phù hợp với Hiến pháp dự án (`constitution.md`); kiểm tra chéo các ràng buộc kỹ thuật. | Thư mục `.specify/`, `specs/001-tiep-nhan-bao-hanh/`, `specs/002-kiem-thu-va-dong-goi-bt3/`. | Tự đọc hiểu toàn bộ cấu trúc quy trình; đối chiếu các quy tắc nghiệp vụ QT-01 đến QT-09 với yêu cầu của giảng viên; xác nhận không có quy tắc nào bị vi phạm. |
 | **OfficeCLI CLI Tool** | Hỗ trợ tra cứu cấu trúc OpenXML, thẩm định tính hợp lệ của tài liệu báo cáo Word (`officecli validate`), kiểm tra số lượng bảng và các đề mục kỹ thuật. | Báo cáo `Báo cáo/BT3/BT3_2374802010247_NGUYỄN BÁ ANH KHÔI.docx`. | Mở trực tiếp file Word đối chiếu 8 mục theo rubric; kiểm tra kỹ trang bìa, mục lục, bảng biểu, giữ nguyên phông chữ Times New Roman và cỡ chữ chuẩn. |
 | **Docker & Shell Scripts** | Tạo môi trường kiểm thử máy trắng tái lập được; đóng gói Multi-stage build và cấu hình PostgreSQL healthcheck. | `Dockerfile`, `docker-compose.yml`, `.env.example`, `docs/deployment-guide.md`. | Tự thực hiện phép thử máy trắng trên thư mục tạm: clone tag `v1.0`, chạy đúng 2 lệnh, kiểm tra `docker compose ps` báo healthy và curl endpoint `/health` thành công. |
@@ -31,4 +31,4 @@
 > *"Tôi xác nhận đã đọc, hiểu và chịu trách nhiệm hoàn toàn về toàn bộ nội dung nộp trong báo cáo và mã nguồn này."*  
 > **Sinh viên thực hiện:** Nguyễn Bá Anh Khôi  
 > **MSSV:** 2374802010247  
-> **Ngày xác nhận:** 05/11/2026
+> **Ngày xác nhận:** 12/11/2026

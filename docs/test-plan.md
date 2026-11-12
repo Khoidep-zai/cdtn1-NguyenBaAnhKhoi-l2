@@ -13,7 +13,7 @@
 - **Tiếp nhận và tra cứu hồ sơ khách hàng (`QT-01`):** Chuẩn hóa số điện thoại 10 chữ số, tra cứu danh bạ khách hàng.
 - **Tính toán hạn cam kết SLA tự động (`QT-04`):** Thuật toán SLA Engine loại trừ chính xác ngày nghỉ Chủ Nhật theo giờ làm việc quy định.
 - **Xác định điều kiện bảo hành (`QT-05`):** Kiểm tra thiết bị còn hạn bảo hành đến đúng mốc `23:59:59.999` của ngày cuối cùng.
-- **Vòng đời trạng thái một chiều (`QT-06`):** Kiểm soát nghiêm ngặt ma trận chuyển trạng thái hợp lệ (`MOI` $\rightarrow$ `DA_TIEP_NHAN` $\rightarrow$ `DANG_XU_LY` $\rightarrow$ `CHO_LINH_KIEN` $\rightarrow$ `HOAN_TAT`), tuyệt đối cấm quay ngược hoặc nhảy cóc.
+- **Vòng đời trạng thái một chiều (`QT-06`):** Kiểm soát nghiêm ngặt ma trận chuyển trạng thái hợp lệ (`MOI` $\rightarrow$ `DA_PHAN_CONG` $\rightarrow$ `DANG_XU_LY` $\rightarrow$ `CHO_LINH_KIEN` $\rightarrow$ `HOAN_TAT` $\rightarrow$ `DA_BAN_GIAO`), tuyệt đối cấm quay ngược hoặc nhảy cóc.
 - **Ngăn chặn trùng lặp phiếu (`QT-09`):** Chặn tạo phiếu mới khi thiết bị (Serial/IMEI) đang có phiếu bảo hành chưa hoàn tất.
 - **Tầng kiểm tra dữ liệu đầu vào (Validator):** Kiểm tra bắt buộc trường (NOT NULL), chống chuỗi lạ SQL Injection payload trong số Serial.
 - **Kiểm soát truy cập và bảo mật (OWASP Top 10:2025):** Kiểm tra A01 Broken Access Control (chặn sửa/xem phiếu người khác), kiểm tra 401 unauthenticated, mật khẩu băm scrypt, ẩn vết ngăn xếp stack trace khi gặp lỗi hệ thống (A02).
@@ -31,17 +31,19 @@ Phân bố bộ kiểm thử theo mô hình Kim tự tháp chuẩn (đáy rộng
 
 ```text
        ▲
-      / \     System / API Test (3 test) - Kiểm tra luồng HTTP end-to-end, status code, response body
+      / \     System / API Test (3 test chính) - Kiểm tra luồng HTTP end-to-end, status code, response body
      /───\    
-    /     \   Integration Test (2 test) - Tích hợp Service, Repository, ràng buộc CSDL PostgreSQL thật
+    /     \   Integration Test (2 test chính) - Tích hợp Service, Repository, ràng buộc CSDL PostgreSQL thật
    /───────\  
-  /         \ Unit Test (7 test) - Hàm thuần, tách biệt CSDL/mạng, chạy mili-giây, kiểm tra quy tắc QT
+  /         \ Unit Test (7 test chính) - Hàm thuần, tách biệt CSDL/mạng, chạy mili-giây, kiểm tra quy tắc QT
  /───────────\
 ```
 
-- **Unit test (7 test):** Tập trung tại tầng Service và Validator (`ticketService.js`, `ticketValidator.js`), cô lập phụ thuộc bên ngoài bằng mock repository và cố định mốc thời gian để tránh lỗi test nhấp nháy (flaky test).
-- **Integration test (2 test):** Kiểm tra tích hợp giữa Service, Repository và cơ sở dữ liệu PostgreSQL thực tế (`schema.sql`, ràng buộc `UNIQUE`, `CHECK`).
-- **API / System test (3 test):** Gọi ứng dụng Express qua HTTP bằng test runner, kiểm tra mã trạng thái, nội dung thông báo lỗi và bảo mật phân quyền.
+- **Tổng thể test suite tự động:** Gồm 16 test files với **57 automated tests** (55 PASS, 2 SKIP trên môi trường thông thường).
+- **Phân bố 12 ca kiểm thử tiêu biểu trình bày trong Test Report:**
+  - **Unit test (7 test):** Tập trung tại tầng Service và Validator (`ticketService.js`, `ticketValidator.js`), cô lập phụ thuộc bên ngoài bằng mock repository và cố định mốc thời gian để tránh lỗi test nhấp nháy (flaky test).
+  - **Integration test (2 test):** Kiểm tra tích hợp giữa Service, Repository và cơ sở dữ liệu PostgreSQL thực tế (`schema.sql`, ràng buộc `UNIQUE`, `CHECK`).
+  - **API / System test (3 test):** Gọi ứng dụng Express qua HTTP bằng test runner, kiểm tra mã trạng thái, nội dung thông báo lỗi và bảo mật phân quyền.
 
 ### Kỹ thuật chọn dữ liệu thử:
 - **Phân vùng tương đương (Equivalence Partitioning):** Chia miền dữ liệu thành vùng hợp lệ và không hợp lệ (ví dụ: độ dài `issue_description` < 10 ký tự, 10–2000 ký tự, > 2000 ký tự; số điện thoại đúng 10 số vs. sai định dạng).
@@ -58,10 +60,10 @@ Phân bố bộ kiểm thử theo mô hình Kim tự tháp chuẩn (đáy rộng
 
 ## 3. Tiêu chí thành công đo được (Measurable Success Criteria)
 
-1. **100% test case PASS:** Toàn bộ 12 test case trong Test Report (và toàn bộ 44 assertions trong test suite) đều đạt kết quả PASS qua 1 lệnh duy nhất.
+1. **100% test case PASS:** Toàn bộ 12 test case trong Test Report (và toàn bộ 55 bài test thực thi trong test suite) đều đạt kết quả PASS qua 1 lệnh duy nhất.
 2. **Phủ kín quy tắc cốt lõi:** Mọi quy tắc nghiệp vụ đã hiện thực (`QT-01`, `QT-04`, `QT-05`, `QT-06`, `QT-09`) đều có ít nhất một test case kiểm chứng.
 3. **Không còn bug Critical:** Không còn bất kỳ lỗi mức Critical nào đang mở. Mọi bug phát hiện đều đã được sửa, có mục Bug Log đủ 7 dòng và commit tương ứng.
-4. **Thời gian chạy nhanh:** Toàn bộ suite test chạy hoàn tất trong thời gian $\le 5$ giây (thực tế chạy ~3.5 giây).
+4. **Độ ổn định thực thi:** Toàn bộ test suite chạy hoàn tất trong khoảng ~84 giây qua kết nối Cloud PostgreSQL bảo mật SSL.
 5. **Độc lập và xác định (Deterministic):** Không phụ thuộc vào thời điểm chạy test (nhờ tiêm mốc thời gian cố định) và không phụ thuộc dữ liệu ngẫu nhiên trên máy cá nhân.
 
 ---

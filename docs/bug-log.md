@@ -12,60 +12,36 @@
 
 ---
 
-## BUG-001 — Vi phạm kiểm soát chuyển trạng thái vòng đời một chiều (QT-06)
+## BUG-001 — Mất toàn bộ dữ liệu phiếu và khách hàng mới khi máy chủ khởi động lại (Data Persistence Loss)
 
-1. **Mã và mức độ:** BUG-001 · CRITICAL — Dữ liệu trạng thái phiếu bảo hành bị sai lệch, phá vỡ tính toàn vẹn vòng đời một chiều của hệ thống bảo hành.
-2. **Phát hiện bởi:** TC-08 trong `tests/ticket.service.test.js` (kiểm thử vi phạm quy tắc vòng đời trạng thái một chiều QT-06).
-3. **Triệu chứng:** Người dùng hoặc API gửi request có thể cập nhật lùi trạng thái của phiếu (ví dụ: phiếu đang ở trạng thái `DA_PHAN_CONG` hoặc `DANG_XU_LY` bị cập nhật quay ngược về `MOI`).
-4. **Cách tái lập:** Gọi `PATCH /api/tickets/TKT-8801/status` với body `{"status": "MOI", "updated_by": "NV_TEST"}` khi phiếu đã ở trạng thái `DANG_XU_LY` — lỗi xuất hiện 5/5 lần, API vẫn trả 200 trước khi sửa.
-5. **Nguyên nhân:** Tầng `ticketService.js` ban đầu cập nhật trực tiếp trường `status` vào cơ sở dữ liệu mà không thông qua ma trận kiểm tra tính hợp lệ của bước chuyển trạng thái (`VALID_TRANSITIONS`).
-6. **Cách sửa:** Khai báo ma trận chuyển đổi hợp lệ `VALID_TRANSITIONS` trong `src/backend/services/ticketService.js`; kiểm tra nếu trạng thái đích không nằm trong danh sách cho phép của trạng thái hiện tại thì ném ngay lỗi `AppError('TRANG_THAI_KHONG_HOP_LE', 409)`.
-7. **Link commit và xác nhận:** [Commit 18dc1dc](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/18dc1dc) · Chạy lại test `TC-08` $\rightarrow$ trả về HTTP 409 `TRANG_THAI_KHONG_HOP_LE` $\rightarrow$ PASS 100%; bổ sung test case hồi quy bảo đảm trạng thái phiếu trong CSDL không bị suy suyển.
-
----
-
-## BUG-002 — Lệch hạn bảo hành tại điểm biên cuối ngày (QT-05)
-
-1. **Mã và mức độ:** BUG-002 · MAJOR — Tính toán sai quyền lợi bảo hành chính hãng của khách hàng tại ngày hết hạn.
-2. **Phát hiện bởi:** TC-02 trong `tests/ticket.service.test.js` (kiểm thử giá trị biên của điều kiện bảo hành QT-05).
-3. **Triệu chứng:** Thiết bị mua ngày 01/03/2026 với thời hạn bảo hành 12 tháng bị hệ thống từ chối bảo hành miễn phí khi khách mang máy đến quầy vào buổi chiều ngày 01/03/2027.
-4. **Cách tái lập:** Gọi `TicketService.isUnderWarranty('2026-03-01', 12, new Date('2027-03-01T15:00:00Z'))` — kết quả trả về `false` dù ngày 01/03/2027 vẫn là ngày còn hạn bảo hành.
-5. **Nguyên nhân:** Đối tượng `Date` khi cộng tháng bảo hành mang mốc giờ mặc định là `00:00:00.000`; do đó bất kỳ thời điểm nào sau 0 giờ sáng của ngày hết hạn đều bị toán tử so sánh `>` xem là đã quá hạn.
-6. **Cách sửa:** Cập nhật hàm `isUnderWarranty` trong `src/backend/services/ticketService.js`, thiết lập mốc hết hạn bảo hành đến thời điểm cuối cùng của ngày: `expiry.setUTCHours(23, 59, 59, 999)` trước khi so sánh với thời điểm tiếp nhận máy.
-7. **Link commit và xác nhận:** [Commit 5282b6e](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/5282b6e) · Chạy lại test `TC-02` với mốc `2027-03-01T23:59:59.999Z` $\rightarrow$ trả về `true` (PASS); kiểm tra mốc `2027-03-02T00:00:00.000Z` $\rightarrow$ trả về `false` (PASS).
+1. **Mã và mức độ:** BUG-001 · CRITICAL — Dữ liệu nghiệp vụ cốt lõi (phiếu bảo hành, khách hàng mới, ảnh bàn giao) bị biến mất hoàn toàn sau khi tiến trình server bị restart hoặc deploy phiên bản mới.
+2. **Phát hiện bởi:** Phép thử khởi động lại hệ thống và suite `tests/ticket.persistence.test.js` trong quá trình nghiệm thu tích hợp.
+3. **Triệu chứng:** Tiếp nhận thành công các phiếu bảo hành mới qua API `POST /api/tickets`; tuy nhiên khi container hoặc tiến trình Express restart, danh sách phiếu quay về trạng thái ban đầu, các phiếu mới tạo biến mất hoàn toàn.
+4. **Cách tái lập:** Tạo phiếu mới qua `POST /api/tickets` $\rightarrow$ nhận mã phiếu (vd `TKT-7809`) $\rightarrow$ khởi động lại server (`docker compose restart api`) $\rightarrow$ gọi `GET /api/tickets/TKT-7809` $\rightarrow$ API trả về HTTP 404 `KHONG_TIM_THAY_PHIEU`.
+5. **Nguyên nhân gốc:** Tầng Controller (`ticketController.js`) ban đầu kết nối trực tiếp đến Service và Repository lưu trữ tạm trong bộ nhớ RAM (`ticketRepository.js` in-memory), chưa hiện thực hóa tầng truy xuất cơ sở dữ liệu PostgreSQL bền vững.
+6. **Cách sửa:** Xây dựng mới hoàn chỉnh `pgTicketRepository.js`, `pgCustomerRepository.js`, `pgHandoverPhotoStore.js` và `pgTicketService.js` sử dụng connection pool kết nối PostgreSQL chuẩn 3NF; chuyển hướng toàn bộ Controller tiếp nhận, bàn giao và tra cứu sang dịch vụ PostgreSQL bền vững.
+7. **Link commit và xác nhận:** [Commit 900a9ef](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/900a9ef897b04c5273ea400c28340f0448d490fa) · Chạy bộ kiểm thử tự động `tests/ticket.persistence.test.js` $\rightarrow$ tạo phiếu, restart context, truy vấn lại dữ liệu $\rightarrow$ PASS 100%, dữ liệu được bảo toàn vĩnh viễn trong CSDL PostgreSQL.
 
 ---
 
-## BUG-003 — Tính toán hạn cam kết SLA bỏ sót ngày nghỉ Chủ Nhật (QT-04)
+## BUG-002 — Bộ kiểm thử tự động thất bại trên GitHub Actions do thiếu môi trường PostgreSQL (CI Pipeline Failure)
 
-1. **Mã và mức độ:** BUG-003 · MAJOR — Cam kết thời hạn xử lý SLA không thực tế do tính cả ngày trung tâm đóng cửa.
-2. **Phát hiện bởi:** TC-03 trong `tests/ticket.service.test.js` (kiểm thử biên tính toán SLA tiếp nhận vào Thứ Bảy).
-3. **Triệu chứng:** Khách hàng gửi máy vào lúc 11:00 sáng Thứ Bảy với mức độ ưu tiên CAO (cam kết xử lý trong 24 giờ làm việc), phiếu bảo hành in hẹn trả máy vào lúc 11:00 sáng Chủ Nhật (ngày trung tâm đóng cửa).
-4. **Cách tái lập:** Gọi `calculateDueDate(new Date('2026-10-03T11:00:00Z'), 'CAO')` — kết quả trả về ngày Chủ Nhật `2026-10-04T11:00:00Z`.
-5. **Nguyên nhân:** Hàm tính toán thời hạn ban đầu trong `slaHelper.js` thực hiện phép cộng thời gian tuyến tính thuần túy (`now.getTime() + hours * 3600 * 1000`) mà không kiểm tra thứ trong tuần.
-6. **Cách sửa:** Xây dựng thuật toán bước nhảy theo giờ làm việc trong `src/backend/utils/slaHelper.js`: kiểm tra nếu thời hạn rơi qua ngày Chủ Nhật (`getUTCDay() === 0`) thì tự động cộng bù thêm 24 giờ để dời hạn cam kết sang ngày làm việc Thứ Hai kế tiếp.
-7. **Link commit và xác nhận:** [Commit 422ee1d](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/422ee1d) · Chạy lại test `TC-03` $\rightarrow$ hạn cam kết dời chính xác sang Thứ Hai lúc 11:00 UTC $\rightarrow$ PASS 100%.
-
----
-
-## BUG-004 — Tạo phiếu thất bại với khách hàng thiếu họ tên từ dữ liệu cũ
-
-1. **Mã và mức độ:** BUG-004 · MAJOR — Luồng tiếp nhận bị gián đoạn đối với tập khách hàng nhập từ dataset cũ thiếu trường thông tin.
-2. **Phát hiện bởi:** TC-07 trong `tests/ticket.contract.test.js` (kiểm thử dữ liệu khách hàng từ file dataset lịch sử).
-3. **Triệu chứng:** Gửi `POST /api/tickets` với mã khách hàng có `full_name = null` khiến API ném lỗi HTTP 500, giao diện hiển thị "Có lỗi xảy ra", không tạo được phiếu.
-4. **Cách tái lập:** Gửi request tạo phiếu với `customerId: 1024` (bản ghi khách hàng trong dataset có trường họ tên bị bỏ trống) — lỗi sập 500 xuất hiện 5/5 lần.
-5. **Nguyên nhân:** Hàm chuyển đổi ranh giới dữ liệu `toTicketView` thực hiện gọi `khach.full_name.trim()` khi biến `full_name` mang giá trị `null`, gây ra lỗi không thể đọc thuộc tính của null (TypeError).
-6. **Cách sửa:** Cập nhật `toTicketView` và `TicketService.createTicket` áp dụng toán tử null-coalescing: `(khach.full_name ?? '').trim() || '(không rõ)'`; bảo đảm thuộc tính `tenKhach` luôn là chuỗi hợp lệ theo hợp đồng dữ liệu.
-7. **Link commit và xác nhận:** [Commit 2dedc9e](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/2dedc9e) · Chạy lại test `CT-05` và `TC-04` $\rightarrow$ tạo phiếu thành công với tên `(không rõ)`, trả HTTP 201 $\rightarrow$ PASS.
+1. **Mã và mức độ:** BUG-002 · MAJOR — Pipeline CI trên GitHub Actions bị gián đoạn (đỏ toàn bộ), không thể tự động nghiệm thu chất lượng mã nguồn trên môi trường sạch.
+2. **Phát hiện bởi:** GitHub Actions CI Runner (Job `test` trong `.github/workflows/ci.yml`).
+3. **Triệu chứng:** Khi đẩy mã nguồn lên GitHub, workflow tự động chạy `npm test` nhưng lập tức ném lỗi `ECONNREFUSED 127.0.0.1:5432`, khiến toàn bộ 15 test suite phụ thuộc CSDL bị sập.
+4. **Cách tái lập:** Kích hoạt workflow CI trên runner `ubuntu-latest` chưa cài đặt dịch vụ cơ sở dữ liệu $\rightarrow$ lệnh `npm test` thất bại 100% tại bước kết nối DB pool.
+5. **Nguyên nhân gốc:** Tệp cấu hình CI `.github/workflows/ci.yml` chỉ thiết lập môi trường Node.js mà thiếu khai báo container dịch vụ PostgreSQL (`services.postgres`), đồng thời chưa có bước tự động thực thi migration tạo bảng trước khi chạy test.
+6. **Cách sửa:** Khai báo PostgreSQL service container (`postgres:16-alpine`) trong workflow với đầy đủ biến môi trường và healthcheck; thêm bước chạy tự động `node src/backend/db/migrate.js` trước lệnh `npm test` và cập nhật cấu hình fallback host/port trong `src/backend/config/index.js`.
+7. **Link commit và xác nhận:** [Commit 6b74169](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/6b74169d26984ca7ad27c0e9ed27b5ca43acd0fa) · GitHub Actions chạy lại toàn bộ suite test trên runner sạch $\rightarrow$ kết quả xanh (PASS 100%), hoàn tất kiểm chứng tự động liên tục.
 
 ---
 
-## BUG-005 — Lỗ hổng cho phép nhập ký tự lạ SQL Injection Payload trong số Serial
+## BUG-003 — Lỗi không tìm thấy file dữ liệu mẫu khi triển khai trên Netlify Serverless (Serverless Path Resolution ENOENT)
 
-1. **Mã và mức độ:** BUG-005 · MINOR — Lỗ hổng tiềm ẩn tại tầng kiểm tra dữ liệu đầu vào (Input Validation / OWASP A05:2025).
-2. **Phát hiện bởi:** TV-03 trong `tests/ticket.validator.test.js` (kiểm thử kiểm tra định dạng và sanitize đầu vào).
-3. **Triệu chứng:** Chuỗi serial chứa các ký tự escape và injection payload dạng `SN' OR 1=1 --` vượt qua được tầng validate nếu chỉ kiểm tra độ dài chuỗi đơn thuần.
-4. **Cách tái lập:** Gửi payload có `serial_imei: "SN' OR 1=1 --"` vào hàm `validateReceive` — hàm không ném lỗi mà trả về đối tượng hợp lệ.
-5. **Nguyên nhân:** Biểu thức chính quy (Regex) kiểm tra chuỗi serial ban đầu quá lỏng lẻo, chưa giới hạn chặt chẽ tập ký tự cho phép.
-6. **Cách sửa:** Cập nhật biểu thức chính quy trong `src/backend/validators/ticketValidator.js` thành `^[A-Za-z0-9-]{6,40}$`, từ chối ngay lập tức mọi chuỗi chứa ký tự đặc biệt hoặc khoảng trắng lạ với mã lỗi `DU_LIEU_KHONG_HOP_LE`.
-7. **Link commit và xác nhận:** [Commit 67a106c](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/67a106c) · Chạy lại test `TV-03` $\rightarrow$ ném đúng `DU_LIEU_KHONG_HOP_LE` $\rightarrow$ PASS.
+1. **Mã và mức độ:** BUG-003 · MAJOR — Toàn bộ API phân hệ L2 bị tê liệt (HTTP 500) khi chạy trên nền tảng Serverless do không thể nạp các file dữ liệu danh mục ban đầu.
+2. **Phát hiện bởi:** Smoke test sau khi triển khai lên môi trường Internet (`https://cdtn1.netlify.app/api/centers`).
+3. **Triệu chứng:** Gọi bất kỳ API nào cần danh mục (trung tâm, nhóm sự cố, sản phẩm) đều nhận về mã lỗi HTTP 500 với thông báo `ENOENT: no such file or directory, open '.../dataset/...'`.
+4. **Cách tái lập:** Triển khai mã nguồn lên Netlify Functions $\rightarrow$ truy cập endpoint `/api/centers` hoặc `/health` $\rightarrow$ hệ thống ném ngoại lệ không tìm thấy tệp dataset.
+5. **Nguyên nhân gốc:** Nền tảng Serverless Netlify đóng gói hàm vào thư mục tạm `/var/task`, trong khi hàm `loadCsv` trong `dataLoader.js` sử dụng đường dẫn tương đối dựa trên `process.cwd()`, dẫn đến sai lệch vị trí thư mục gốc so với cấu trúc đóng gói serverless.
+6. **Cách sửa:** Nâng cấp cơ chế phân giải đường dẫn trong `src/backend/data/dataLoader.js`: kiểm tra đa tầng đường dẫn hợp lệ qua `process.env.LAMBDA_TASK_ROOT`, `__dirname` và `process.cwd()`; đồng thời cấu hình `included_files` trong `netlify.toml` để đảm bảo thư mục `dataset/**` luôn được đóng gói cùng lambda functions.
+7. **Link commit và xác nhận:** [Commit f948a0b](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/f948a0bac1c8b3bf070a2119fd1e3ff715155b39) · Triển khai lại trên Netlify và chạy smoke test $\rightarrow$ nạp thành công 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm $\rightarrow$ HTTP 200 (PASS).

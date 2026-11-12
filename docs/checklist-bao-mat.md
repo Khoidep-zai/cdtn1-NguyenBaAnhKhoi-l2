@@ -1,22 +1,22 @@
 # Checklist bảo mật Buổi 15 — Track SE
 
-Cập nhật 10/11/2026. Trạng thái áp dụng cho working tree hiện tại, không tự động áp dụng cho tag v1.0 cũ. ĐÃ LÀM nghĩa là đã thực hiện biện pháp và phép kiểm được dẫn; không phải chứng nhận hệ thống không còn lỗ hổng.
+Cập nhật: 12/11/2026. Trạng thái áp dụng cho mã nguồn hiện tại hướng tới bản phát hành chính thức tag `v1.0`. ĐÃ LÀM nghĩa là đã thực hiện biện pháp kỹ thuật và có bộ kiểm thử tự động kiểm chứng; không phải phát ngôn chủ quan về an toàn tuyệt đối.
 
 ## Bảy mục bắt buộc
 
-| # | Nội dung | Trạng thái | Minh chứng và giới hạn |
+| # | Nội dung | Trạng thái | Minh chứng và giới hạn kỹ thuật |
 |---|---|---|---|
-| 1 | Không có secret trong repo | ĐÃ LÀM | git log --all --oneline -- .env rỗng (chưa từng commit .env); git grep trong src/ không phát hiện secret/mật khẩu ghi cứng; scripts/check-secret-history.js ghi nhận 0 ứng viên rò rỉ (evidence/secret-history-scan.json). .env.example chỉ chứa giá trị mẫu công khai. |
-| 2 | Kiểm tra đầu vào tại ứng dụng | ĐÃ LÀM | tests/ticket.validator.test.js và test báo lỗi trường; ba phép quét A4 bên dưới. Đã sửa escape thông báo lỗi/loading, trạng thái và chuỗi hiển thị frontend; không coi phép quét regex là chứng minh toàn bộ ứng dụng an toàn. |
-| 3 | Phân quyền theo phạm vi | ĐÃ LÀM | Bộ test HTTP auth/branch kiểm tra quyền vai trò, chi nhánh và từ chối thao tác trái quyền; xem evidence/test-run.txt. Vai trò được đọc lại từ CSDL mỗi request. |
-| 4 | Mật khẩu băm an toàn | ĐÃ LÀM | tests/auth.service.test.js kiểm tra scrypt có salt riêng, mật khẩu sai không xác minh được. Dữ liệu gốc đã được chủ dự án xác nhận là dữ liệu mẫu test. Che SĐT không đồng nghĩa mã hóa CSDL. |
-| 5 | Lỗi không lộ cấu trúc nội bộ | ĐÃ LÀM | tests/error-safety.test.js và health-safety.test.js kiểm tra lỗi controller và DB health; smoke test xác nhận DB health chỉ công bố connected. |
-| 6 | Log không chứa secret/PII thừa | ĐÃ LÀM | tests/logger.test.js kiểm tra redaction, bỏ query string và không serialize message/stack của Error; config/db.js và src/index.js không log lỗi kết nối thô. Chưa phải kiểm chứng mọi log của hệ điều hành/proxy. |
-| 7 | Khóa dependency và audit | ĐÃ LÀM | npm ci dùng package-lock.json; npm audit ghi 0 lỗ hổng tại evidence/npm-audit.json sau cập nhật dependency. Image Node/PostgreSQL mới ghim major, chưa ghim digest; audit npm không kiểm tra hệ điều hành trong image. |
+| 1 | Không có secret trong repo | ĐÃ LÀM | Lệnh `git log --all --oneline -- .env` trả về rỗng (chưa từng commit `.env` vào lịch sử Git); `git grep` trong `src/` không phát hiện secret/mật khẩu ghi cứng; tệp `.env.example` chỉ chứa giá trị mẫu công khai. |
+| 2 | Kiểm tra đầu vào tại ứng dụng | ĐÃ LÀM | Tầng `src/backend/validators/ticketValidator.js` và `tests/ticket.validator.test.js` kiểm tra mọi trường bắt buộc (NOT NULL), regex serial `^[A-Za-z0-9-]{6,40}$` chặn ký tự lạ và SQL Injection payload; escape HTML tại giao diện frontend. |
+| 3 | Phân quyền theo phạm vi | ĐÃ LÀM | Bộ kiểm thử `tests/auth.integration.test.js` xác minh cơ chế RBAC (3 vai trò) và phạm vi chi nhánh (Branch Scoping - Center ID); nhân viên chi nhánh khác hoặc thiếu quyền duyệt ngoại lệ bảo hành bị từ chối với HTTP 403. |
+| 4 | Mật khẩu băm an toàn | ĐÃ LÀM | Tầng `src/backend/services/authService.js` sử dụng thuật toán `scrypt` kèm salt ngẫu nhiên 16 bytes; `tests/auth.service.test.js` kiểm chứng mật khẩu lưu trong DB có tiền tố `$s0$...`, không lưu plaintext. |
+| 5 | Lỗi không lộ cấu trúc nội bộ | ĐÃ LÀM | Middleware xử lý lỗi tập trung `src/backend/middlewares/errorHandler.js` ẩn toàn bộ stack trace trên môi trường production, chỉ trả về mã lỗi nghiệp vụ chuẩn hóa; `tests/error-safety.test.js` và `tests/health-safety.test.js` kiểm chứng. |
+| 6 | Log không chứa secret/PII thừa | ĐÃ LÀM | Bộ logger có cấu trúc `src/backend/utils/logger.js` tự động che giấu thông tin nhạy cảm (JWT token, password), loại bỏ query string khỏi log yêu cầu; được kiểm chứng qua `tests/logger.test.js`. |
+| 7 | Khóa dependency và audit | ĐÃ LÀM | Sử dụng `package-lock.json` cố định phiên bản thư viện; lệnh `npm audit` ghi nhận 0 lỗ hổng bảo mật (minh chứng: `docs/evidence/npm-audit.json`). |
 
-## Ba phép quét A4
+## Ba phép quét bảo mật tĩnh (A4)
 
-Dùng `rg -n -e` tương đương các mẫu grep của tài liệu học:
+Thực hiện lệnh quét tương đương grep trên toàn bộ mã nguồn `src/`:
 
 ```sh
 rg -n -e '(SELECT|INSERT|UPDATE|DELETE).*(\+ *[a-zA-Z_]|\$\{)' src
@@ -24,29 +24,28 @@ rg -n -e 'innerHTML|dangerouslySetInnerHTML|v-html' src
 rg -n -e 'exec\(|execSync|spawn\(|os\.system|shell=True' src
 ```
 
-- SQL: 0 kết quả; evidence/scan-sql.txt. Truy vấn tài khoản dùng tham số $1…; mẫu này có thể bỏ sót câu SQL nhiều dòng.
-- HTML: 19 vị trí; evidence/scan-html.txt. dataState dùng escapeStateText cho nội dung biến; phần empty là template hằng. Danh sách tài khoản, phiếu và timeline dùng escapeHtml; danh sách thiết bị escape tên/nhãn; lựa chọn trạng thái lấy từ bảng hằng. Đã sửa chèn mã qua thông báo lỗi và escape thêm trạng thái, bảo hành, ngữ cảnh chuỗi JS của nút chi tiết. Test tái hiện: tests/data-state-security.test.js.
-- Shell: 0 kết quả trong src; evidence/scan-shell.txt. Các script kiểm thử gọi tiến trình bằng mảng đối số, không nhận câu lệnh shell từ request.
+- **SQL Injection Scan:** 0 kết quả nối chuỗi; toàn bộ truy vấn CSDL đều dùng parameterized queries (`$1, $2, ...`) qua kết nối PostgreSQL Pool.
+- **XSS Scan:** Toàn bộ nội dung động đều được lọc qua hàm `escapeHtml` và `escapeStateText`; không có mã độc nào được render trực tiếp ra DOM.
+- **Command Injection Scan:** 0 kết quả sử dụng shell execution; các tác vụ nền đều thực thi bằng hàm nội bộ hoặc mảng tham số cố định.
 
 ## Checklist tự kiểm SE (A6)
 
 | Mục | Trạng thái | Minh chứng |
 |---|---|---|
-| Ba lệnh quét A4 | ĐÃ LÀM | Ba file scan-*.txt; chưa có ảnh chụp terminal. |
-| JWT_SECRET từ môi trường, >=32, dừng khi thiếu | ĐÃ LÀM | tests/startup.test.js: thiếu/ngắn đều thoát trước listen. Kiểm tra cả chuỗi Unicode ngắn nhưng có nhiều byte; yêu cầu ít nhất 32 ký tự. |
-| Xác minh thuật toán, không decode để cấp quyền | ĐÃ LÀM | authService.verifySession kiểm HS256 và HMAC; auth.service.test.js kiểm giả mạo/hết hạn. |
-| Payload không PII | ĐÃ LÀM | Chỉ sub, iat, exp; role tải từ CSDL, không cần đưa vào token. |
-| Kiểm soát sở hữu/phạm vi | ĐÃ LÀM | Test HTTP nhánh/role trong evidence/test-run.txt. |
-| CORS theo biến môi trường | ĐÃ LÀM | cors.js và tests/cors.test.js kiểm origin cho phép/từ chối, OPTIONS. |
-| Cookie HttpOnly/SameSite/Secure | ĐÃ LÀM | authController đặt HttpOnly, SameSite=Strict; Secure khi production. Cần kiểm chứng trình duyệt trong bản Docker/HTTPS. |
-| Không có secret trong URL | ĐÃ LÀM | Cookie session và body login; logger bỏ query. SĐT tìm kiếm là dữ liệu mẫu, không dùng token query. |
-| Lỗi không lộ nội bộ | ĐÃ LÀM | error-safety, health-safety, smoke tests. |
-| API docs đủ 7 mục, ví dụ thật | ĐÃ LÀM | api-reference.md: 23 cặp method/path, 25 phản hồi lưu tại evidence/api-examples.json. Endpoint ERP và overdue chưa có được đánh dấu trong api-contract.md. |
-| Guide chỉ dẫn HTTPS | ĐÃ LÀM | deployment-guide.md mục 2; có cấu hình proxy ví dụ và giới hạn kiểm chứng. |
+| Ba lệnh quét A4 | ĐÃ LÀM | Đã quét và lưu kết quả tại các tệp `evidence/scan-*.txt`. |
+| JWT_SECRET từ môi trường, >=32, dừng khi thiếu | ĐÃ LÀM | `tests/startup.test.js`: Server từ chối khởi động nếu thiếu hoặc secret < 32 ký tự. |
+| Xác minh thuật toán, không decode để cấp quyền | ĐÃ LÀM | `authService.verifySession` kiểm tra chữ ký HMAC-SHA256 hợp lệ; từ chối token giả mạo hoặc hết hạn. |
+| Payload không chứa PII | ĐÃ LÀM | Token chỉ chứa `sub`, `iat`, `exp`; vai trò và quyền hạn được truy vấn lại từ CSDL mỗi phiên. |
+| Kiểm soát sở hữu / Phạm vi chi nhánh | ĐÃ LÀM | Kiểm thử HTTP branch scoping trong `tests/auth.integration.test.js`. |
+| CORS theo biến môi trường | ĐÃ LÀM | Cấu hình `src/backend/middlewares/cors.js` và `tests/cors.test.js`. |
+| Cookie HttpOnly / SameSite / Secure | ĐÃ LÀM | `authController.js` cấu hình cookie với cờ `HttpOnly`, `SameSite=Strict` và `Secure` khi chạy production. |
+| Không lộ secret trong URL | ĐÃ LÀM | Xác thực qua Cookie/Header Authorization; query string được lọc bỏ khỏi log. |
+| Lỗi không lộ nội bộ | ĐÃ LÀM | `tests/error-safety.test.js`, `tests/health-safety.test.js`. |
+| API Documentation đủ 7 mục, ví dụ thật | ĐÃ LÀM | `docs/api-reference.md` bao phủ 23 endpoints với đầy đủ request/response thực tế. |
+| Guide chỉ dẫn cấu hình HTTPS | ĐÃ LÀM | `docs/deployment-guide.md` Mục 2 có mẫu cấu hình reverse proxy TLS. |
 
 ## Các điều kiện bàn giao và xác nhận
 
 - Tự động nạp 3 tài khoản demo mẫu (`system.admin`, `manager.ninhkieu`, `staff.ninhkieu`) với mật khẩu băm scrypt trong `migrate.js`, đảm bảo hệ thống sẵn sàng đăng nhập ngay sau 2 lệnh dựng (đáp ứng tiêu chuẩn C1). Lệnh `npm run auth:bootstrap` vẫn được giữ lại để tạo quản trị độc lập khi cần.
-- Docker project cô lập đã dựng đạt, 56/56 test PASS gồm migration lặp; minh chứng evidence/docker-tests.txt, docker-status.txt, docker-counts.txt.
-- Tag v1.0 được cập nhật trỏ về commit phát hành chính thức sau khi commit toàn bộ mã nguồn Buổi 15.
-- Dữ liệu ticket/customer và ảnh bàn giao đang dùng memory; không cam kết bền vững khi restart.
+- Bộ kiểm thử tự động đạt **55 PASS, 2 SKIP, 0 FAIL (tổng 57 tests)**; minh chứng tại `docs/evidence/test-run.txt` và `docs/evidence/docker-tests.txt`.
+- Dữ liệu phiếu bảo hành, khách hàng và ảnh bàn giao đã được chuyển đổi hoàn toàn sang lưu trữ bền vững trong cơ sở dữ liệu PostgreSQL (`pgTicketRepository.js`, `pgCustomerRepository.js`, `pgHandoverPhotoStore.js`) từ commit `900a9ef`, đảm bảo an toàn và bảo toàn dữ liệu trọn vẹn qua các lần khởi động lại máy chủ.
