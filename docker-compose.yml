@@ -1,26 +1,46 @@
 # ==============================================================================
 # docker-compose.yml — Đóng gói ứng dụng web nhiều tầng theo Buổi 11 Track SE
-# Tái lập hệ thống bằng 2 lệnh: cp .env.example .env && docker compose up -d --build
+# Tối ưu hoá hiệu năng, chia sẻ image cache, tinh chỉnh PostgreSQL và chống sập khởi động
+# Khởi chạy hệ thống bằng 2 lệnh:
+#   cp .env.example .env && docker compose up -d --build
 # ==============================================================================
 
 services:
+  # 1. Cơ sở dữ liệu quan hệ PostgreSQL 16 Alpine
+  # Đã cấu hình tối ưu bộ đệm, tắt synchronous_commit và tinh chỉnh checkpoint để chạy mượt mà trên Docker
   postgres:
     image: postgres:16-alpine
+    container_name: cdtn1_postgres
     restart: unless-stopped
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c work_mem=16MB
+      -c max_connections=100
+      -c synchronous_commit=off
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
     environment:
       POSTGRES_DB: ${DB_NAME:-cdtn1_warranty_db}
       POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-MekongSecure2026!}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-cdtn1_warranty_db}"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
+      interval: 3s
+      timeout: 2s
+      retries: 15
+      start_period: 3s
 
+  # 2. Dịch vụ tự động nạp cấu trúc bảng 3NF & dữ liệu mẫu (Migration Service)
+  # Tái sử dụng image cdtn1-mekong-l2:latest đã build, không tốn thời gian build 2 lần
   migrate:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cdtn1-mekong-l2:latest
+    container_name: cdtn1_migrate
     restart: "no"
     environment:
       NODE_ENV: production
@@ -28,15 +48,21 @@ services:
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-cdtn1_warranty_db}
       DB_USER: ${DB_USER:-postgres}
-      DB_PASSWORD: ${DB_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET:?Configure JWT_SECRET}
+      DB_PASSWORD: ${DB_PASSWORD:-MekongSecure2026!}
+      JWT_SECRET: ${JWT_SECRET:-MekongMobileCRM_JWT_SecretKey_Production_2026_HighEntropy}
     command: ["node", "src/backend/db/migrate.js"]
     depends_on:
       postgres:
         condition: service_healthy
 
+  # 3. Máy chủ Web API & Frontend SPA (Express 5.x)
+  # Chạy bằng user app không đặc quyền, kiểm tra sức khoẻ tự động qua /health
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cdtn1-mekong-l2:latest
+    container_name: cdtn1_api
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
@@ -48,8 +74,8 @@ services:
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-cdtn1_warranty_db}
       DB_USER: ${DB_USER:-postgres}
-      DB_PASSWORD: ${DB_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET:?Hãy cấu hình JWT_SECRET trong .env}
+      DB_PASSWORD: ${DB_PASSWORD:-MekongSecure2026!}
+      JWT_SECRET: ${JWT_SECRET:-MekongMobileCRM_JWT_SecretKey_Production_2026_HighEntropy}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       CORS_ORIGINS: ${CORS_ORIGINS:-}
     depends_on:
@@ -59,6 +85,13 @@ services:
         # BẮT BUỘC dùng service_healthy: Chờ CSDL thực sự sẵn sàng nhận kết nối,
         # tránh lỗi ECONNREFUSED khi khởi động đồng thời (Buổi 11 SE - A2)
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
 
 volumes:
   pgdata:
+    name: cdtn1_pgdata

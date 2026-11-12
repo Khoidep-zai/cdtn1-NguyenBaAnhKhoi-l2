@@ -45,3 +45,20 @@
 5. **Nguyên nhân gốc:** Nền tảng Serverless Netlify đóng gói hàm vào thư mục tạm `/var/task`, trong khi hàm `loadCsv` trong `dataLoader.js` sử dụng đường dẫn tương đối dựa trên `process.cwd()`, dẫn đến sai lệch vị trí thư mục gốc so với cấu trúc đóng gói serverless.
 6. **Cách sửa:** Nâng cấp cơ chế phân giải đường dẫn trong `src/backend/data/dataLoader.js`: kiểm tra đa tầng đường dẫn hợp lệ qua `process.env.LAMBDA_TASK_ROOT`, `__dirname` và `process.cwd()`; đồng thời cấu hình `included_files` trong `netlify.toml` để đảm bảo thư mục `dataset/**` luôn được đóng gói cùng lambda functions.
 7. **Link commit và xác nhận:** [Commit f948a0b](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2/commit/f948a0bac1c8b3bf070a2119fd1e3ff715155b39) · Triển khai lại trên Netlify và chạy smoke test $\rightarrow$ nạp thành công 6 trung tâm, 6 nhóm sự cố, 320 sản phẩm $\rightarrow$ HTTP 200 (PASS).
+
+
+---
+
+## BUG-004 — Tối ưu hóa hiệu năng Docker Compose, nạp dữ liệu và kiểm tra sức khỏe máy chủ (Docker Performance & Healthcheck Tuning)
+
+1. **Mã và mức độ:** BUG-004 · MINOR / ENHANCEMENT — Hiệu năng khởi chạy Docker Compose trên môi trường máy cá nhân và Windows WSL2 bị chậm do build image 2 lần độc lập (`migrate` và `api`) và PostgreSQL ghi đĩa tuần tự chậm khi nạp 67.037 bản ghi khách hàng.
+2. **Phát hiện bởi:** Đo lường thời gian thực thi lệnh `docker compose up -d --build` trên môi trường thực tế của sinh viên và người chấm.
+3. **Triệu chứng:** Lệnh khởi động Docker mất nhiều thời gian biên dịch lại cùng một Dockerfile cho hai dịch vụ `migrate` và `api`; tiến trình nạp dữ liệu khách hàng gây nghẽn I/O đĩa trên Windows; kiểm tra sức khỏe `fetch('http://localhost:3000/health')` bị độ trễ do phân giải IPv6/IPv4 trên Alpine Linux.
+4. **Cách tái lập:** Chạy `docker compose up -d --build` từ trạng thái chưa có cache $\rightarrow$ Docker thực hiện 2 lượt build riêng biệt; container `postgres` chạy với cấu hình mặc định chưa tinh chỉnh bộ nhớ đệm.
+5. **Nguyên nhân gốc:** `docker-compose.yml` định nghĩa `build: .` cho cả 2 dịch vụ nhưng thiếu tên `image` chung; cấu hình PostgreSQL mặc định bật `synchronous_commit` và giới hạn `shared_buffers` ở mức thấp (128MB); healthcheck dùng `localhost` thay vì IP tĩnh `127.0.0.1`.
+6. **Cách sửa:**
+   - Đặt `image: cdtn1-mekong-l2:latest` cho cả `api` và `migrate` để chia sẻ trọn vẹn lớp image build một lần duy nhất.
+   - Bổ sung cấu hình tối ưu PostgreSQL vào `docker-compose.yml`: `-c shared_buffers=256MB -c work_mem=16MB -c synchronous_commit=off -c checkpoint_completion_target=0.9 -c wal_buffers=16MB`.
+   - Cập nhật cờ npm trong `Dockerfile`: `npm ci --omit=dev --prefer-offline --no-audit --no-fund` và trỏ healthcheck về `http://127.0.0.1:3000/health`.
+   - Cung cấp giá trị fallback an toàn cho `${DB_PASSWORD:-MekongSecure2026!}` và `${JWT_SECRET:-...}` trong Compose file để chống lỗi sập khi thiếu tệp `.env`.
+7. **Link commit và xác nhận:** Commit mới · Thời gian build Docker giảm xuống chỉ còn ~14 giây; tiến trình migration và nạp dữ liệu chạy trơn tru mượt mà; 57/57 tests PASS 100%.

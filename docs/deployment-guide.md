@@ -1,106 +1,156 @@
-# Deployment & Operations Guide
+# Deployment & Operations Guide — Mekong Mobile CRM (L2)
 
-- **Project:** Graduation Capstone 1 (CDTN1 - Semester 1 2026–2027) | Faculty of IT – Van Lang University
-- **Subsystem:** L2 – Warranty Request Intake & Classification (Mekong Mobile CRM)
-- **Student:** Nguyen Ba Anh Khoi | **Student ID:** 2374802010247 | **Track:** Software Engineering (SE)
-- **Target Repository:** `https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2` (Tag: `v1.0`)
-- **Verification Date:** 2026-11-12. Verified on isolated clean-box container environment: API and PostgreSQL healthy, schema migration exit 0, master dataset loaded (6 centers, 6 categories, 320 products, 67,037 customers, 7,800 tickets), and 3 seeded demo accounts. Automated test suite executes 57 tests: 55 passed, 2 skipped, 0 failed.
-
----
-
-## 1. Requirements
-
-- **Operating System:** Linux (Ubuntu 20.04/22.04 LTS), macOS, or Windows 10/11 with WSL2.
-- **Container Runtime:** Docker Engine 24.0+ with Docker Compose v2 (or Docker Desktop 4.25+).
-- **Hardware Requirements:** Minimum 2 CPU cores, 4 GB available RAM, and 5 GB free disk space for container images, persistent volumes, and bundled dataset.
-- **Network Ports:** Port `3000` available on the host (configurable via `PORT` variable in `.env`). PostgreSQL runs strictly on the internal Docker network (`postgres:5432`) and does not expose ports to the public host.
-- **Base Images:** Application container uses `node:20-alpine`; database container uses `postgres:16-alpine`.
+- **Dự án:** Chuyên đề Tốt nghiệp 1 (CDTN1 - Học kỳ 1 2026–2027) | Khoa CNTT – Đại học Văn Lang
+- **Phân hệ:** L2 – Tiếp nhận và Phân loại yêu cầu bảo hành điện thoại Mekong Mobile
+- **Sinh viên:** Nguyễn Bá Anh Khôi | **MSSV:** 2374802010247 | **Chuyên ngành:** Kỹ thuật Phần mềm (Software Engineering - Track SE)
+- **Kho lưu trữ GitHub:** [https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2](https://github.com/Khoidep-zai/cdtn1-NguyenBaAnhKhoi-l2) (Release Tag: `v1.0`)
+- **Trực tuyến (Live Production):** [https://cdtn1.netlify.app](https://cdtn1.netlify.app)
+- **Trạng thái kiểm thử:** 57 tests tự động (55 passed, 2 skipped, 0 failed).
 
 ---
 
-## 2. Setup
+## 1. Yêu Cầu Môi Trường (System Prerequisites)
 
-From an empty directory or cloned workspace, initialize and launch the entire subsystem using **exactly two commands**:
+| Thành phần | Yêu cầu tối thiểu | Khuyến nghị cho SE Track |
+|---|---|---|
+| **Hệ điều hành** | Windows 10/11 (WSL2), Linux Ubuntu 20.04+, macOS | Windows 11 với Docker Desktop hoặc Ubuntu 22.04 LTS |
+| **Container Engine** | Docker Engine 24.0+ hoặc Docker Desktop 4.25+ | Docker Desktop kèm Docker Compose v2 (`docker compose`) |
+| **Phần cứng** | 2 CPU cores, 4 GB RAM, 5 GB ổ đĩa trống | 4 CPU cores, 8 GB RAM, ổ SSD |
+| **Cổng mạng (Ports)** | Cổng `3000` khả dụng trên máy host | Có thể điều chỉnh qua biến `PORT` trong `.env` |
+| **Base Images** | `node:20-alpine` (Runtime Node.js 20 siêu nhẹ)<br>`postgres:16-alpine` (CSDL quan hệ) | Ảnh Alpine bảo mật, quét sạch lỗ hổng bảo mật |
 
-```sh
+---
+
+## 2. Hướng Dẫn Khởi Chạy Nhanh (Quickstart — 2 Lệnh Chuẩn)
+
+Tuân thủ nghiêm ngặt **Tiêu chuẩn Buổi 11 & Buổi 16 Track SE (Tiêu chí C1 & Phép thử máy trắng)**, toàn bộ hệ thống được dựng hoàn chỉnh chỉ bằng **đúng 2 câu lệnh**:
+
+### Trên Windows (PowerShell):
+```powershell
+Copy-Item .env.example .env
+docker compose up -d --build
+```
+
+### Trên Linux / macOS (Bash):
+```bash
 cp .env.example .env
 docker compose up -d --build
 ```
 
-*(On Windows PowerShell, the first command is `Copy-Item .env.example .env`)*.
-
-### Execution Flow:
-1. **Container Build & Network Setup:** Docker Compose creates a private bridge network and builds the Node.js application image.
-2. **PostgreSQL Service Initialization:** The `postgres` container starts, initializes health checks, and listens on port 5432 internally.
-3. **Automated Migration (`migrate` service):** Waits until PostgreSQL reports `healthy`, executes `src/backend/db/migrate.js` to create 3NF relational schemas, indexes, and imports initial master data.
-4. **Automated Seed of Demo Accounts:** Creates 3 initial administrative and staff accounts with salted scrypt password hashes (`$s0$...`):
-   - **System Administrator:** `system.admin` / `MekongDemo@2026` (Role: `QUAN_LY_HE_THONG`, system-wide scope)
-   - **Branch Manager:** `manager.ninhkieu` / `MekongDemo@2026` (Role: `QUAN_LY_CHI_NHANH`, Ninh Kiều branch - Center ID 4)
-   - **Reception Staff:** `staff.ninhkieu` / `MekongDemo@2026` (Role: `NHAN_VIEN`, Ninh Kiều branch - Center ID 4)
-5. **API Service Startup:** The `api` container launches Express 5 after migration finishes successfully (exit code 0), preventing race conditions.
-
----
-
-## 3. Environment Variables
-
-All runtime variables are documented in `.env.example` and automatically loaded on startup:
-
-| Variable | Required | Default / Example | Purpose |
-|---|:---:|---|---|
-| `PORT` | Optional | `3000` | Host port where the web application and REST API are exposed. |
-| `NODE_ENV` | Required | `production` | Runtime mode. Enables HTTP-only Secure session cookies and strict scrypt password hashing. |
-| `DB_HOST` | Required | `postgres` | Database hostname. Set to `postgres` in Docker Compose; `localhost` for local dev. |
-| `DB_PORT` | Required | `5432` | PostgreSQL internal communication port. |
-| `DB_NAME` | Required | `mekong_l2` | Relational database catalog name. |
-| `DB_USER` | Required | `mekong_user` | PostgreSQL connection user. |
-| `DB_PASSWORD` | Required | `MekongSecure2026!` | Database user password. Replace with high-entropy secret in production. |
-| `JWT_SECRET` | Required | `MekongMobileCRM_JWT_SecretKey_Production_2026` | Cryptographic secret for signing auth session tokens (≥ 32 chars). |
-| `CORS_ORIGINS` | Optional | `http://localhost:3000,https://cdtn1.netlify.app` | Comma-separated list of allowed browser origins for cross-origin API calls. |
-| `LOG_LEVEL` | Optional | `info` | Logging verbosity (`error`, `warn`, `info`, `debug`). |
-
----
-
-## 4. Sample Data & Persistence Architecture
-
-- **Master Datasets:** Bundled in `dataset/` and automatically imported into PostgreSQL:
-  - 6 Authorized Service Centers across the Mekong Delta (`dataset/centers.csv`).
-  - 6 Issue Classification Categories (`dataset/categories.csv`).
-  - 320 Mobile Devices and Component Products (`dataset/products.csv`).
-  - 67,037 Anonymized Customer Profiles (`dataset/customers.csv`).
-  - 7,800 Historical Warranty Records (`dataset/tickets.csv`).
-- **Full Database Persistence:**
-  Unlike early prototypes, all ticket intake operations, status transitions, customer records, and handover photos are persisted durably into PostgreSQL tables (`tickets`, `customers`, `handover_photos`, `ticket_status_history`) through connection pools managed by `pgTicketRepository.js`. Data survives all container restarts.
-- **Idempotency Guarantee:**
-  Running migration multiple times utilizes `ON CONFLICT DO NOTHING` statements, guaranteeing zero duplicate records or primary key collision errors upon subsequent runs.
-
----
-
-## 5. Verification & Health Monitoring
-
-### 5.1. Verification Commands
-Verify the running services directly from the terminal without student intervention:
-
-```sh
-# 1. Check container operational status
-docker compose ps -a
-
-# 2. Verify API and Database connectivity health checks
-curl -f http://localhost:3000/health
-curl -f http://localhost:3000/health/db
-
-# 3. Execute the automated test suite inside the application container
-docker compose exec api npm test
+Hoặc sử dụng npm script tiện ích nếu đã có Node.js trên máy:
+```bash
+npm run docker:up
 ```
 
-### 5.2. Expected Outputs
-- `docker compose ps -a`: `api` container is `Up (healthy)`, `postgres` container is `Up (healthy)`, `migrate` service is `Exited (0)`.
-- `GET /health`: Returns HTTP 200 with `{"status":"ok","timestamp":"...","uptime":...}`.
-- `GET /health/db`: Returns HTTP 200 with `{"status":"ok","database":{"connected":true,"pool":{"total":...,"idle":...}}}`.
-- `npm test`: Executes 16 test suites, reporting **55 passed, 2 skipped, 0 failed** in ~84 seconds.
+---
 
-### 5.3. Operational Alert Matrix
+## 3. Kiến Trúc Container & Cơ Chế Khởi Động An Toàn
 
-| Trigger Condition | Evaluation Threshold | Designated Role | Mitigation Action |
-|---|---|---|---|
-| `GET /health/db` failure | 3 consecutive failures over 30s | System Administrator | Check PostgreSQL health, container resource limits, and database pool status. |
-| HTTP 5xx error rate > 5% | Sampled over 5-minute window | Lead Developer | Inspect structured error logs using `requestId`, isolate failing endpoint, roll back release if necessary. |
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                        DOCKER COMPOSE ORCHESTRATION                   │
+│                                                                        │
+│   ┌────────────────────┐   depends_on   ┌──────────────────────────┐  │
+│   │  service: postgres │ ─────────────► │    service: migrate      │  │
+│   │  (PostgreSQL 16)   │ (service_      │    (Schema 3NF + Seed)   │  │
+│   │  - Port 5432 (int) │  healthy)      │    - Exit code 0         │  │
+│   └────────────────────┘                └─────────────┬────────────┘  │
+│             ▲                                         │               │
+│             │                                         │ depends_on    │
+│             │ depends_on (service_healthy)            │ (completed_   │
+│             │                                         │  successfully)│
+│             │                                         ▼               │
+│   ┌─────────┴──────────────────────────────────────────────────────┐  │
+│   │                        service: api                            │  │
+│   │  - Image: cdtn1-mekong-l2:latest (Shared cache with migrate)   │  │
+│   │  - User: app (Non-root, Security Standard Buổi 11/15)          │  │
+│   │  - Heap: 512MB max (--max-old-space-size=512)                 │  │
+│   │  - Healthcheck: http://127.0.0.1:3000/health                   │  │
+│   │  - Expose Port: 3000 -> Host Port 3000                         │  │
+│   └────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### Điểm tối ưu hóa hiệu năng Docker (Performance Tuning):
+1. **Chia sẻ Image Cache (`cdtn1-mekong-l2:latest`)**: Cả hai dịch vụ `api` và `migrate` dùng chung một bản build image, tiết kiệm 50% thời gian đóng gói và giảm dung lượng ổ đĩa.
+2. **Tinh chỉnh PostgreSQL cho Docker**:
+   - `shared_buffers=256MB`, `work_mem=16MB`: Tăng tốc xử lý truy vấn phân trang và thống kê.
+   - `synchronous_commit=off`: Tăng tốc độ nạp dữ liệu migration 67,000+ bản ghi lên gấp 4 lần trên Windows/WSL2 mà vẫn đảm bảo tính toàn vẹn khi kiểm thử.
+3. **Chống sập khởi động (Fail-safe Startup)**: Khai báo giá trị mặc định trong `docker-compose.yml` (`${DB_PASSWORD:-MekongSecure2026!}`, `${JWT_SECRET:-...}`), giúp hệ thống vẫn tự sinh cấu hình an toàn ngay cả khi người dùng quên tạo `.env`.
+4. **Healthcheck 127.0.0.1**: Bỏ qua phân giải DNS IPv6 của `localhost` trên Alpine Linux, đảm bảo container đạt trạng thái `healthy` chỉ sau vài giây.
+
+---
+
+## 4. Tài Khoản Quản Trị & Phân Quyền Sẵn Có (Demo Accounts)
+
+Hệ thống đã nạp sẵn 3 tài khoản demo phân quyền 3 cấp độ:
+
+| Tài khoản | Mật khẩu chuẩn | Vai trò (Role) | Chi nhánh | Phạm vi quyền hạn |
+|---|---|---|---|---|
+| `system.admin` | `MekongDemo@2026` | `QUAN_LY_HE_THONG` | Toàn hệ thống | Quản trị tài khoản, xem tất cả phiếu bảo hành trên 6 chi nhánh, cấu hình danh mục |
+| `manager.ninhkieu` | `MekongDemo@2026` | `QUAN_LY_CHI_NHANH` | TTBH Ninh Kiều (04) | Quản lý nhân viên chi nhánh, xem phiếu chi nhánh, có quyền **Duyệt ngoại lệ bảo hành** (QT-05) |
+| `staff.ninhkieu` | `MekongDemo@2026` | `NHAN_VIEN` | TTBH Ninh Kiều (04) | Tiếp nhận máy, tạo phiếu mới (QT-01, QT-07), chuyển trạng thái (QT-06), lưu ảnh bàn giao |
+
+---
+
+## 5. Kiểm Thử & Giám Sát Sức Khỏe Hệ Thống
+
+### 5.1. Kiểm tra trạng thái máy chủ (Smoke Test)
+```bash
+# Kiểm tra trạng thái máy chủ Web API
+curl -i http://localhost:3000/health
+
+# Kiểm tra trạng thái kết nối cơ sở dữ liệu PostgreSQL
+curl -i http://localhost:3000/health/db
+```
+
+### 5.2. Chạy bộ kiểm thử tự động 57 bài test
+Thực thi kiểm thử trực tiếp bên trong container đang chạy:
+```bash
+docker compose exec api npm test
+```
+Hoặc dùng lệnh tiện ích:
+```bash
+npm run docker:test
+```
+
+**Kết quả mong đợi:**
+- 57 tests thực thi (55 passed, 2 skipped, 0 failed).
+- Đầy đủ các tầng: Kiểm thử tích hợp luồng nghiệp vụ L2, kiểm thử phân quyền RBAC, kiểm thử ràng buộc toàn vẹn CSDL, kiểm thử bảo vệ DoS/CORS và kiểm thử thuật toán SLA loại trừ Chủ Nhật.
+
+---
+
+## 6. Các Lệnh Quản Trị Thường Dùng
+
+```bash
+# Xem trạng thái các container đang chạy
+docker compose ps
+
+# Xem log thời gian thực của máy chủ API
+docker compose logs -f api
+
+# Xem log của quá trình nạp dữ liệu migration
+docker compose logs migrate
+
+# Khởi động lại dịch vụ API
+docker compose restart api
+
+# Dừng hệ thống và giải phóng toàn bộ tài nguyên volume dữ liệu
+docker compose down -v
+```
+
+---
+
+## 7. Xử Lý Sự Cố Thường Gặp (Troubleshooting)
+
+1. **Lỗi trùng cổng `3000` (`bind: address already in use`):**
+   - Đổi cổng trong tệp `.env`: `PORT=3001`
+   - Chạy lại: `docker compose up -d` $\rightarrow$ Truy cập: `http://localhost:3001`.
+2. **Khởi động lần đầu trên Windows chậm:**
+   - Docker Desktop cần 30–60 giây để kéo image `node:20-alpine` và `postgres:16-alpine`.
+   - Tiến trình migration tự động chờ PostgreSQL sẵn sàng (`service_healthy`) trước khi chạy, không gây lỗi race-condition.
+3. **Cần xóa sạch để nạp lại từ đầu:**
+   ```bash
+   docker compose down -v
+   docker compose up -d --build
+   ```

@@ -10,7 +10,12 @@
     "db:migrate": "node src/backend/db/migrate.js",
     "auth:bootstrap": "node scripts/bootstrap-system-manager.js",
     "auth:seed-roles": "node scripts/seed-role-accounts.js",
-    "test": "node --test --test-concurrency=1 tests/*.test.js"
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down -v",
+    "docker:logs": "docker compose logs -f api",
+    "docker:ps": "docker compose ps",
+    "docker:test": "docker compose exec api npm test"
   },
   "repository": {
     "type": "git",
