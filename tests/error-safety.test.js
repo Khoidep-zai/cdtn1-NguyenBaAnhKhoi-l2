@@ -3,14 +3,14 @@ const assert = require('node:assert/strict');
 const loader = require('../src/backend/data/dataLoader');
 const catalog = require('../src/backend/controllers/catalogController');
 const tickets = require('../src/backend/controllers/ticketController');
-const service = require('../src/backend/services/ticketService');
+const service = require('../src/backend/services/pgTicketService');
 
-test('unexpected ticket failures do not reveal internal error details', () => {
+test('unexpected ticket failures do not reveal internal error details', async () => {
   const original = service.getTickets;
   service.getTickets = () => { throw new Error('private connection string'); };
   let body;
   const res = { status(code) { this.statusCode = code; return this; }, json(value) { body = value; return this; } };
-  try { tickets.list({ query: {} }, res); } finally { service.getTickets = original; }
+  try { await tickets.list({ query: {} }, res); } finally { service.getTickets = original; }
   assert.equal(res.statusCode, 500);
   assert.ok(!JSON.stringify(body).includes('private connection string'));
 });

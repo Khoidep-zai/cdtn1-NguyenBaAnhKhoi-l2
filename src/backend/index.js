@@ -23,6 +23,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Endpoint Smoke Test
 app.get('/health', (req, res) => {
+  res.set('X-App-Revision', 'ticket-persistence-v1');
   res.status(200).json({ status: 'ok' });
 });
 

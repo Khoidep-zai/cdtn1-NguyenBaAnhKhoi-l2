@@ -16,9 +16,16 @@ test('Integration Test: Phân hệ tiếp nhận và phân loại bảo hành (L
   const username = `integration_${Date.now()}`;
   const password = 'Integration-Test-Password-2026!';
   let userId = null;
+  const cleanupTestTicket = async () => {
+    try {
+      await query("DELETE FROM ticket WHERE device_id IN (SELECT device_id FROM device WHERE serial_no = 'IMEI356789012345678')");
+    } catch (e) {}
+  };
+  await cleanupTestTicket();
   t.after(async () => {
     server.close();
     if (userId) await query('DELETE FROM app_user WHERE user_id=$1', [userId]);
+    await cleanupTestTicket();
   });
   const passwordHash = await hashPassword(password);
   const userResult = await query(

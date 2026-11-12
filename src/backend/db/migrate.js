@@ -316,6 +316,7 @@ async function migrate() {
       console.log(`ℹ Bảng app_user đã có ${userRes.rows[0].count} bản ghi.`);
     }
 
+    await pool.query(fs.readFileSync(path.resolve(__dirname, 'ticket-persistence.sql'), 'utf-8'));
     console.log('✅ Migration và nạp dữ liệu PostgreSQL 18 hoàn tất 100%! Có thể dùng pgAdmin 4 truy vấn ngay.');
   } catch (err) {
     console.error('❌ Lỗi trong quá trình migration:', err);

@@ -1,4 +1,4 @@
-const TicketService = require('../services/ticketService');
+const TicketService = require('../services/pgTicketService');
 
 function checkCreateCenter(req, res, next) {
   if (req.user.role === 'QUAN_LY_HE_THONG') return next();
@@ -9,9 +9,9 @@ function checkCreateCenter(req, res, next) {
   next();
 }
 
-function checkTicketCenter(req, res, next) {
+async function checkTicketCenter(req, res, next) {
   if (req.user.role === 'QUAN_LY_HE_THONG') return next();
-  const ticket = TicketService.getTicketById(req.params.id);
+  const ticket = await TicketService.getTicketById(req.params.id);
   if (!ticket) return next(); // Controller trả 404 thống nhất.
   if (Number(ticket.center_id) !== Number(req.user.branchId)) {
     return res.status(403).json({ error: 'CENTER_FORBIDDEN', message: 'Phiếu thuộc chi nhánh khác.' });

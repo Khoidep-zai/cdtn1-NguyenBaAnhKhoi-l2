@@ -1,8 +1,8 @@
-const tickets = require('../repositories/ticketRepository');
+const tickets = require('../repositories/pgTicketRepository');
 
 // Gắn ảnh với chính đối tượng phiếu trong kho prototype; không dùng mã phiếu
 // làm khóa lưu bền vững vì mã có thể được cấp lại sau khi khởi động lại.
-const photos = require('../repositories/handoverPhotoStore');
+const photos = require('../repositories/pgHandoverPhotoStore');
 
 function imageType(bytes) {
   if (!Buffer.isBuffer(bytes)) return null;
@@ -12,27 +12,27 @@ function imageType(bytes) {
   return null;
 }
 
-function save(req, res) {
-  const ticket = tickets.findById(req.params.id);
+async function save(req, res) {
+  const ticket = await tickets.findById(req.params.id);
   if (!ticket) return res.status(404).json({ message: 'Không tìm thấy phiếu bảo hành.' });
   if (!['HOAN_TAT', 'DA_BAN_GIAO'].includes(ticket.status)) return res.status(409).json({ message: 'Chỉ thêm ảnh sau khi hoàn thành sửa chữa.' });
   const type = imageType(req.body);
   if (!type || type !== req.get('content-type')?.split(';')[0].trim().toLowerCase()) {
     return res.status(415).json({ message: 'Vui lòng chọn ảnh JPEG, PNG hoặc WebP hợp lệ.' });
   }
-  photos.set(ticket, { bytes: req.body, type });
-  tickets.addStatusLog({ ticket_id: ticket.id, from_status: ticket.status, to_status: ticket.status,
+  await photos.set(ticket, { bytes: req.body, type });
+  await tickets.addStatusLog({ ticket_id: ticket.id, from_status: ticket.status, to_status: ticket.status,
     changed_by: req.user.username, note: 'Cập nhật ảnh minh chứng bàn giao.' });
-  return res.status(200).json({ success: true, message: 'Đã lưu ảnh minh chứng bàn giao.' });
+  return { success: true, message: 'Đã lưu ảnh minh chứng bàn giao.' };
 }
 
-function get(req, res) {
-  const ticket = tickets.findById(req.params.id);
+async function get(req, res) {
+  const ticket = await tickets.findById(req.params.id);
   if (!ticket) return res.status(404).json({ message: 'Không tìm thấy phiếu bảo hành.' });
-  const photo = photos.get(ticket);
+  const photo = await photos.get(ticket);
   if (!photo) return res.status(404).json({ message: 'Phiếu chưa có ảnh bàn giao.' });
   res.set({ 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
   return res.type(photo.type).send(photo.bytes);
 }
 
-module.exports = { save, get };
+module.exports = { save: (req,res,next) => tickets.transaction(() => save(req,res)).then(result => { if (!res.headersSent) res.status(200).json(result); }).catch(next), get };

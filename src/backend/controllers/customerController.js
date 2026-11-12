@@ -1,11 +1,11 @@
-const dataLoader = require('../data/dataLoader');
+const dataLoader = require('../repositories/pgCustomerRepository');
 const { normalizePhone, isValidVietnamesePhone } = require('../utils/phoneHelper');
 
 class CustomerController {
   /**
    * Tra cứu hồ sơ khách hàng theo số điện thoại (US1 / FR1 / QT-01)
    */
-  static getByPhone(req, res) {
+  static async getByPhone(req, res) {
     try {
       const { phone } = req.query;
 
@@ -24,7 +24,7 @@ class CustomerController {
         });
       }
 
-      const customer = dataLoader.findCustomerByPhone(normalized);
+      const customer = await dataLoader.findCustomerByPhone(normalized);
 
       if (!customer) {
         return res.status(404).json({
@@ -34,7 +34,7 @@ class CustomerController {
         });
       }
 
-      const devices = dataLoader.getCustomerDevices(customer.customer_id);
+      const devices = await dataLoader.getCustomerDevices(customer.customer_id);
 
       return res.status(200).json({
         success: true,
@@ -49,7 +49,8 @@ class CustomerController {
           devices: devices, // Danh sách thiết bị và lịch sử bảo hành thực tế từ Dataset
         },
       });
-    } catch (error) {
+     } catch (error) {
+      if (error.code === '23505') return res.status(409).json({success:false,message:'Số điện thoại đã tồn tại trong hệ thống (QT-01).'});
       return res.status(500).json({ success: false, message: 'Lỗi máy chủ nội bộ' });
     }
   }
@@ -57,7 +58,7 @@ class CustomerController {
   /**
    * Đăng ký mới hồ sơ khách hàng khi chưa tồn tại (QT-01)
    */
-  static create(req, res) {
+  static async create(req, res) {
     try {
       const { full_name, phone, email, address } = req.body;
 
@@ -76,7 +77,7 @@ class CustomerController {
       }
 
       const normalized = normalizePhone(phone);
-      const existing = dataLoader.findCustomerByPhone(normalized);
+      const existing = await dataLoader.findCustomerByPhone(normalized);
       if (existing) {
         return res.status(409).json({
           success: false,
@@ -85,7 +86,7 @@ class CustomerController {
         });
       }
 
-      const newCustomer = dataLoader.addCustomer({
+      const newCustomer = await dataLoader.addCustomer({
         full_name: full_name.trim(),
         phone: normalized,
         email: email ? email.trim() : '',
@@ -97,7 +98,8 @@ class CustomerController {
         message: 'Đăng ký hồ sơ khách hàng mới thành công.',
         data: newCustomer,
       });
-    } catch (error) {
+     } catch (error) {
+      if (error.code === '23505') return res.status(409).json({success:false,message:'Số điện thoại đã tồn tại trong hệ thống (QT-01).'});
       return res.status(500).json({ success: false, message: 'Lỗi máy chủ nội bộ' });
     }
   }
